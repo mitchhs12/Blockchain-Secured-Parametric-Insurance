@@ -1,0 +1,23 @@
+# Ignore the .next/ build directory
+.next/
+
+# Ignore Node.js dependencies
+node_modules/
+
+# Ignore the local development server logs
+.DS_Store
+*.log
+
+# Ignore the VS Code workspace settings
+.vscode/
+*.code-workspace
+
+# Ignore environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore the production build artifacts
+out/
