@@ -1,13 +1,21 @@
 import { MoralisNextApi } from "@moralisweb3/next";
 
-console.log("MORALIS_API_KEY:", process.env.MORALIS_API_KEY);
-console.log("NEXT_AUTH_URL:", process.env.NEXTAUTH_URL);
+const apiKey = process.env.MORALIS_API_KEY;
+const nextAuthUrl = process.env.NEXTAUTH_URL;
+
+if (!apiKey) {
+    throw new Error("Please ensure you have MORALIS_API_KEY in your environment variables");
+}
+
+if (!nextAuthUrl) {
+    throw new Error("Please ensure you have NEXTAUTH_URL in your environment variables");
+}
 
 export default MoralisNextApi({
-    apiKey: process.env.MORALIS_API_KEY,
+    apiKey,
     authentication: {
         domain: "my.dapp",
-        uri: process.env.NEXTAUTH_URL,
+        uri: nextAuthUrl,
         timeout: 120,
     },
 });
