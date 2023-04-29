@@ -1,26 +1,28 @@
 import { getSession, signOut } from "next-auth/react";
-import type { User } from "next-auth";
+import { GetServerSidePropsContext } from "next";
 
-interface UserProps {
-    user: User;
+interface UserSession {
+    user: {
+        id: string;
+        domain: string;
+        chainId: number;
+        address: string;
+        uri: string;
+        version: string;
+        nonce: string;
+        profileId: string;
+        payload: any | null;
+    };
+    expires: string;
 }
 
-// gets a prop from getServerSideProps
-function User({ user }) {
-    return (
-        <div>
-            <h4>User session:</h4>
-            <pre>{JSON.stringify(user, null, 2)}</pre>
-            <button onClick={() => signOut({ redirect: "/" })}>Sign out</button>
-        </div>
-    );
-}
-
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getSession(context);
+    console.log(typeof session);
+    console.log(session);
 
-    // redirect if not authenticated
     if (!session) {
+        // redirect if not authenticated
         return {
             redirect: {
                 destination: "/",
@@ -28,10 +30,16 @@ export async function getServerSideProps(context) {
             },
         };
     }
-
-    return {
-        props: { user: session.user },
-    };
+    return { props: { session } };
 }
+const user_home = ({ session }: { session: UserSession }) => {
+    return (
+        <div>
+            <h4>User session:</h4>
+            <pre>{JSON.stringify(session.user, null, 2)}</pre>
+            <button onClick={() => signOut({ redirect: true })}>Sign out</button>
+        </div>
+    );
+};
 
-export default User;
+export default user_home;
