@@ -10,9 +10,9 @@ const Home = () => {
             </Head>
 
             <main className="flex flex-col items-center justify-center flex-1 px-20 text-center">
-                <h1 className="text-5xl font-bold">Welcome to Blockchain-Secured Parametric Insurance</h1>
+                <h1 className="text-5xl font-bold text-white">Welcome to Blockchain-Secured Parametric Insurance</h1>
 
-                <p className="mt-3 text-2xl">
+                <p className="mt-3 text-2xl text-white">
                     This is some sample text to demonstrate the layout and styling of the homepage. You can customize
                     this page to suit your needs.
                 </p>

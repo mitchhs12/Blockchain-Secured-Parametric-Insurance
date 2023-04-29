@@ -44,11 +44,11 @@ const particlesConfig = {
             },
             onHover: {
                 enable: true,
-                mode: "attract",
+                mode: "grab",
                 parallax: {
-                    enable: false,
-                    force: 10,
-                    smooth: 10,
+                    enable: true,
+                    force: 400,
+                    smooth: 1,
                 },
             },
             resize: {
@@ -87,11 +87,11 @@ const particlesConfig = {
                 radius: 60,
             },
             grab: {
-                distance: 100,
+                distance: 200,
                 links: {
                     blink: false,
                     consent: false,
-                    opacity: 1,
+                    opacity: 0.5,
                 },
             },
             push: {
@@ -129,7 +129,7 @@ const particlesConfig = {
                 quantity: 5,
                 particles: {
                     color: {
-                        value: "#ff0000",
+                        value: "#36393e",
                         animation: {
                             enable: true,
                             speed: 400,
@@ -325,11 +325,11 @@ const particlesConfig = {
         number: {
             density: {
                 enable: true,
-                width: 1920,
-                height: 1080,
+                width: 2000,
+                height: 2000,
             },
-            limit: 0,
-            value: 200,
+            limit: 300,
+            value: 300,
         },
         opacity: {
             random: {
@@ -345,7 +345,7 @@ const particlesConfig = {
                 enable: true,
                 speed: 0.5,
                 decay: 0,
-                sync: false,
+                sync: true,
                 destroy: "none",
                 startValue: "random",
                 minimumValue: 0.3,
@@ -533,10 +533,10 @@ const particlesConfig = {
                 value: "random",
             },
             consent: false,
-            distance: 100,
+            distance: 125,
             enable: true,
             frequency: 1,
-            opacity: 1,
+            opacity: 0.5,
             shadow: {
                 blur: 5,
                 color: {
@@ -564,10 +564,10 @@ const particlesConfig = {
             speed: 1,
         },
     },
-    pauseOnBlur: true,
-    pauseOnOutsideViewport: true,
+    pauseOnBlur: false,
+    pauseOnOutsideViewport: false,
     responsive: [],
-    smooth: false,
+    smooth: true,
     style: {},
     themes: [],
     zLayers: 100,
