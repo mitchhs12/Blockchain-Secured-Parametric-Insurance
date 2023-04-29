@@ -4,6 +4,7 @@ import { createClient, configureChains, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { SessionProvider } from "next-auth/react";
 import { mainnet } from "wagmi/chains";
+import Background from "@/components/ParticlesBackground";
 
 const { provider, webSocketProvider } = configureChains([mainnet], [publicProvider()]);
 
@@ -17,6 +18,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
     return (
         <WagmiConfig client={client}>
             <SessionProvider session={pageProps.session} refetchInterval={0}>
+                <Background />
                 <Component {...pageProps} />
             </SessionProvider>
         </WagmiConfig>
