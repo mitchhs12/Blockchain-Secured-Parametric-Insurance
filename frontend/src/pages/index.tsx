@@ -30,7 +30,7 @@ const Home = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Mitchell
+                        Mitchell Spencer
                     </a>
                 </p>
             </footer>
