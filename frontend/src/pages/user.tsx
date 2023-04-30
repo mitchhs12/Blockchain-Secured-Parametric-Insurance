@@ -33,12 +33,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return { props: { session } };
 }
 
-const user_home = ({ session }: { session: UserSession }) => {
+const user_home = ({
+    session,
+    setBackgroundColor,
+}: {
+    session: UserSession;
+    setBackgroundColor: (color: string) => void;
+}) => {
     return (
         <div className="flex flex-col h-screen">
             <Navbar address={session.user.address} />
             <div className="flex-grow flex items-center justify-center mb-20">
-                <Content />
+                <Content setBackgroundColor={setBackgroundColor} />
             </div>
         </div>
     );
