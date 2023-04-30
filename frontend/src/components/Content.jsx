@@ -1,3 +1,5 @@
+import { ReactSVG } from "react-svg";
+
 const Content = () => {
     return (
         <div className="text-center">
@@ -15,6 +17,9 @@ const Content = () => {
                 <button className="w-20 h-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto mb-4 sm:w-auto sm:h-auto">
                     Snow
                 </button>
+            </div>
+            <div>
+                <ReactSVG src="@/assets/map.svg" />
             </div>
         </div>
     );
