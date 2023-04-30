@@ -2,7 +2,6 @@ import { getSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
 import Content from "@/components/Content";
 import Navbar from "@/components/Navbar";
-import Rain from "@/components/Rain";
 
 interface UserSession {
     user: {

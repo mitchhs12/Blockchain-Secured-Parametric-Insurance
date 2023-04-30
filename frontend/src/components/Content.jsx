@@ -1,80 +1,35 @@
 import React, { useState } from "react";
-import Rain from "./Rain";
+import Insurance from "@/components/Insurance";
+import Buttons from "@/components/Buttons";
+import BackButton from "@/components/BackButton";
 
 const Content = () => {
     const [selectedInsurance, setSelectedInsurance] = useState(null);
-    const [showBackButton, setShowBackButton] = useState(false);
+    const [showButtons, setShowButtons] = useState(true);
 
     const handleButtonClick = (insuranceType) => {
         setSelectedInsurance(insuranceType);
-        setShowBackButton(true);
+        setShowButtons(false);
     };
 
     const handleBackButtonClick = () => {
         setSelectedInsurance(null);
-        setShowBackButton(false);
+        setShowButtons(true);
     };
 
     const renderContent = () => {
-        if (selectedInsurance) {
-            switch (selectedInsurance) {
-                case "Rain":
-                    return <Rain />;
-                case "Drought":
-                    return <DroughtComponent />;
-                case "Earthquake":
-                    return <EarthquakeComponent />;
-                case "Snow":
-                    return <SnowComponent />;
-                default:
-                    return null;
-            }
+        if (showButtons) {
+            return <Buttons onButtonClick={handleButtonClick} />;
         } else {
-            return (
-                <>
-                    <h2 className="text-4xl font-bold text-white">Please Select an Insurance Package</h2>
-                    <div className="flex flex-wrap justify-center mt-6">
-                        <button
-                            className="w-20 h-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto mb-4 sm:w-auto sm:h-auto"
-                            onClick={() => handleButtonClick("Rain")}
-                        >
-                            Rain
-                        </button>
-                        <button
-                            className="w-20 h-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto mb-4 sm:w-auto sm:h-auto"
-                            onClick={() => handleButtonClick("Drought")}
-                        >
-                            Drought
-                        </button>
-                        <button
-                            className="w-20 h-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto mb-4 sm:w-auto sm:h-auto"
-                            onClick={() => handleButtonClick("Earthquake")}
-                        >
-                            Earthquake
-                        </button>
-                        <button
-                            className="w-20 h-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto mb-4 sm:w-auto sm:h-auto"
-                            onClick={() => handleButtonClick("Snow")}
-                        >
-                            Snow
-                        </button>
-                    </div>
-                </>
-            );
+            return <Insurance type={selectedInsurance} />;
         }
     };
 
     return (
-        <div className="text-center">
+        <div className="flex flex-col justify-center items-center h-full">
             {renderContent()}
-            {showBackButton && (
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-                    onClick={handleBackButtonClick}
-                >
-                    Back
-                </button>
-            )}
+            {selectedInsurance && <BackButton onButtonClick={handleBackButtonClick} />}
+            <div className="text-center mb-6">{/* Your text goes here */}</div>
         </div>
     );
 };
