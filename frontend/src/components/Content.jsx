@@ -29,15 +29,12 @@ const Content = ({ setBackgroundColor }) => {
 
     return (
         <div className="flex flex-col justify-center items-center h-full">
+            <div className="flex flex-col items-center">{renderContent()}</div>
             {selectedInsurance && (
-                <div className="absolute bottom-0 mb-4 mr-4">
+                <div>
                     <BackButton onButtonClick={handleBackButtonClick} />
                 </div>
             )}
-            <div className="flex flex-col items-center mt-8">
-                {renderContent()}
-                <div className="text-center mb-6">{/* Your text goes here */}</div>
-            </div>
         </div>
     );
 };

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@moralisweb3/next": "^2.18.4",
+    "@react-google-maps/api": "^2.18.1",
     "@types/node": "18.16.1",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",

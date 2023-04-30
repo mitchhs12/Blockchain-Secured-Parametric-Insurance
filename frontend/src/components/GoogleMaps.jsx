@@ -1,1 +1,0 @@
-// Generates the googlemaps and returns it to rain
