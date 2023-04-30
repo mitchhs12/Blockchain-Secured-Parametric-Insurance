@@ -1,0 +1,1 @@
+// Return google maps component, will be rendered by content which will be rendered by user
