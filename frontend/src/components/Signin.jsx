@@ -3,6 +3,7 @@ import { signIn } from "next-auth/react";
 import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { useRouter } from "next/router";
 import { useAuthRequestChallengeEvm } from "@moralisweb3/next";
+import { useState } from "react";
 
 function SignIn() {
     const { connectAsync } = useConnect();
@@ -11,9 +12,12 @@ function SignIn() {
     const { signMessageAsync } = useSignMessage();
     const { requestChallengeAsync } = useAuthRequestChallengeEvm();
     const { push } = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleAuth = async () => {
         try {
+            setIsLoading(true); // set loading state to true
+
             if (isConnected) {
                 await disconnectAsync();
             }
@@ -43,6 +47,8 @@ function SignIn() {
         } catch (error) {
             console.error(error);
             // handle the error here, e.g. show a message to the user
+        } finally {
+            setIsLoading(false); // set loading state to false
         }
     };
 
@@ -51,8 +57,32 @@ function SignIn() {
             <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleAuth}
+                disabled={isLoading} // disable the button when it's loading
             >
-                Authenticate via Metamask
+                {isLoading ? (
+                    <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                        ></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm12 0a8 8 0 100-16 8 8 0 000 16zM4 12h4m8 0h4"
+                        />
+                    </svg>
+                ) : (
+                    "Authenticate via Metamask"
+                )}
             </button>
         </div>
     );
