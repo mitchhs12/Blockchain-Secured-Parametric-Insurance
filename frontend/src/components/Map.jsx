@@ -52,7 +52,7 @@ function MyComponent() {
     return (
         <div className="flex items-center justify-center">
             <LoadScriptNext
-                googleMapsApiKey="AIzaSyBZuw3-0hopzdLU8nO3MtpXIW62LoNkfr4"
+                googleMapsApiKey="AIzaSyBZuw3-0hopzdLU8nO3MtpXIW62LoNkfr4" // use process.env
                 libraries={["drawing", "places"]}
             >
                 <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={15} options={options}>
