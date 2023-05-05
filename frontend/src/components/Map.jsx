@@ -19,6 +19,20 @@ function MyMap({ changeRectangle }) {
 
     const [currentRectangle, setCurrentRectangle] = useState(null);
 
+    const updateCoordinates = (rectangle) => {
+        const bounds = rectangle.getBounds();
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        const coordinates = [
+            { lat: ne.lat(), lng: ne.lng() },
+            { lat: sw.lat(), lng: ne.lng() },
+            { lat: sw.lat(), lng: sw.lng() },
+            { lat: ne.lat(), lng: sw.lng() },
+        ];
+        changeRectangle(coordinates);
+        console.log("Rectangle Bounds:", coordinates);
+    };
+
     const onOverlayComplete = (overlay) => {
         if (currentRectangle) {
             currentRectangle.setMap(null);
@@ -26,19 +40,11 @@ function MyMap({ changeRectangle }) {
 
         const rectangle = overlay.overlay;
         setCurrentRectangle(rectangle);
+        updateCoordinates(rectangle);
 
-        const bounds = rectangle.getBounds();
-        const ne = bounds.getNorthEast();
-        const sw = bounds.getSouthWest();
-
-        const coordinates = [
-            { lat: ne.lat(), lng: ne.lng() }, // top right of square
-            { lat: sw.lat(), lng: ne.lng() }, // bottom right of square
-            { lat: sw.lat(), lng: sw.lng() }, // bottom left of square
-            { lat: ne.lat(), lng: sw.lng() }, // top left of square
-        ];
-        changeRectangle(coordinates);
-        console.log("Rectangle Bounds:", coordinates);
+        rectangle.addListener("bounds_changed", () => {
+            updateCoordinates(rectangle);
+        });
     };
 
     return (
