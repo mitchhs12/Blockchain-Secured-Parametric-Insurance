@@ -19,7 +19,16 @@ function MyMap({changeRectangle}) {
     libraries: ["drawing"],
   });
 
-  const onRectangleComplete = rectangle => {
+  const [currentRectangle, setCurrentRectangle] = useState(null);
+
+  const onOverlayComplete = overlay => {
+    if (currentRectangle) {
+      currentRectangle.setMap(null);
+    }
+
+    const rectangle = overlay.overlay;
+    setCurrentRectangle(rectangle);
+
     const bounds = rectangle.getBounds();
     const ne = bounds.getNorthEast();
     const sw = bounds.getSouthWest();
@@ -43,7 +52,7 @@ function MyMap({changeRectangle}) {
         >
           <DrawingManagerF
             onLoad={drawingManager => console.log(drawingManager)}
-            onRectangleComplete={onRectangleComplete}
+            onOverlayComplete={onOverlayComplete}
             options={{
               drawingControl: true,
               drawingControlOptions: {
