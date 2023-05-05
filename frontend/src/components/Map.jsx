@@ -3,7 +3,7 @@ import { GoogleMap, LoadScript, DrawingManagerF, useLoadScript } from '@react-go
 import ContractInput from './ContractInput';
 
 const mapContainerStyle = {
-  height: '400px',
+  height: '800px',
   width: '400px'
 };
 
@@ -21,14 +21,7 @@ function MyMap({changeRectangle}) {
 
   const [currentRectangle, setCurrentRectangle] = useState(null);
 
-  const onOverlayComplete = overlay => {
-    if (currentRectangle) {
-      currentRectangle.setMap(null);
-    }
-
-    const rectangle = overlay.overlay;
-    setCurrentRectangle(rectangle);
-
+  const updateCoordinates = (rectangle) => {
     const bounds = rectangle.getBounds();
     const ne = bounds.getNorthEast();
     const sw = bounds.getSouthWest();
@@ -40,6 +33,20 @@ function MyMap({changeRectangle}) {
     ];
     changeRectangle(coordinates);
     console.log('Rectangle Bounds:', coordinates);
+  };
+
+  const onOverlayComplete = overlay => {
+    if (currentRectangle) {
+      currentRectangle.setMap(null);
+    }
+
+    const rectangle = overlay.overlay;
+    setCurrentRectangle(rectangle);
+    updateCoordinates(rectangle);
+
+    rectangle.addListener('bounds_changed', () => {
+      updateCoordinates(rectangle);
+    });
   };
 
   return (
