@@ -16,17 +16,13 @@ const Insurance = ({ type }) => {
 
   const [rectangleBounds, setRectangleBounds] = useState(null);
 
-  const handleRectangleBoundsChange = bounds => {
-    setRectangleBounds(bounds);
-  };
-
   return (
     <div className="flex flex-col items-center">
       <div className="text-white font-bold text-4xl pb-8">{type} Insurance</div>
       <div className="w-full flex flex-col lg:flex-row lg:items-center lg:justify-center lg:pb-4">
         <div className="w-full lg:pr-4 xl:pr-8">
           <div className="h-96 w-full lg:h-auto border-2 max-w-2xl mx-auto lg:max-w-lg">
-            <Map onRectangleBoundsChange={handleRectangleBoundsChange} />
+            <Map changeRectangle={setRectangleBounds} />
           </div>
         </div>
         <div className="w-full lg:pl-4 xl:pl-8 pt-10 pb-20">

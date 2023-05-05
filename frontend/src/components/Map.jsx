@@ -12,8 +12,8 @@ const center = {
   lng: -115.234
 };
 
-function MyMap() {
-  const [rectangleBounds, setRectangleBounds] = useState(null);
+function MyMap({changeRectangle}) {
+ 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyBLOuQAyQQbIrn9OqW3aWF0y574rj8MCsA",
     libraries: ["drawing"],
@@ -29,7 +29,7 @@ function MyMap() {
       { lat: sw.lat(), lng: sw.lng() },
       { lat: ne.lat(), lng: sw.lng() }
     ];
-    setRectangleBounds(coordinates);
+    changeRectangle(coordinates);
     console.log('Rectangle Bounds:', coordinates);
   };
 
@@ -64,7 +64,6 @@ function MyMap() {
           />
         </GoogleMap>
       )}
-      <ContractInput rectangleBounds={rectangleBounds} />
     </div>
   );
 }
