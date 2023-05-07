@@ -28,7 +28,7 @@ const Content = ({ setBackgroundColor }) => {
     };
 
     return (
-        <div className="flex w-full h-full flex-col justify-center items-center">
+        <div className="pt-10 flex flex-col justify-center">
             <div>{renderContent()}</div>
             {selectedInsurance && (
                 <div>

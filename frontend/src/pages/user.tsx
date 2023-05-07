@@ -43,7 +43,7 @@ const user_home = ({
     return (
         <div className="flex flex-col w-full h-full justify-center">
             <Navbar address={session.user.address} />
-            <div className="flex flex-grow border-2 items-center w-full h-full justify-center mb-20">
+            <div className="flex flex-grow items-center w-full h-full justify-center mb-20">
                 <Content setBackgroundColor={setBackgroundColor} />
             </div>
         </div>

@@ -20,10 +20,10 @@ const Insurance = ({ type }) => {
         <div className="flex flex-col items-center justify-center">
             <div className="text-white font-bold text-4xl pb-8">{type} Insurance</div>
             <div className="flex flex-col lg:flex-row">
-                <div className="border-2 mx-auto lg:mr-4">
+                <div className="mx-auto lg:mr-2">
                     <Map changeRectangle={setRectangleBounds} />
                 </div>
-                <div className="border-2 pt-10 pb-20 mx-auto lg:ml-4">
+                <div className="pt-6 pb-20 mx-auto lg:ml-2">
                     <ContractInput configLabel={configLabel} rectangleBounds={rectangleBounds} />
                 </div>
             </div>

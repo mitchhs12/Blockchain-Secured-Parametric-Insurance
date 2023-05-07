@@ -25,6 +25,7 @@ function MyMap({ changeRectangle }) {
         lat: 38.685,
         lng: -115.234,
     };
+
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: "AIzaSyBLOuQAyQQbIrn9OqW3aWF0y574rj8MCsA",
         libraries: ["drawing"],
@@ -87,7 +88,7 @@ function MyMap({ changeRectangle }) {
                         options={{
                             drawingControl: true,
                             drawingControlOptions: {
-                                position: window.google.maps.ControlPosition.TOP_CENTER,
+                                position: window.google.maps.ControlPosition.TOP_RIGHT,
                                 drawingModes: [window.google.maps.drawing.OverlayType.RECTANGLE],
                             },
                             rectangleOptions: {
