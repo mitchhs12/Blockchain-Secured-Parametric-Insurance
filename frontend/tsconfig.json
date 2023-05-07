@@ -19,6 +19,6 @@
             "@/*": ["./src/*"]
         }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/ParticlesBackground.jsx"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/ParticlesBackground.jsx", "src/insurance_estimators/drought.js", "src/insurance_estimators/snow.js", "src/insurance_estimators/earthquake.js", "src/insurance_estimators/rain.js"],
     "exclude": ["node_modules"]
 }

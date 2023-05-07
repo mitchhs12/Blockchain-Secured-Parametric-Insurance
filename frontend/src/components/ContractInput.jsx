@@ -20,12 +20,12 @@ const ContractInput = ({ configLabel, rectangleBounds }) => {
     return (
         <div className="border-2 text-white font-bold p-4">
             Please draw a square on the map to select the area of interest.
-            <div className="mt-6 mb-6 flex flex-row items-center">
+            <div className="mt-6 mb-6 flex">
                 <div>
                     <input
                         id="coordinates"
                         type="text"
-                        className="w-96 border-gray-300 rounded-lg py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                        className="w-4/5 border-gray-300 rounded-lg py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                         placeholder="Square Center Coordinates (Latitude, Longitude)"
                         value={center ? `${center.lat}, ${center.lng}` : ""}
                         readOnly
@@ -36,7 +36,7 @@ const ContractInput = ({ configLabel, rectangleBounds }) => {
                     <input
                         id="size"
                         type="text"
-                        className="w-32 border-gray-300 rounded-lg py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                        className="w-1/5 border-gray-300 rounded-lg py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                         placeholder="Area (km²)"
                         value={
                             area
@@ -55,7 +55,7 @@ const ContractInput = ({ configLabel, rectangleBounds }) => {
                     <input
                         id="config"
                         type="number"
-                        className="w-80 border-gray-300 rounded-lg py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                        className="w-full border-gray-300 rounded-lg py-2 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                         placeholder={configLabel}
                         min="1"
                     />
@@ -66,7 +66,7 @@ const ContractInput = ({ configLabel, rectangleBounds }) => {
                     <input
                         id="days"
                         type="number"
-                        className="w-50 border-gray-300 rounded-lg px-4 py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                        className="w-full border-gray-300 rounded-lg px-4 py-2 sm:px-2 sm:py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                         placeholder="Number of Days"
                         min="1"
                     />

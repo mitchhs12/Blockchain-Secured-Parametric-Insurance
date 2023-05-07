@@ -1,17 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleMap, LoadScript, DrawingManagerF, useLoadScript } from "@react-google-maps/api";
 
-const mapContainerStyle = {
-    height: "400px",
-    width: "400px",
-};
-
-const center = {
-    lat: 38.685,
-    lng: -115.234,
-};
-
 function MyMap({ changeRectangle }) {
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+    const isLargeScreen = screenWidth > 1023;
+
+    const mapContainerStyle = {
+        height: isLargeScreen ? "60vh" : "50vh",
+        width: isLargeScreen ? "40vw" : "80vw",
+    };
+
+    const center = {
+        lat: 38.685,
+        lng: -115.234,
+    };
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: "AIzaSyBLOuQAyQQbIrn9OqW3aWF0y574rj8MCsA",
         libraries: ["drawing"],
@@ -47,10 +60,27 @@ function MyMap({ changeRectangle }) {
         });
     };
 
+    const onClear = () => {
+        if (currentRectangle) {
+            currentRectangle.setMap(null);
+            setCurrentRectangle(null);
+            changeRectangle([]);
+        }
+    };
+
     return (
         <div>
+            {" "}
             {isLoaded && (
-                <GoogleMap mapContainerStyle={mapContainerStyle} zoom={10} center={center}>
+                <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    zoom={10}
+                    center={center}
+                    options={{
+                        fullscreenControl: false,
+                        streetViewControl: false,
+                    }}
+                >
                     <DrawingManagerF
                         onLoad={(drawingManager) => console.log(drawingManager)}
                         onOverlayComplete={onOverlayComplete}
@@ -72,6 +102,7 @@ function MyMap({ changeRectangle }) {
                             },
                         }}
                     />
+                    <button onClick={onClear}>Clear</button>
                 </GoogleMap>
             )}
         </div>

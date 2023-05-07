@@ -41,9 +41,9 @@ const user_home = ({
     setBackgroundColor: (color: string) => void;
 }) => {
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col w-full h-full justify-center">
             <Navbar address={session.user.address} />
-            <div className="flex-grow flex items-center justify-center mb-20">
+            <div className="flex flex-grow border-2 items-center w-full h-full justify-center mb-20">
                 <Content setBackgroundColor={setBackgroundColor} />
             </div>
         </div>
