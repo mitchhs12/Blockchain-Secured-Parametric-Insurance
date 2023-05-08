@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { mainnet } from "wagmi/chains";
 import Background from "@/components/ParticlesBackground";
 import React, { useState, useCallback } from "react";
+import "react-day-picker/dist/style.css";
 
 const { provider, webSocketProvider } = configureChains([mainnet], [publicProvider()]);
 

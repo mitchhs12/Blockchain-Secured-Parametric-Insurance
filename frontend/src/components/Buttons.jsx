@@ -8,15 +8,15 @@ const Buttons = ({ onButtonClick }) => {
                 <div className="flex h-full w-full flex-wrap justify-center gap-2">
                     <button
                         className="w-1/2 sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 mx-2 flex items-center justify-center text-center"
-                        onClick={() => onButtonClick("Rain", "#78c4fa")}
+                        onClick={() => onButtonClick("Rainfall", "#78c4fa")}
                     >
-                        Rain
+                        Rainfall
                     </button>
                     <button
                         className="w-1/2 sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 mx-2 flex items-center justify-center text-center"
-                        onClick={() => onButtonClick("Drought", "#fa8b46")}
+                        onClick={() => onButtonClick("Temperature", "#fa8b46")}
                     >
-                        Drought
+                        Temperature
                     </button>
                     <button
                         className="w-1/2 sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 mx-2 flex items-center justify-center text-center"
@@ -26,9 +26,9 @@ const Buttons = ({ onButtonClick }) => {
                     </button>
                     <button
                         className="w-1/2 sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 mx-2 flex items-center justify-center text-center"
-                        onClick={() => onButtonClick("Snow", "#ecf0f1")}
+                        onClick={() => onButtonClick("Snowfall", "#ecf0f1")}
                     >
-                        Snow
+                        Snowfall
                     </button>
                 </div>
             </div>

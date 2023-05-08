@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GoogleMap, LoadScript, DrawingManagerF, useLoadScript } from "@react-google-maps/api";
+import { GoogleMap, DrawingManagerF, useLoadScript } from "@react-google-maps/api";
 
 function MyMap({ changeRectangle }) {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -32,6 +32,7 @@ function MyMap({ changeRectangle }) {
     });
 
     const [currentRectangle, setCurrentRectangle] = useState(null);
+    const [mapCenter, setMapCenter] = useState(center);
 
     const updateCoordinates = (rectangle) => {
         const bounds = rectangle.getBounds();
@@ -55,17 +56,18 @@ function MyMap({ changeRectangle }) {
         const rectangle = overlay.overlay;
         setCurrentRectangle(rectangle);
         updateCoordinates(rectangle);
+        updateMap(rectangle);
 
         rectangle.addListener("bounds_changed", () => {
             updateCoordinates(rectangle);
         });
     };
 
-    const onClear = () => {
-        if (currentRectangle) {
-            currentRectangle.setMap(null);
-            setCurrentRectangle(null);
-            changeRectangle([]);
+    const updateMap = (rectangle) => {
+        if (mapCenter.lat === center.lat && mapCenter.lng === center.lng) {
+            setMapCenter(rectangle.getBounds().getCenter());
+            console.log("center is");
+            console.log(rectangle.getBounds().getCenter());
         }
     };
 
@@ -76,7 +78,7 @@ function MyMap({ changeRectangle }) {
                 <GoogleMap
                     mapContainerStyle={mapContainerStyle}
                     zoom={10}
-                    center={center}
+                    center={mapCenter}
                     options={{
                         fullscreenControl: false,
                         streetViewControl: false,
@@ -86,6 +88,7 @@ function MyMap({ changeRectangle }) {
                         onLoad={(drawingManager) => console.log(drawingManager)}
                         onOverlayComplete={onOverlayComplete}
                         options={{
+                            gestureHandling: true,
                             drawingControl: true,
                             drawingControlOptions: {
                                 position: window.google.maps.ControlPosition.TOP_RIGHT,
@@ -103,7 +106,6 @@ function MyMap({ changeRectangle }) {
                             },
                         }}
                     />
-                    <button onClick={onClear}>Clear</button>
                 </GoogleMap>
             )}
         </div>

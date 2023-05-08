@@ -1,6 +1,22 @@
 import { estimate_area } from "../utils/estimate_area";
+import { useState } from "react";
+import Calendar from "@/components/Calendar";
 
-const ContractInput = ({ configLabel, rectangleBounds }) => {
+const ContractInput = ({ configLabel, units, rectangleBounds }) => {
+    console.log(configLabel);
+    console.log(units);
+
+    const [aboveOrBelow, setAboveOrBelow] = useState("above");
+    const [inputValue, setInputValue] = useState("");
+
+    const handleChange = (e) => {
+        setInputValue(e.target.value);
+    };
+
+    const handleDropdownChange = (e) => {
+        setAboveOrBelow(e.target.value);
+    };
+
     let center = "";
     let area = "";
     if (rectangleBounds) {
@@ -50,33 +66,32 @@ const ContractInput = ({ configLabel, rectangleBounds }) => {
                     />
                 </div>
             </div>
-            <div className="mb-6 flex flex-row items-center">
-                <div>
-                    <input
-                        id="config"
-                        type="number"
-                        className="w-full border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                        placeholder={configLabel}
-                        min="1"
-                    />
-                </div>
+            <div className="flex">
+                <select
+                    id="config"
+                    className="w-6/12 mr-2 text-gray-700 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    value={aboveOrBelow}
+                    onChange={handleDropdownChange}
+                >
+                    <option value="above">Insure for {configLabel} above</option>
+                    <option value="below">Insure for {configLabel} below</option>
+                </select>
+                <input
+                    type="number"
+                    className="w-3/12 ml-2 text-black border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    placeholder={configLabel}
+                    min="1"
+                    step="0.1"
+                    value={inputValue}
+                    onChange={handleChange}
+                />
+                <span className="ml-2 text-gray-400 self-end">{units}</span>
             </div>
-            <div className="mb-6 flex flex-row items-center">
-                <div>
-                    <input
-                        id="days"
-                        type="number"
-                        className="w-full border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                        placeholder="Number of Days"
-                        min="1"
-                    />
-                </div>
+            <div className="flex pt-10">
+                <Calendar />
             </div>
-            <div className="mb-6 flex flex-row items-center">
+            <div className="mt-10 flex flex-row items-center">
                 <div>Estimated Cost of Insurance</div>
-            </div>
-            <div className="mb-6 flex flex-row items-center">
-                <div>Cost of Insurance</div>
             </div>
         </div>
     );
