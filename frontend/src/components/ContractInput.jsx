@@ -94,19 +94,19 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 />
                 <span className="ml-2 text-gray-400 self-end">{units}</span>
             </div>
-            <div className="flex mt-4 justify-center border-2 flex-col sm:flex-row sm:justify-between sm:pr-10">
-                <div className="w-auto flex justify-center sm:justify-end">
+            <div className="flex mt-4 justify-center flex-col sm:flex-row sm:justify-between">
+                <div className="w-auto flex justify-center sm:justify-start">
                     <Calendar fromDate={setFromDate} toDate={setToDate} completed={setIsComplete} />
                 </div>
-                <div className="w-auto flex sm:justify-start flex-col items-center sm:items-start mt-6 mb-6">
+                <div className="w-auto flex sm:justify-start flex-col text-right items-center sm:items-end mt-6 mb-6 sm:pr-6">
                     From:
                     <br />
-                    {fromDate}
+                    {fromDate ? fromDate : <br />}
                     <br />
                     <br />
                     To:
                     <br />
-                    {toDate}
+                    {toDate ? toDate : <br />}
                     <br />
                     <br />
                     {isComplete ? (
@@ -116,8 +116,10 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                         >
                             Estimate Cost
                         </button>
+                    ) : fromDate ? (
+                        "Please select an end date"
                     ) : (
-                        "Not complete"
+                        "Please select a start date"
                     )}
                 </div>
             </div>
