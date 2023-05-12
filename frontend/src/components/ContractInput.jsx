@@ -1,6 +1,10 @@
 import { estimate_area } from "../utils/estimate_area";
 import { useState } from "react";
 import Calendar from "@/components/Calendar";
+import estimateTemperature from "@/insurance_estimators/temperature.js";
+import estimateRainfall from "@/insurance_estimators/rainfall.js";
+import estimateSnowfall from "@/insurance_estimators/snowfall.js";
+import estimateEarthquake from "@/insurance_estimators/earthquake.js";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     console.log(configLabel);
@@ -8,6 +12,9 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
 
     const [aboveOrBelow, setAboveOrBelow] = useState("above");
     const [inputValue, setInputValue] = useState("");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [isComplete, setIsComplete] = useState(false);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -36,7 +43,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     return (
         <div className=" text-white font-bold p-4 text-l">
             Please select your area with the tool in the top right corner of the map.
-            <div className="mt-6 mb-6 flex">
+            <div className="mt-8 mb-8 flex">
                 <div className="w-9/12">
                     <input
                         id="coordinates"
@@ -78,7 +85,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 </select>
                 <input
                     type="number"
-                    className="w-3/12 ml-2 text-black border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    className="w-4/12 ml-4 text-black border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     placeholder={configLabel}
                     min="1"
                     step="0.1"
@@ -87,11 +94,44 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 />
                 <span className="ml-2 text-gray-400 self-end">{units}</span>
             </div>
-            <div className="flex pt-10">
-                <Calendar />
+            <div className="flex mt-4 justify-center border-2 flex-col sm:flex-row sm:justify-between sm:pr-10">
+                <div className="w-auto flex justify-center sm:justify-end">
+                    <Calendar fromDate={setFromDate} toDate={setToDate} completed={setIsComplete} />
+                </div>
+                <div className="w-auto flex sm:justify-start flex-col items-center sm:items-start mt-6 mb-6">
+                    From:
+                    <br />
+                    {fromDate}
+                    <br />
+                    <br />
+                    To:
+                    <br />
+                    {toDate}
+                    <br />
+                    <br />
+                    {isComplete ? (
+                        <button
+                            className="w-auto sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
+                            onClick={() => onButtonClick("Rainfall", "#78c4fa")}
+                        >
+                            Estimate Cost
+                        </button>
+                    ) : (
+                        "Not complete"
+                    )}
+                </div>
             </div>
-            <div className="mt-10 flex flex-row items-center">
-                <div>Estimated Cost of Insurance</div>
+            <div className="flex justify-center">
+                TOTAL COST:
+                {/* {configLabel === "Snowfall"
+                    ? estimateSnowfall(area, location, dateRange, aboveOrBelow)
+                    : configLabel === "Earthquake"
+                    ? estimateEarthquake(area, location, dateRange, aboveOrBelow)
+                    : configLabel === "Rainfall"
+                    ? estimateRainfall(area, location, dateRange, aboveOrBelow)
+                    : configLabel === "Temperature"
+                    ? estimateTemperature(area, location, dateRange, aboveOrBelow)
+                    : console.log("Invalid configLabel provided!")} */}
             </div>
         </div>
     );

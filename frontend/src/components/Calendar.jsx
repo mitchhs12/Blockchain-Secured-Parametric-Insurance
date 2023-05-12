@@ -1,47 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { addDays, format } from "date-fns";
-import { DateRange, DayPicker } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 
 const css = `
-  .my-selected:not([disabled]) { 
-    font-weight: bold; 
-    border: 2px solid currentColor;
-  }
+    .my-today { 
+        font-weight: bold;
+        font-size: 150%; 
+        color: yellow;
+    }
 
-  .my-selected:hover:not([disabled]) { 
-    border-color: blue;
-    color: blue;
-  }
+    .my-selected:not([disabled]) { 
+        font-weight: bold;
+        color: orange
+    }
 
-  .my-today { 
-    font-weight: bold;
-    font-size: 150%; 
-    color: green;
-  }
+    .my-selected:not([enabled]) {
+        background-color: #242424;
+        border-color: black;
+    }
+
+    .my-selected:hover:not([disabled]) { 
+        border-color: grey;
+        color: black;
+    }
+
+    .my-today:hover:not([disabled]){
+        color: red
+    }
 `;
 
-const Calendar = () => {
+const Calendar = ({ fromDate, toDate, completed }) => {
     const pastMonth = new Date();
+    const [range, setRange] = useState("Please select the first day");
 
-    const defaultSelected = {
-        from: addDays(pastMonth, 7),
-        to: addDays(pastMonth, 14),
-    };
-
-    const [range, setRange] = useState(defaultSelected);
-
-    let footer = <p>Please pick the first day.</p>;
-    if (range?.from) {
-        if (!range.to) {
-            footer = <p>{format(range.from, "PPP")}</p>;
-        } else if (range.to) {
-            footer = (
-                <p className="pt-4">
-                    {format(range.from, "PPP")} – {format(range.to, "PPP")}
-                </p>
-            );
+    useEffect(() => {
+        if (range?.from) {
+            if (!range.to) {
+                fromDate(<span>{format(range.from, "PPP")}</span>);
+                completed(false);
+            } else if (range.to) {
+                fromDate(<span>{format(range.from, "PPP")}</span>);
+                toDate(<span>{format(range.to, "PPP")}</span>);
+                completed(true);
+            }
+        } else {
+            fromDate("");
+            toDate("");
+            completed(false);
         }
-    }
+    }, [range]);
 
     return (
         <>
@@ -49,16 +56,14 @@ const Calendar = () => {
             <DayPicker
                 id="calendar"
                 mode="range"
-                styles={{ caption: { color: "white" } }}
+                styles={{
+                    caption: { color: "white" },
+                }}
                 defaultMonth={pastMonth}
                 selected={range}
-                footer={footer}
                 modifiersClassNames={{
                     selected: "my-selected",
                     today: "my-today",
-                }}
-                modifiersStyles={{
-                    disabled: { fontSize: "75%" },
                 }}
                 onSelect={setRange}
             />
