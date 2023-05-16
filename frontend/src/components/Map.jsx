@@ -90,6 +90,8 @@ function MyMap({ changeRectangle }) {
         console.log(rectangle.getBounds().getCenter());
     };
 
+    const mapRef = useRef();
+
     return (
         <div>
             {" "}

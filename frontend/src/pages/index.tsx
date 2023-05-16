@@ -5,7 +5,7 @@ const Home = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
             <Head>
-                <title>My Next.js Web3 App</title>
+                <title>Parametric Insurance</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { addDays, format } from "date-fns";
 import { DayPicker } from "react-day-picker";
 
 const css = `
@@ -40,11 +39,11 @@ const Calendar = ({ fromDate, toDate, completed }) => {
     useEffect(() => {
         if (range?.from) {
             if (!range.to) {
-                fromDate(<span>{format(range.from, "PPP")}</span>);
+                fromDate(range.from);
                 completed(false);
             } else if (range.to) {
-                fromDate(<span>{format(range.from, "PPP")}</span>);
-                toDate(<span>{format(range.to, "PPP")}</span>);
+                fromDate(range.from);
+                toDate(range.to);
                 completed(true);
             }
         } else {

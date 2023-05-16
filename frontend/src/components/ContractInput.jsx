@@ -5,11 +5,9 @@ import { estimateTemperature } from "../insurance_estimators/temperature.jsx";
 import { estimateRainfall } from "../insurance_estimators/rainfall.jsx";
 import { estimateSnowfall } from "../insurance_estimators/snowfall.jsx";
 import { estimateEarthquake } from "../insurance_estimators/earthquake.jsx";
+import { format } from "date-fns";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
-    console.log(configLabel);
-    console.log(units);
-
     const [coordinatesSelected, setCoordinatesSelected] = useState(false);
     const [aboveOrBelow, setAboveOrBelow] = useState("above");
     const [inputValue, setInputValue] = useState("");
@@ -74,16 +72,16 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
         let cost;
         switch (configLabel) {
             case "Snowfall":
-                cost = estimateSnowfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                cost = estimateSnowfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
                 break;
             case "Earthquake":
-                cost = estimateEarthquake(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                cost = estimateEarthquake(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
                 break;
             case "Rainfall":
-                cost = estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                cost = estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
                 break;
             case "Temperature":
-                cost = estimateTemperature(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                cost = estimateTemperature(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
                 break;
             default:
                 console.error("Invalid configLabel provided!");
@@ -152,12 +150,12 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 <div className="w-auto flex sm:justify-start flex-col text-right items-center sm:items-end mt-6 mb-6 sm:pr-6">
                     From:
                     <br />
-                    {fromDate ? fromDate : <br />}
+                    {fromDate ? <span>{format(fromDate, "PPP")}</span> : <br />}
                     <br />
                     <br />
                     To:
                     <br />
-                    {toDate ? toDate : <br />}
+                    {toDate ? <span>{format(toDate, "PPP")}</span> : <br />}
                     <br />
                     <br />
                     {renderButtonOrMessage()}
