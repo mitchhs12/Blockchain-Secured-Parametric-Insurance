@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { GoogleMap, DrawingManagerF, useLoadScript } from "@react-google-maps/api";
+import React, { useState, useEffect, useRef } from "react";
+import { GoogleMap, DrawingManagerF, useLoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 
 function MyMap({ changeRectangle }) {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -28,8 +28,29 @@ function MyMap({ changeRectangle }) {
 
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: "AIzaSyBLOuQAyQQbIrn9OqW3aWF0y574rj8MCsA",
-        libraries: ["drawing"],
+        libraries: ["drawing", "places"],
     });
+
+    const [searchBox, setSearchBox] = useState(null);
+    const searchBoxRef = useRef(null);
+
+    const onSearchBoxLoad = (ref) => {
+        setSearchBox(ref);
+    };
+
+    const onPlacesChanged = () => {
+        if (searchBox) {
+            const places = searchBox.getPlaces();
+            if (places && places.length > 0) {
+                const place = places[0];
+                const newCenter = {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                };
+                setMapCenter(newCenter);
+            }
+        }
+    };
 
     const [currentRectangle, setCurrentRectangle] = useState(null);
     const [mapCenter, setMapCenter] = useState(center);
@@ -64,11 +85,9 @@ function MyMap({ changeRectangle }) {
     };
 
     const updateMap = (rectangle) => {
-        if (mapCenter.lat === center.lat && mapCenter.lng === center.lng) {
-            setMapCenter(rectangle.getBounds().getCenter());
-            console.log("center is");
-            console.log(rectangle.getBounds().getCenter());
-        }
+        setMapCenter(rectangle.getBounds().getCenter());
+        console.log("center is");
+        console.log(rectangle.getBounds().getCenter());
     };
 
     return (
@@ -77,13 +96,37 @@ function MyMap({ changeRectangle }) {
             {isLoaded && (
                 <GoogleMap
                     mapContainerStyle={mapContainerStyle}
-                    zoom={10}
+                    zoom={15}
                     center={mapCenter}
                     options={{
                         fullscreenControl: false,
                         streetViewControl: false,
                     }}
                 >
+                    <StandaloneSearchBox onLoad={onSearchBoxLoad} onPlacesChanged={onPlacesChanged}>
+                        <input
+                            type="text"
+                            placeholder="Search location"
+                            style={{
+                                boxSizing: `border-box`,
+                                border: `1px solid transparent`,
+                                width: isLargeScreen ? "50%" : "65%", // Update the width here
+                                height: `32px`,
+                                marginBottom: `27px`,
+                                padding: `0 12px`,
+                                borderRadius: `3px`,
+                                boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                                fontSize: `14px`,
+                                outline: `none`,
+                                textOverflow: `ellipses`,
+                                position: "absolute",
+                                left: "50%",
+                                bottom: "0px",
+                                transform: "translateX(-50%)", // This will center the input box
+                            }}
+                        />
+                    </StandaloneSearchBox>
+
                     <DrawingManagerF
                         onLoad={(drawingManager) => console.log(drawingManager)}
                         onOverlayComplete={onOverlayComplete}
