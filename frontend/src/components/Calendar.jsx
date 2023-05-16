@@ -3,29 +3,33 @@ import { addDays, format } from "date-fns";
 import { DayPicker } from "react-day-picker";
 
 const css = `
-    .my-today { 
-        font-weight: bold;
-        font-size: 150%; 
-        color: yellow;
-    }
-
-    .my-selected:not([disabled]) { 
+    .rdp-day_selected:not([disabled]) { 
         font-weight: bold;
         color: orange
     }
 
-    .my-selected:not([enabled]) {
+    .rdp-day_selected:not([enabled]) {
         background-color: #242424;
-        border-color: black;
-    }
-
-    .my-selected:hover:not([disabled]) { 
         border-color: grey;
-        color: black;
     }
 
-    .my-today:hover:not([disabled]){
-        color: red
+    .rdp-day_selected:hover:not([disabled]) { 
+        border-color: grey;
+        color: orange;
+    }
+
+    .rdp-day_today,
+    .rdp-day_today.rdp-day_selected,
+    .rdp-day_today:hover:not([disabled]){
+        color: yellow;
+        font-weight: bold;
+        font-size: 150%
+    }
+
+    .rdp-day:not(.rdp-day_selected):hover { 
+        color: black;
+        background-color: white;
+        border-radius: 50%;
     }
 `;
 
@@ -61,10 +65,6 @@ const Calendar = ({ fromDate, toDate, completed }) => {
                 }}
                 defaultMonth={pastMonth}
                 selected={range}
-                modifiersClassNames={{
-                    selected: "my-selected",
-                    today: "my-today",
-                }}
                 onSelect={setRange}
             />
         </>

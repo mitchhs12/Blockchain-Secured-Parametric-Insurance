@@ -1,20 +1,24 @@
 import { estimate_area } from "../utils/estimate_area";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "@/components/Calendar";
-import estimateTemperature from "@/insurance_estimators/temperature.js";
-import estimateRainfall from "@/insurance_estimators/rainfall.js";
-import estimateSnowfall from "@/insurance_estimators/snowfall.js";
-import estimateEarthquake from "@/insurance_estimators/earthquake.js";
+import { estimateTemperature } from "../insurance_estimators/temperature.jsx";
+import { estimateRainfall } from "../insurance_estimators/rainfall.jsx";
+import { estimateSnowfall } from "../insurance_estimators/snowfall.jsx";
+import { estimateEarthquake } from "../insurance_estimators/earthquake.jsx";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     console.log(configLabel);
     console.log(units);
 
+    const [coordinatesSelected, setCoordinatesSelected] = useState(false);
     const [aboveOrBelow, setAboveOrBelow] = useState("above");
     const [inputValue, setInputValue] = useState("");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [isComplete, setIsComplete] = useState(false);
+    const [center, setCenter] = useState("");
+    const [area, setArea] = useState("");
+    const [cost, setCost] = useState("");
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -24,21 +28,68 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
         setAboveOrBelow(e.target.value);
     };
 
-    let center = "";
-    let area = "";
-    if (rectangleBounds) {
-        const latSum = rectangleBounds.reduce((sum, corner) => sum + corner.lat, 0);
-        const lngSum = rectangleBounds.reduce((sum, corner) => sum + corner.lng, 0);
-        const centerLat = latSum / 4;
-        const centerLng = lngSum / 4;
-        center = { lat: centerLat, lng: centerLng };
-        console.log(center);
+    useEffect(() => {
+        if (rectangleBounds) {
+            const latSum = rectangleBounds.reduce((sum, corner) => sum + corner.lat, 0);
+            const lngSum = rectangleBounds.reduce((sum, corner) => sum + corner.lng, 0);
+            const centerLat = latSum / 4;
+            const centerLng = lngSum / 4;
+            setCenter({ lat: centerLat, lng: centerLng });
+            console.log(center);
+            setCoordinatesSelected(true);
 
-        const latitudes = rectangleBounds.map((corner) => corner.lat);
-        const longitudes = rectangleBounds.map((corner) => corner.lng);
-        area = estimate_area(latitudes, longitudes);
-        console.log(`The area of the region is approximately ${area} square kilometers.`);
-    }
+            const latitudes = rectangleBounds.map((corner) => corner.lat);
+            const longitudes = rectangleBounds.map((corner) => corner.lng);
+            const estimatedArea = estimate_area(latitudes, longitudes);
+            setArea(estimatedArea);
+            console.log(`The area of the region is approximately ${area} square kilometers.`);
+        }
+    }, [rectangleBounds]);
+
+    const renderButtonOrMessage = () => {
+        if (coordinatesSelected && inputValue && fromDate && toDate && isComplete) {
+            return (
+                <button
+                    className="w-auto sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
+                    onClick={onButtonClick}
+                >
+                    Estimate Cost
+                </button>
+            );
+        } else if (!coordinatesSelected) {
+            return "Please select an area";
+        } else if (!inputValue) {
+            return "Please type in a quantity";
+        } else if (!fromDate) {
+            return "Please select a start date";
+        } else if (!toDate) {
+            return "Please select an end date";
+        } else {
+            return "Please fill out the form";
+        }
+    };
+
+    const onButtonClick = () => {
+        const dateRange = { from: fromDate, to: toDate };
+        let cost;
+        switch (configLabel) {
+            case "Snowfall":
+                cost = estimateSnowfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                break;
+            case "Earthquake":
+                cost = estimateEarthquake(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                break;
+            case "Rainfall":
+                cost = estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                break;
+            case "Temperature":
+                cost = estimateTemperature(rectangleBounds, area, dateRange, aboveOrBelow, inputValue);
+                break;
+            default:
+                console.error("Invalid configLabel provided!");
+        }
+        setCost(cost);
+    };
 
     return (
         <div className=" text-white font-bold p-4 text-l">
@@ -109,32 +160,10 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                     {toDate ? toDate : <br />}
                     <br />
                     <br />
-                    {isComplete ? (
-                        <button
-                            className="w-auto sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
-                            onClick={() => onButtonClick("Rainfall", "#78c4fa")}
-                        >
-                            Estimate Cost
-                        </button>
-                    ) : fromDate ? (
-                        "Please select an end date"
-                    ) : (
-                        "Please select a start date"
-                    )}
+                    {renderButtonOrMessage()}
                 </div>
             </div>
-            <div className="flex justify-center">
-                TOTAL COST:
-                {/* {configLabel === "Snowfall"
-                    ? estimateSnowfall(area, location, dateRange, aboveOrBelow)
-                    : configLabel === "Earthquake"
-                    ? estimateEarthquake(area, location, dateRange, aboveOrBelow)
-                    : configLabel === "Rainfall"
-                    ? estimateRainfall(area, location, dateRange, aboveOrBelow)
-                    : configLabel === "Temperature"
-                    ? estimateTemperature(area, location, dateRange, aboveOrBelow)
-                    : console.log("Invalid configLabel provided!")} */}
-            </div>
+            <div className="flex justify-center">{cost ? <div>TOTAL COST{cost}</div> : ""}</div>
         </div>
     );
 };

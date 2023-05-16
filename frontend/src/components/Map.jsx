@@ -22,8 +22,8 @@ function MyMap({ changeRectangle }) {
     };
 
     const center = {
-        lat: 38.685,
-        lng: -115.234,
+        lat: 51.5027477,
+        lng: -0.1291531,
     };
 
     const { isLoaded } = useLoadScript({
