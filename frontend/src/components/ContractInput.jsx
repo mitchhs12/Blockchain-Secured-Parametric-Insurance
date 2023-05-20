@@ -130,7 +130,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                     onChange={handleDropdownChange}
                 >
                     <option value="above">Insure for {configLabel} above</option>
-                    <option value="below">Insure for {configLabel} below</option>
+                    {configLabel !== "Rainfall" ? <option value="below">Insure for {configLabel} below</option> : ""}
                 </select>
                 <input
                     type="number"

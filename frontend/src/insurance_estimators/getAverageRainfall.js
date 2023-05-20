@@ -12,46 +12,97 @@ async function getAverageRainfall(startDate, latitude, longitude) {
     let response = await fetch(url);
     let data = await response.json();
 
-    // Initialize season sums and counts
-    let seasons = { Winter: [0, 0], Spring: [0, 0], Summer: [0, 0], Fall: [0, 0] };
-    let seasonDays = { Winter: new Set(), Spring: new Set(), Summer: new Set(), Fall: new Set() };
+    // Initialize season sums, counts and data arrays
+    let seasonsData = { Winter: [], Spring: [], Summer: [], Fall: [] };
 
-    // Loop through the data and update season sums and counts
+    // Loop through the data and update season data arrays
     for (let i = 0; i < data.hourly.time.length; i++) {
         let date = new Date(data.hourly.time[i]);
         let rain = data.hourly.rain[i];
-        let season;
 
-        // Adjust seasons based on the hemisphere
+        // If rain is null or 0, skip the iteration
+        if (rain === null || rain === 0) {
+            continue;
+        }
+
+        let season;
+        let dateStr = date.toISOString().split("T")[0]; // to get the date part only
+
+        // Adjust seasons based on the hemisphere and solstice/equinox dates
         if (latitude >= 0) {
             // Northern Hemisphere
-            if (date.getMonth() < 2 || date.getMonth() === 11) season = "Winter";
-            else if (date.getMonth() < 5) season = "Spring";
-            else if (date.getMonth() < 8) season = "Summer";
+            if (
+                (date.getMonth() === 11 && date.getDate() >= 21) ||
+                date.getMonth() < 2 ||
+                (date.getMonth() === 2 && date.getDate() < 20)
+            )
+                season = "Winter";
+            else if (
+                (date.getMonth() === 2 && date.getDate() >= 20) ||
+                date.getMonth() < 5 ||
+                (date.getMonth() === 5 && date.getDate() < 20)
+            )
+                season = "Spring";
+            else if (
+                (date.getMonth() === 5 && date.getDate() >= 20) ||
+                date.getMonth() < 8 ||
+                (date.getMonth() === 8 && date.getDate() < 22)
+            )
+                season = "Summer";
             else season = "Fall";
         } else {
             // Southern Hemisphere
-            if (date.getMonth() < 2 || date.getMonth() === 11) season = "Summer";
-            else if (date.getMonth() < 5) season = "Fall";
-            else if (date.getMonth() < 8) season = "Winter";
+            if (
+                (date.getMonth() === 11 && date.getDate() >= 21) ||
+                date.getMonth() < 2 ||
+                (date.getMonth() === 2 && date.getDate() < 20)
+            )
+                season = "Summer";
+            else if (
+                (date.getMonth() === 2 && date.getDate() >= 20) ||
+                date.getMonth() < 5 ||
+                (date.getMonth() === 5 && date.getDate() < 20)
+            )
+                season = "Fall";
+            else if (
+                (date.getMonth() === 5 && date.getDate() >= 20) ||
+                date.getMonth() < 8 ||
+                (date.getMonth() === 8 && date.getDate() < 22)
+            )
+                season = "Winter";
             else season = "Spring";
         }
 
-        // Update season sums and counts
-        seasons[season][0] += rain;
-        seasons[season][1] += 1;
+        if (!seasonsData[season][dateStr]) {
+            seasonsData[season][dateStr] = 0; // initialize if not already present
+        }
 
-        // Update season day counts
-        seasonDays[season].add(date.toISOString().split("T")[0]);
+        seasonsData[season][dateStr] += rain; // accumulate daily rainfall
     }
 
-    // Calculate averages
+    // Convert daily rainfall objects to arrays and calculate averages after removing outliers
     let averages = {};
-    for (let season in seasons) {
-        averages[season] = seasons[season][0] / seasonDays[season].size;
-    }
+    let cutoffs = {};
+    for (let season in seasonsData) {
+        let dailyRainfalls = Object.values(seasonsData[season]); // convert daily rainfall data to array
+        let mean = dailyRainfalls.reduce((a, b) => a + b) / dailyRainfalls.length;
+        let max = Math.max(...dailyRainfalls);
+        let min = Math.min(...dailyRainfalls);
+        let sd = Math.sqrt(
+            dailyRainfalls.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / dailyRainfalls.length
+        );
+        console.log("season:", season, "mean:", mean, "sd:", sd, "max:", max, "min:", min);
 
-    return averages;
+        // outliers: remove values that are more than 3 standard deviations away from the mean
+        let lowerCutoff = mean - 3 * sd;
+        let upperCutoff = mean + 3 * sd;
+        let filteredData = dailyRainfalls.filter((rain) => rain >= lowerCutoff && rain <= upperCutoff);
+
+        // calculate new average and new cutoff: 99.7% chance that it will not rain this much in a day in a given season
+        averages[season] = filteredData.reduce((a, b) => a + b) / filteredData.length;
+        cutoffs[season] = averages[season] + 3 * sd; // 99.7% chance that it will not rain this much in a day in a given season
+    }
+    return cutoffs;
 }
 
 module.exports = getAverageRainfall;

@@ -17,7 +17,7 @@ export function estimateEarthquake(rectangleBounds, area, dateRange, aboveOrBelo
         res.on("data", (chunk) => {
             data += chunk;
         });
-
+c
         res.on("end", () => {
             const result = JSON.parse(data);
             console.log(result);
