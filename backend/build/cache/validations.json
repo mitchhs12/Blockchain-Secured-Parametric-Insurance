@@ -2,6 +2,2610 @@
   "version": "3.4",
   "log": [
     {
+      "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token": {
+        "src": "@chainlink/contracts/src/v0.4/ERC677Token.sol:8",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/LinkToken.sol:LinkToken": {
+        "src": "@chainlink/contracts/src/v0.4/LinkToken.sol:8",
+        "version": {
+          "withMetadata": "0c849729feb55964fb72fbba902b0d8dff50625477329130bdb86f8094f9493a",
+          "withoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a",
+          "linkedWithoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken",
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "LinkToken()",
+          "transferAndCall(address,uint256,bytes)",
+          "transfer(address,uint256)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "allowance(address,address)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "transfer(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ERC20Basic",
+              "label": "totalSupply",
+              "type": "t_uint256",
+              "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:10"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:5",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:ERC677Receiver": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onTokenTransfer(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:12",
+        "version": {
+          "withMetadata": "3693a76f11ce178d5fbfd079cd5eb8c8e24b21edce96c235e50a63b64bf66407",
+          "withoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f",
+          "linkedWithoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink"
+        ],
+        "methods": [
+          "transfer(address,uint256)",
+          "balanceOf(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "BasicToken",
+              "label": "balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:15"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:8",
+        "version": {
+          "withMetadata": "9cdb3b01bb1d09a31e69628419b9ff03e5e3fee25beac127b52065e09ef5c188",
+          "withoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688",
+          "linkedWithoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:15",
+        "version": {
+          "withMetadata": "3411c4525259b5c4f2d052ced1457e6b4a2afae2ed219bc6f3f08522fa5f0a28",
+          "withoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d",
+          "linkedWithoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "allowance(address,address)",
+          "increaseApproval(address,uint256)",
+          "decreaseApproval(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "StandardToken",
+              "label": "allowed",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:17"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "latestAnswer()",
+          "latestTimestamp()",
+          "latestRound()",
+          "getAnswer(uint256)",
+          "getTimestamp(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "decimals()",
+          "description()",
+          "version()",
+          "getRoundData(uint80)",
+          "latestRoundData()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:MockV3Aggregator": {
+        "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:14",
+        "version": {
+          "withMetadata": "28f51b4729bfb4220f63d14af6ea2ce565207a62c00fa7551fe9012849f6e962",
+          "withoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a",
+          "linkedWithoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [
+          "(uint8,int256)",
+          "updateAnswer(int256)",
+          "updateRoundData(uint80,int256,uint256,uint256)",
+          "getRoundData(uint80)",
+          "latestRoundData()",
+          "description()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockV3Aggregator",
+            "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:26"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "decimals",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:17"
+            },
+            {
+              "label": "latestAnswer",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_int256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:18"
+            },
+            {
+              "label": "latestTimestamp",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:19"
+            },
+            {
+              "label": "latestRound",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:20"
+            },
+            {
+              "label": "getAnswer",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_int256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:22"
+            },
+            {
+              "label": "getTimestamp",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:23"
+            },
+            {
+              "label": "getStartedAt",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:24"
+            }
+          ],
+          "types": {
+            "t_int256": {
+              "label": "int256",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_int256)": {
+              "label": "mapping(uint256 => int256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true
+        },
+        "solcVersion": "0.7.0"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token": {
+        "src": "@chainlink/contracts/src/v0.4/ERC677Token.sol:8",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/LinkToken.sol:LinkToken": {
+        "src": "@chainlink/contracts/src/v0.4/LinkToken.sol:8",
+        "version": {
+          "withMetadata": "0c849729feb55964fb72fbba902b0d8dff50625477329130bdb86f8094f9493a",
+          "withoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a",
+          "linkedWithoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken",
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "LinkToken()",
+          "transferAndCall(address,uint256,bytes)",
+          "transfer(address,uint256)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "allowance(address,address)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "transfer(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ERC20Basic",
+              "label": "totalSupply",
+              "type": "t_uint256",
+              "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:10"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:5",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:ERC677Receiver": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onTokenTransfer(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:12",
+        "version": {
+          "withMetadata": "3693a76f11ce178d5fbfd079cd5eb8c8e24b21edce96c235e50a63b64bf66407",
+          "withoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f",
+          "linkedWithoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink"
+        ],
+        "methods": [
+          "transfer(address,uint256)",
+          "balanceOf(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "BasicToken",
+              "label": "balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:15"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:8",
+        "version": {
+          "withMetadata": "9cdb3b01bb1d09a31e69628419b9ff03e5e3fee25beac127b52065e09ef5c188",
+          "withoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688",
+          "linkedWithoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:15",
+        "version": {
+          "withMetadata": "3411c4525259b5c4f2d052ced1457e6b4a2afae2ed219bc6f3f08522fa5f0a28",
+          "withoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d",
+          "linkedWithoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "allowance(address,address)",
+          "increaseApproval(address,uint256)",
+          "decreaseApproval(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "StandardToken",
+              "label": "allowed",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:17"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "latestAnswer()",
+          "latestTimestamp()",
+          "latestRound()",
+          "getAnswer(uint256)",
+          "getTimestamp(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "decimals()",
+          "description()",
+          "version()",
+          "getRoundData(uint80)",
+          "latestRoundData()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:MockV3Aggregator": {
+        "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:14",
+        "version": {
+          "withMetadata": "28f51b4729bfb4220f63d14af6ea2ce565207a62c00fa7551fe9012849f6e962",
+          "withoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a",
+          "linkedWithoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [
+          "(uint8,int256)",
+          "updateAnswer(int256)",
+          "updateRoundData(uint80,int256,uint256,uint256)",
+          "getRoundData(uint80)",
+          "latestRoundData()",
+          "description()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockV3Aggregator",
+            "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:26"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "decimals",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:17"
+            },
+            {
+              "label": "latestAnswer",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_int256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:18"
+            },
+            {
+              "label": "latestTimestamp",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:19"
+            },
+            {
+              "label": "latestRound",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:20"
+            },
+            {
+              "label": "getAnswer",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_int256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:22"
+            },
+            {
+              "label": "getTimestamp",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:23"
+            },
+            {
+              "label": "getStartedAt",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:24"
+            }
+          ],
+          "types": {
+            "t_int256": {
+              "label": "int256",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_int256)": {
+              "label": "mapping(uint256 => int256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true
+        },
+        "solcVersion": "0.7.0"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token": {
+        "src": "@chainlink/contracts/src/v0.4/ERC677Token.sol:8",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/LinkToken.sol:LinkToken": {
+        "src": "@chainlink/contracts/src/v0.4/LinkToken.sol:8",
+        "version": {
+          "withMetadata": "0c849729feb55964fb72fbba902b0d8dff50625477329130bdb86f8094f9493a",
+          "withoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a",
+          "linkedWithoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken",
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "LinkToken()",
+          "transferAndCall(address,uint256,bytes)",
+          "transfer(address,uint256)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "allowance(address,address)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "transfer(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ERC20Basic",
+              "label": "totalSupply",
+              "type": "t_uint256",
+              "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:10"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:5",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:ERC677Receiver": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onTokenTransfer(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:12",
+        "version": {
+          "withMetadata": "3693a76f11ce178d5fbfd079cd5eb8c8e24b21edce96c235e50a63b64bf66407",
+          "withoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f",
+          "linkedWithoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink"
+        ],
+        "methods": [
+          "transfer(address,uint256)",
+          "balanceOf(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "BasicToken",
+              "label": "balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:15"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:8",
+        "version": {
+          "withMetadata": "9cdb3b01bb1d09a31e69628419b9ff03e5e3fee25beac127b52065e09ef5c188",
+          "withoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688",
+          "linkedWithoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:15",
+        "version": {
+          "withMetadata": "3411c4525259b5c4f2d052ced1457e6b4a2afae2ed219bc6f3f08522fa5f0a28",
+          "withoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d",
+          "linkedWithoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "allowance(address,address)",
+          "increaseApproval(address,uint256)",
+          "decreaseApproval(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "StandardToken",
+              "label": "allowed",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:17"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "latestAnswer()",
+          "latestTimestamp()",
+          "latestRound()",
+          "getAnswer(uint256)",
+          "getTimestamp(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "decimals()",
+          "description()",
+          "version()",
+          "getRoundData(uint80)",
+          "latestRoundData()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:MockV3Aggregator": {
+        "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:14",
+        "version": {
+          "withMetadata": "28f51b4729bfb4220f63d14af6ea2ce565207a62c00fa7551fe9012849f6e962",
+          "withoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a",
+          "linkedWithoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [
+          "(uint8,int256)",
+          "updateAnswer(int256)",
+          "updateRoundData(uint80,int256,uint256,uint256)",
+          "getRoundData(uint80)",
+          "latestRoundData()",
+          "description()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockV3Aggregator",
+            "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:26"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "decimals",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:17"
+            },
+            {
+              "label": "latestAnswer",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_int256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:18"
+            },
+            {
+              "label": "latestTimestamp",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:19"
+            },
+            {
+              "label": "latestRound",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:20"
+            },
+            {
+              "label": "getAnswer",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_int256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:22"
+            },
+            {
+              "label": "getTimestamp",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:23"
+            },
+            {
+              "label": "getStartedAt",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:24"
+            }
+          ],
+          "types": {
+            "t_int256": {
+              "label": "int256",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_int256)": {
+              "label": "mapping(uint256 => int256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true
+        },
+        "solcVersion": "0.7.0"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token": {
+        "src": "@chainlink/contracts/src/v0.4/ERC677Token.sol:8",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/LinkToken.sol:LinkToken": {
+        "src": "@chainlink/contracts/src/v0.4/LinkToken.sol:8",
+        "version": {
+          "withMetadata": "0c849729feb55964fb72fbba902b0d8dff50625477329130bdb86f8094f9493a",
+          "withoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a",
+          "linkedWithoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken",
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "LinkToken()",
+          "transferAndCall(address,uint256,bytes)",
+          "transfer(address,uint256)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "allowance(address,address)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "transfer(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ERC20Basic",
+              "label": "totalSupply",
+              "type": "t_uint256",
+              "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:10"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:5",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:ERC677Receiver": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onTokenTransfer(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:12",
+        "version": {
+          "withMetadata": "3693a76f11ce178d5fbfd079cd5eb8c8e24b21edce96c235e50a63b64bf66407",
+          "withoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f",
+          "linkedWithoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink"
+        ],
+        "methods": [
+          "transfer(address,uint256)",
+          "balanceOf(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "BasicToken",
+              "label": "balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:15"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:8",
+        "version": {
+          "withMetadata": "9cdb3b01bb1d09a31e69628419b9ff03e5e3fee25beac127b52065e09ef5c188",
+          "withoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688",
+          "linkedWithoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:15",
+        "version": {
+          "withMetadata": "3411c4525259b5c4f2d052ced1457e6b4a2afae2ed219bc6f3f08522fa5f0a28",
+          "withoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d",
+          "linkedWithoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "allowance(address,address)",
+          "increaseApproval(address,uint256)",
+          "decreaseApproval(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "StandardToken",
+              "label": "allowed",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:17"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "latestAnswer()",
+          "latestTimestamp()",
+          "latestRound()",
+          "getAnswer(uint256)",
+          "getTimestamp(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "decimals()",
+          "description()",
+          "version()",
+          "getRoundData(uint80)",
+          "latestRoundData()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:MockV3Aggregator": {
+        "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:14",
+        "version": {
+          "withMetadata": "28f51b4729bfb4220f63d14af6ea2ce565207a62c00fa7551fe9012849f6e962",
+          "withoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a",
+          "linkedWithoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [
+          "(uint8,int256)",
+          "updateAnswer(int256)",
+          "updateRoundData(uint80,int256,uint256,uint256)",
+          "getRoundData(uint80)",
+          "latestRoundData()",
+          "description()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockV3Aggregator",
+            "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:26"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "decimals",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:17"
+            },
+            {
+              "label": "latestAnswer",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_int256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:18"
+            },
+            {
+              "label": "latestTimestamp",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:19"
+            },
+            {
+              "label": "latestRound",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:20"
+            },
+            {
+              "label": "getAnswer",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_int256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:22"
+            },
+            {
+              "label": "getTimestamp",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:23"
+            },
+            {
+              "label": "getStartedAt",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:24"
+            }
+          ],
+          "types": {
+            "t_int256": {
+              "label": "int256",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_int256)": {
+              "label": "mapping(uint256 => int256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true
+        },
+        "solcVersion": "0.7.0"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token": {
+        "src": "@chainlink/contracts/src/v0.4/ERC677Token.sol:8",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/LinkToken.sol:LinkToken": {
+        "src": "@chainlink/contracts/src/v0.4/LinkToken.sol:8",
+        "version": {
+          "withMetadata": "0c849729feb55964fb72fbba902b0d8dff50625477329130bdb86f8094f9493a",
+          "withoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a",
+          "linkedWithoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken",
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "LinkToken()",
+          "transferAndCall(address,uint256,bytes)",
+          "transfer(address,uint256)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "allowance(address,address)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "transfer(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ERC20Basic",
+              "label": "totalSupply",
+              "type": "t_uint256",
+              "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:10"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:5",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:ERC677Receiver": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onTokenTransfer(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:12",
+        "version": {
+          "withMetadata": "3693a76f11ce178d5fbfd079cd5eb8c8e24b21edce96c235e50a63b64bf66407",
+          "withoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f",
+          "linkedWithoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink"
+        ],
+        "methods": [
+          "transfer(address,uint256)",
+          "balanceOf(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "BasicToken",
+              "label": "balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:15"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:8",
+        "version": {
+          "withMetadata": "9cdb3b01bb1d09a31e69628419b9ff03e5e3fee25beac127b52065e09ef5c188",
+          "withoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688",
+          "linkedWithoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:15",
+        "version": {
+          "withMetadata": "3411c4525259b5c4f2d052ced1457e6b4a2afae2ed219bc6f3f08522fa5f0a28",
+          "withoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d",
+          "linkedWithoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "allowance(address,address)",
+          "increaseApproval(address,uint256)",
+          "decreaseApproval(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "StandardToken",
+              "label": "allowed",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:17"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "latestAnswer()",
+          "latestTimestamp()",
+          "latestRound()",
+          "getAnswer(uint256)",
+          "getTimestamp(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "decimals()",
+          "description()",
+          "version()",
+          "getRoundData(uint80)",
+          "latestRoundData()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:MockV3Aggregator": {
+        "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:14",
+        "version": {
+          "withMetadata": "28f51b4729bfb4220f63d14af6ea2ce565207a62c00fa7551fe9012849f6e962",
+          "withoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a",
+          "linkedWithoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [
+          "(uint8,int256)",
+          "updateAnswer(int256)",
+          "updateRoundData(uint80,int256,uint256,uint256)",
+          "getRoundData(uint80)",
+          "latestRoundData()",
+          "description()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockV3Aggregator",
+            "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:26"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "decimals",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:17"
+            },
+            {
+              "label": "latestAnswer",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_int256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:18"
+            },
+            {
+              "label": "latestTimestamp",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:19"
+            },
+            {
+              "label": "latestRound",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:20"
+            },
+            {
+              "label": "getAnswer",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_int256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:22"
+            },
+            {
+              "label": "getTimestamp",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:23"
+            },
+            {
+              "label": "getStartedAt",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:24"
+            }
+          ],
+          "types": {
+            "t_int256": {
+              "label": "int256",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_int256)": {
+              "label": "mapping(uint256 => int256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true
+        },
+        "solcVersion": "0.7.0"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token": {
+        "src": "@chainlink/contracts/src/v0.4/ERC677Token.sol:8",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/LinkToken.sol:LinkToken": {
+        "src": "@chainlink/contracts/src/v0.4/LinkToken.sol:8",
+        "version": {
+          "withMetadata": "0c849729feb55964fb72fbba902b0d8dff50625477329130bdb86f8094f9493a",
+          "withoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a",
+          "linkedWithoutMetadata": "dcb7b29c70b560d2b415ab628a7cf9f903c128d867b6e96bcff8ced43d39d28a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/ERC677Token.sol:ERC677Token",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677",
+          "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken",
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "LinkToken()",
+          "transferAndCall(address,uint256,bytes)",
+          "transfer(address,uint256)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:11",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "allowance(address,address)",
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address)",
+          "transfer(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "ERC20Basic",
+              "label": "totalSupply",
+              "type": "t_uint256",
+              "src": "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:10"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:ERC677": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677.sol:5",
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:ERC677Receiver": {
+        "src": "@chainlink/contracts/src/v0.4/interfaces/ERC677Receiver.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "onTokenTransfer(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:12",
+        "version": {
+          "withMetadata": "3693a76f11ce178d5fbfd079cd5eb8c8e24b21edce96c235e50a63b64bf66407",
+          "withoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f",
+          "linkedWithoutMetadata": "4fcf70a8bc68714c7f78a8347caa95330804cd67337543e27922850c66a44b5f"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [
+          "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink"
+        ],
+        "methods": [
+          "transfer(address,uint256)",
+          "balanceOf(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "BasicToken",
+              "label": "balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:15"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:SafeMathChainlink": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/SafeMathChainlink.sol:8",
+        "version": {
+          "withMetadata": "9cdb3b01bb1d09a31e69628419b9ff03e5e3fee25beac127b52065e09ef5c188",
+          "withoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688",
+          "linkedWithoutMetadata": "6784c9bdde3ddff1c688b77760f8abee60b5ea4939b980505024050460e92688"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      },
+      "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:StandardToken": {
+        "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:15",
+        "version": {
+          "withMetadata": "3411c4525259b5c4f2d052ced1457e6b4a2afae2ed219bc6f3f08522fa5f0a28",
+          "withoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d",
+          "linkedWithoutMetadata": "8619713a82168a3b8b5fea42a2e9425b397932829ff05af8758924ba1e47344d"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.4/vendor/BasicToken.sol:BasicToken",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20.sol:ERC20",
+          "@chainlink/contracts/src/v0.4/interfaces/ERC20Basic.sol:ERC20Basic"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferFrom(address,address,uint256)",
+          "approve(address,uint256)",
+          "allowance(address,address)",
+          "increaseApproval(address,uint256)",
+          "decreaseApproval(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "contract": "StandardToken",
+              "label": "allowed",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "@chainlink/contracts/src/v0.4/vendor/StandardToken.sol:17"
+            }
+          ],
+          "types": {
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))"
+            },
+            "t_address": {
+              "label": "address"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)"
+            },
+            "t_uint256": {
+              "label": "uint256"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.4.24"
+      }
+    },
+    {
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "latestAnswer()",
+          "latestTimestamp()",
+          "latestRound()",
+          "getAnswer(uint256)",
+          "getTimestamp(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:7",
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface": {
+        "src": "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:4",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "decimals()",
+          "description()",
+          "version()",
+          "getRoundData(uint80)",
+          "latestRoundData()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false
+        },
+        "solcVersion": "0.7.0"
+      },
+      "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:MockV3Aggregator": {
+        "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:14",
+        "version": {
+          "withMetadata": "28f51b4729bfb4220f63d14af6ea2ce565207a62c00fa7551fe9012849f6e962",
+          "withoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a",
+          "linkedWithoutMetadata": "b34b3bb8a285ac46e3c1468c797eae35652f4bd46019a62bd7404c18d642502a"
+        },
+        "inherit": [
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol:AggregatorV2V3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorV3Interface.sol:AggregatorV3Interface",
+          "@chainlink/contracts/src/v0.7/interfaces/AggregatorInterface.sol:AggregatorInterface"
+        ],
+        "libraries": [],
+        "methods": [
+          "(uint8,int256)",
+          "updateAnswer(int256)",
+          "updateRoundData(uint80,int256,uint256,uint256)",
+          "getRoundData(uint80)",
+          "latestRoundData()",
+          "description()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockV3Aggregator",
+            "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:26"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "decimals",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint8",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:17"
+            },
+            {
+              "label": "latestAnswer",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_int256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:18"
+            },
+            {
+              "label": "latestTimestamp",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:19"
+            },
+            {
+              "label": "latestRound",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:20"
+            },
+            {
+              "label": "getAnswer",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_int256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:22"
+            },
+            {
+              "label": "getTimestamp",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:23"
+            },
+            {
+              "label": "getStartedAt",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "MockV3Aggregator",
+              "src": "@chainlink/contracts/src/v0.7/tests/MockV3Aggregator.sol:24"
+            }
+          ],
+          "types": {
+            "t_int256": {
+              "label": "int256",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_int256)": {
+              "label": "mapping(uint256 => int256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true
+        },
+        "solcVersion": "0.7.0"
+      }
+    },
+    {
       "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol:ConfirmedOwner": {
         "src": "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol:10",
         "version": {

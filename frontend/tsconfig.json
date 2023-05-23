@@ -19,6 +19,14 @@
             "@/*": ["./src/*"]
         }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/ParticlesBackground.jsx", "src/insurance_estimators/temperature.jssrc/insurance_estimators/snowfall.jsw.js", "src/insurance_estimators/earthquake.jssrc/insurance_estimators/rainfall.jsn.js", "src/utils/getKoppenGeigerZones.js"],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "src/components/ParticlesBackground.jsx",
+        "src/insurance_estimators/temperature.jssrc/insurance_estimators/snowfall.jsw.js",
+        "src/insurance_estimators/earthquake.jssrc/insurance_estimators/rainfall.jsn.js",
+        "utils/getKoppenGeigerZones.js"
+    ],
     "exclude": ["node_modules"]
 }
