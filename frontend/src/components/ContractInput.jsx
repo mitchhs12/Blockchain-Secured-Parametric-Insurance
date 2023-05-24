@@ -5,7 +5,7 @@ import { estimateTemperature } from "../insurance_estimators/temperature.jsx";
 import { estimateRainfall } from "../insurance_estimators/rainfall.jsx";
 import { estimateSnowfall } from "../insurance_estimators/snowfall.jsx";
 import { estimateEarthquake } from "../insurance_estimators/earthquake.jsx";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const [coordinatesSelected, setCoordinatesSelected] = useState(false);
@@ -16,7 +16,9 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const [isComplete, setIsComplete] = useState(false);
     const [center, setCenter] = useState("");
     const [area, setArea] = useState("");
-    const [cost, setCost] = useState("");
+    const [totalCost, setTotalCost] = useState("");
+    const [averageDaily, setAverageDaily] = useState("");
+    const [isEstimating, setIsEstimating] = useState(false);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -47,12 +49,40 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const renderButtonOrMessage = () => {
         if (coordinatesSelected && inputValue && fromDate && toDate && isComplete) {
             return (
-                <button
-                    className="w-auto sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
-                    onClick={onButtonClick}
-                >
-                    Estimate Cost
-                </button>
+                <>
+                    {isEstimating ? ( // Check if loading state is true
+                        <div className="flex items-center justify-center">
+                            <svg
+                                className="animate-spin h-5 w-5 mr-3"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                ></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                            </svg>
+                            Estimating...
+                        </div>
+                    ) : (
+                        <button
+                            className="w-auto sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
+                            onClick={onButtonClick}
+                        >
+                            Estimate Cost
+                        </button>
+                    )}
+                </>
             );
         } else if (!coordinatesSelected) {
             return "Please select an area";
@@ -70,25 +100,54 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     };
 
     const onButtonClick = () => {
+        setIsEstimating(true);
         const dateRange = { from: fromDate, to: toDate };
-        let cost;
+        let averageDailyEstimate, totalEstimate;
+
         switch (configLabel) {
             case "Snowfall":
-                cost = estimateSnowfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
+                ({ dailyPrice: averageDailyEstimate, average: totalEstimate } = estimateSnowfall(
+                    rectangleBounds,
+                    area,
+                    dateRange,
+                    aboveOrBelow,
+                    inputValue,
+                    center
+                ));
                 break;
             case "Earthquake":
-                cost = estimateEarthquake(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
+                ({ dailyPrice: averageDailyEstimate, average: totalEstimate } = estimateEarthquake(
+                    rectangleBounds,
+                    area,
+                    dateRange,
+                    aboveOrBelow,
+                    inputValue,
+                    center
+                ));
                 break;
             case "Rainfall":
-                cost = estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
+                estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center).then(
+                    ({ sum: totalEstimate, average: averageDailyEstimate }) => {
+                        console.log(totalEstimate, averageDailyEstimate);
+                        setTotalCost(totalEstimate);
+                        setAverageDaily(averageDailyEstimate);
+                        setIsEstimating(false);
+                    }
+                );
                 break;
             case "Temperature":
-                cost = estimateTemperature(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center);
+                ({ dailyPrice: averageDailyEstimate, average: totalEstimate } = estimateTemperature(
+                    rectangleBounds,
+                    area,
+                    dateRange,
+                    aboveOrBelow,
+                    inputValue,
+                    center
+                ));
                 break;
             default:
                 console.error("Invalid configLabel provided!");
         }
-        setCost(cost);
     };
 
     return (
@@ -163,7 +222,46 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                     {renderButtonOrMessage()}
                 </div>
             </div>
-            <div className="flex justify-center">{cost ? <div>TOTAL COST{cost}</div> : ""}</div>
+            <div className="flex justify-center mb-6 mt-4">
+                {averageDaily ? (
+                    <div className="bg-green-900 text-white px-4 py-1 rounded-lg text-lg">
+                        Daily Cost Estimate: ${averageDaily.toFixed(2)} per day
+                    </div>
+                ) : (
+                    ""
+                )}
+            </div>
+            <div className="flex justify-center mb-6">
+                {totalCost ? (
+                    <div className="bg-green-900 text-white px-4 py-1 rounded-lg text-lg">
+                        Total Cost Estimate: ${totalCost.toFixed(2)}
+                    </div>
+                ) : (
+                    ""
+                )}
+            </div>
+            {averageDaily > 1000000 && (
+                <div className="flex justify-center mb-6">
+                    <div className="text-red-500 px-4 rounded-lg text-xl justify-center text-center">
+                        <div>WARNING! Your insurance is expensive!</div>
+                        <div> Consider changing area, {units}, and / or dates.</div>
+                    </div>
+                </div>
+            )}
+            <div className="flex justify-center">
+                {totalCost ? (
+                    <div className="text-white px-4 py-2 rounded-lg text-lg">
+                        <button
+                            className="w-auto sm:w-auto h-10 sm:h-auto bg-green-800 hover:bg-green-500 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
+                            // onClick={submitToContract}
+                        >
+                            Submit to Contract
+                        </button>
+                    </div>
+                ) : (
+                    ""
+                )}
+            </div>
         </div>
     );
 };

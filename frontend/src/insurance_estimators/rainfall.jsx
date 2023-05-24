@@ -45,7 +45,7 @@ function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
     return result;
 }
 
-export function estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center) {
+export async function estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center) {
     console.log(rectangleBounds);
     console.log(area);
     console.log(dateRange);
@@ -53,95 +53,92 @@ export function estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow,
     console.log(inputValue);
     console.log(center);
 
-    getKoppenGeigerZones(rectangleBounds)
-        .then(({ zone, description }) => {
-            console.log("Zone: ", zone);
-            console.log("Description: ", description);
-        })
-        .catch((err) => console.error(err));
+    try {
+        const { zone, description } = await getKoppenGeigerZones(rectangleBounds);
+        console.log("Zone: ", zone);
+        console.log("Description: ", description);
 
-    getAverageRainfall(dateRange.from, center.lat, center.lng)
-        .then((cutoffs) => {
-            for (let season in cutoffs) {
-                console.log(`Season: ${season}, Cutoff: ${cutoffs[season]}`);
+        const cutoffs = await getAverageRainfall(dateRange.from, center.lat, center.lng);
+        for (let season in cutoffs) {
+            console.log(`Season: ${season}, Cutoff: ${cutoffs[season]}`);
+        }
+        let startDateIndex = getDayOfYear(dateRange.from);
+        console.log("Start Day of Year:", startDateIndex);
+        let endDateIndex = getDayOfYear(dateRange.to);
+        console.log("End Day of Year:", endDateIndex);
+
+        var currentDate = dateRange.from;
+        var season;
+        var dayNumber = 0;
+        let sinVar;
+        let dailyPrice = [];
+
+        while (currentDate <= dateRange.to) {
+            console.log(currentDate);
+
+            if (center.lat > 0) {
+                // Northern Hemisphere
+                if (
+                    (currentDate.getMonth() === 11 && currentDate.getDate() >= 21) ||
+                    currentDate.getMonth() < 2 ||
+                    (currentDate.getMonth() === 2 && currentDate.getDate() < 20)
+                )
+                    season = "Winter";
+                else if (
+                    (currentDate.getMonth() === 2 && currentDate.getDate() >= 20) ||
+                    currentDate.getMonth() < 5 ||
+                    (currentDate.getMonth() === 5 && currentDate.getDate() < 20)
+                )
+                    season = "Spring";
+                else if (
+                    (currentDate.getMonth() === 5 && currentDate.getDate() >= 20) ||
+                    currentDate.getMonth() < 8 ||
+                    (currentDate.getMonth() === 8 && currentDate.getDate() < 22)
+                )
+                    season = "Summer";
+                else season = "Fall";
+                sinVar = sinCurveNothern(dayNumber);
+            } else {
+                // Southern Hemisphere
+                if (
+                    (currentDate.getMonth() === 11 && currentDate.getDate() >= 21) ||
+                    currentDate.getMonth() < 2 ||
+                    (currentDate.getMonth() === 2 && currentDate.getDate() < 20)
+                )
+                    season = "Summer";
+                else if (
+                    (currentDate.getMonth() === 2 && currentDate.getDate() >= 20) ||
+                    currentDate.getMonth() < 5 ||
+                    (currentDate.getMonth() === 5 && currentDate.getDate() < 20)
+                )
+                    season = "Fall";
+                else if (
+                    (currentDate.getMonth() === 5 && currentDate.getDate() >= 20) ||
+                    currentDate.getMonth() < 8 ||
+                    (currentDate.getMonth() === 8 && currentDate.getDate() < 22)
+                )
+                    season = "Winter";
+                else season = "Spring";
+                sinVar = sinCurveSouthern(dayNumber);
             }
-            let startDateIndex = getDayOfYear(dateRange.from);
-            console.log("Start Day of Year:", startDateIndex);
-            let endDateIndex = getDayOfYear(dateRange.to);
-            console.log("End Day of Year:", endDateIndex);
+            dailyPrice.push({
+                date: new Date(currentDate),
+                price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, inputValue),
+            });
+            console.log(dayNumber, season, cutoffs[season]);
+            currentDate.setDate(currentDate.getDate() + 1);
+            dayNumber++;
+        }
 
-            var currentDate = dateRange.from;
-            var season;
-            var dayNumber = 0;
-            let sinVar;
-            let dailyPrice = [];
+        // Sum
+        const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0);
+        // Average
+        const average = sum / dailyPrice.length;
 
-            while (currentDate <= dateRange.to) {
-                console.log(currentDate);
-
-                if (center.lat > 0) {
-                    // Northern Hemisphere
-                    if (
-                        (currentDate.getMonth() === 11 && currentDate.getDate() >= 21) ||
-                        currentDate.getMonth() < 2 ||
-                        (currentDate.getMonth() === 2 && currentDate.getDate() < 20)
-                    )
-                        season = "Winter";
-                    else if (
-                        (currentDate.getMonth() === 2 && currentDate.getDate() >= 20) ||
-                        currentDate.getMonth() < 5 ||
-                        (currentDate.getMonth() === 5 && currentDate.getDate() < 20)
-                    )
-                        season = "Spring";
-                    else if (
-                        (currentDate.getMonth() === 5 && currentDate.getDate() >= 20) ||
-                        currentDate.getMonth() < 8 ||
-                        (currentDate.getMonth() === 8 && currentDate.getDate() < 22)
-                    )
-                        season = "Summer";
-                    else season = "Fall";
-                    sinVar = sinCurveNothern(dayNumber);
-                } else {
-                    // Southern Hemisphere
-                    if (
-                        (currentDate.getMonth() === 11 && currentDate.getDate() >= 21) ||
-                        currentDate.getMonth() < 2 ||
-                        (currentDate.getMonth() === 2 && currentDate.getDate() < 20)
-                    )
-                        season = "Summer";
-                    else if (
-                        (currentDate.getMonth() === 2 && currentDate.getDate() >= 20) ||
-                        currentDate.getMonth() < 5 ||
-                        (currentDate.getMonth() === 5 && currentDate.getDate() < 20)
-                    )
-                        season = "Fall";
-                    else if (
-                        (currentDate.getMonth() === 5 && currentDate.getDate() >= 20) ||
-                        currentDate.getMonth() < 8 ||
-                        (currentDate.getMonth() === 8 && currentDate.getDate() < 22)
-                    )
-                        season = "Winter";
-                    else season = "Spring";
-                    sinVar = sinCurveSouthern(dayNumber);
-                }
-                dailyPrice.push({
-                    date: new Date(currentDate),
-                    price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, inputValue),
-                });
-                console.log(dayNumber, season, cutoffs[season]);
-                currentDate.setDate(currentDate.getDate() + 1);
-                dayNumber++;
-            }
-            // Sum
-            let sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0);
-
-            // Average
-            let average = sum / dailyPrice.length;
-
-            console.log("Sum of daily prices: ", sum);
-            console.log("Average daily price: ", average);
-        })
-        .catch((err) => {
-            console.error(err);
-        });
+        console.log("Sum of daily prices: ", sum);
+        console.log("Average daily price: ", average);
+        return { sum, average };
+    } catch (error) {
+        console.error(err);
+    }
 }
