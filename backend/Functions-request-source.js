@@ -1,9 +1,18 @@
 // This example shows how to make a decentralized price feed using multiple APIs
 
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
-const coinMarketCapCoinId = args[0]
-const coinGeckoCoinId = args[1]
-const coinPaprikaCoinId = args[2]
+const latNw = args[0]
+const longNw = args[1]
+const longNe = args[3]
+const latNe = args[2]
+const latSe = args[4]
+const longSe = args[5]
+const latSw = args[6]
+const longSw = args[7]
+const configParam = args[8]
+const insuranceType = args[9]
+const numDays = args[10]
+const startDay = args[11]
 
 if (
   secrets.apiKey == "" ||

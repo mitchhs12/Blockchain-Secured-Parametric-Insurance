@@ -56,6 +56,8 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
             );
         } else if (!coordinatesSelected) {
             return "Please select an area";
+        } else if (area < 0.1) {
+            return "Please select a larger area";
         } else if (!inputValue) {
             return "Please type in a quantity";
         } else if (!fromDate) {

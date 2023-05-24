@@ -65,6 +65,7 @@ const Calendar = ({ fromDate, toDate, completed }) => {
                 defaultMonth={pastMonth}
                 selected={range}
                 onSelect={setRange}
+                disabled={{ before: new Date() }}
             />
         </>
     );

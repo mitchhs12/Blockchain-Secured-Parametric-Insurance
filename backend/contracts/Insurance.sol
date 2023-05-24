@@ -5,7 +5,7 @@ import "./insurances/Rain.sol";
 import "./insurances/Drought.sol";
 import "./insurances/Earthquake.sol";
 import "./insurances/Snow.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {getLatestPrice} from "./LinkMaticPrice.sol";
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
@@ -18,108 +18,116 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
 
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
-  AggregatorV3Interface internal priceFeed;
-
-  constructor(address oracle) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
-    priceFeed = AggregatorV3Interface(
-      "0x12162c3E810393dEC01362aBf156D7ecf6159528" //Polygon Mumbai LINK/MATIC pricefeed
-    );
-  }
-
-  enum InsuranceType {
-    Rain,
-    Drought,
-    Earthquake,
-    Snow
-  }
+  constructor(address oracle) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {}
 
   struct InsuranceData {
-    uint256 latNw;
-    uint256 longNw;
-    uint256 latNe;
-    uint256 longNe;
-    uint256 latSe;
-    uint256 longSe;
-    uint256 latSw;
-    uint256 longSw;
-    uint256 configParam;
-    InsuranceType insuranceType;
-    uint256 numDays;
-    uint256 startDay;
+    string latNw;
+    string longNw;
+    string latNe;
+    string longNe;
+    string latSe;
+    string longSe;
+    string latSw;
+    string longSw;
+    string insuranceType;
+    string configParam;
+    string numDays;
+    string startDay;
   }
 
-  mapping(address => InsuranceData) public insuranceMapping;
-
-  function getLatestPrice() public view returns (int) {
-    (
-      ,
-      /* uint80 roundID */ int price /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/,
-      ,
-      ,
-
-    ) = priceFeed.latestRoundData();
-    return price;
-  }
+  mapping(address => InsuranceData[]) public insuranceDataMapping;
 
   function estimateInsurance(
     string calldata source,
     bytes calldata secrets,
-    uint256 latNw,
-    uint256 longNw,
-    uint256 latNe,
-    uint256 longNe,
-    uint256 latSe,
-    uint256 longSe,
-    uint256 latSw,
-    uint256 longSw,
-    uint256 configParam,
-    uint256 insuranceType,
-    uint256 numDays,
-    uint256 startDay
-  ) public payable {
+    uint64 subscriptionId,
+    uint32 gasLimit,
+    string[] calldata args
+  ) public payable returns (bytes32) {
     // Ensure at least 1 Matic is sent
     require(msg.value >= 1 ether, "Not enough Matic sent");
-    InsuranceData storage newInsuranceData = InsuranceData({
-      latNw: latNw,
-      longNw: longNw,
-      latNe: latNe,
-      longNe: longNe,
-      latSe: latSe,
-      longSe: longSe,
-      latSw: latSw,
-      longSw: longSw,
-      configParam: configParam,
-      insuranceType: insuranceType,
-      numDays: numDays,
-      startDay: startDay
-    });
-    Functrions.Request memory req;
+    require(args.length == 12, "Invalid number of arguments");
+
+    InsuranceData[] storage policies = insuranceDataMapping[msg.sender];
+    InsuranceData storage newInsuranceData = policies[policies.length - 1];
+
+    newInsuranceData.latNw = args[0];
+    newInsuranceData.longNw = args[1];
+    newInsuranceData.latNe = args[2];
+    newInsuranceData.longNe = args[3];
+    newInsuranceData.latSe = args[4];
+    newInsuranceData.longSe = args[5];
+    newInsuranceData.latSw = args[6];
+    newInsuranceData.longSw = args[7];
+    newInsuranceData.configParam = args[8];
+    newInsuranceData.insuranceType = args[9];
+    newInsuranceData.numDays = args[10];
+    newInsuranceData.startDay = args[11];
+
+    Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
     if (secrets.length > 0) {
       req.addRemoteSecrets(secrets);
     }
-    if (args.Length > 0) req.addArgs(args);
-    // Calls Chainlink DON for insurance cost
-    insuranceMapping[msg.sender] = newInsuranceData;
+    if (args.length > 0) req.addArgs(args);
+
+    bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
+    latestRequestId = assignedReqID;
+    return assignedReqID;
   }
 
-  function checkInsuranceData() public payable returns (uint256) {
-    require(
-      InsuranceData.latNw != 0 &&
-        InsuranceData.longNw != 0 &&
-        InsuranceData.latNe != 0 &&
-        InsuranceData.longNe != 0 &&
-        InsuranceData.latSe != 0 &&
-        InsuranceData.longSe != 0 &&
-        InsuranceData.latSw != 0 &&
-        InsuranceData.longSw != 0 &&
-        InsuranceData.configParam != 0 &&
-        InsuranceData.insuranceType != 0 &&
-        InsuranceData.numDays != 0 &&
-        InsuranceData.startDay != 0,
-      "User data not found or incomplete"
-    );
+  function checkInsuranceData() public view returns (bool) {
+    InsuranceData[] storage insuranceData = insuranceDataMapping[msg.sender];
+    require(insuranceData.length > 0, "No insurance data found");
 
-    return 1;
+    for (uint256 i = 0; i < insuranceData.length; i++) {
+      InsuranceData memory data = insuranceData[i];
+
+      if (
+        bytes(data.latNw).length != 0 &&
+        bytes(data.longNw).length != 0 &&
+        bytes(data.latNe).length != 0 &&
+        bytes(data.longNe).length != 0 &&
+        bytes(data.latSe).length != 0 &&
+        bytes(data.longSe).length != 0 &&
+        bytes(data.latSw).length != 0 &&
+        bytes(data.longSw).length != 0 &&
+        bytes(data.configParam).length != 0 &&
+        bytes(data.insuranceType).length != 0 &&
+        bytes(data.numDays).length != 0 &&
+        bytes(data.startDay).length != 0
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * @notice Callback that is invoked once the DON has resolved the request or hit an error
+   *
+   * @param requestId The request ID, returned by sendRequest()
+   * @param response Aggregated response from the user code
+   * @param err Aggregated error from the user code or from the execution pipeline
+   * Either response or error parameter will be set, but never both
+   */
+  function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
+    latestResponse = response;
+    latestError = err;
+    emit OCRResponse(requestId, response, err);
+  }
+
+  /**
+   * @notice Allows the Functions oracle address to be updated
+   *
+   * @param oracle New oracle address
+   */
+  function updateOracleAddress(address oracle) public onlyOwner {
+    setOracle(oracle);
+  }
+
+  function addSimulatedRequestId(address oracleAddress, bytes32 requestId) public onlyOwner {
+    addExternalRequest(oracleAddress, requestId);
   }
 }
