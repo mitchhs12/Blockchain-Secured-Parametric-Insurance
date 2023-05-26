@@ -28,10 +28,10 @@ const Content = ({ setBackgroundColor }) => {
     };
 
     return (
-        <div className="pt-10 flex flex-col justify-center">
-            <div>{renderContent()}</div>
+        <div className="pt-10 flex flex-col justify-center relative min-h-screen">
+            <div className="mb-auto">{renderContent()}</div>
             {selectedInsurance && (
-                <div>
+                <div className="fixed bottom-0 left-0 right-0 pb-8">
                     <BackButton onButtonClick={handleBackButtonClick} />
                 </div>
             )}

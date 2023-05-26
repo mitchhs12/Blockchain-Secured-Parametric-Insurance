@@ -1,6 +1,6 @@
 import { privateDecrypt } from "crypto";
 import { calculateOverrideValues } from "next/dist/server/font-utils";
-
+const normDist = require("@/utils/getCumulativeDistribution");
 const getKoppenGeigerZones = require("@/utils/getKoppenGeigerZones");
 const getAverageRainfall = require("../insurance_estimators/getAverageRainfall");
 
@@ -36,13 +36,50 @@ function getDayOfYear(x) {
 }
 
 function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
-    const mlExcess = (inputValue - cutoff) / 2;
+    const mlExcess = (inputValue - cutoff) / 2; // adjusts cutoff
     const constant = 500;
     const exponent = Math.exp(mlExcess * (constant ^ (sinVar / dayNumber)));
     console.log(exponent);
     const result = exponent * (area ^ 4) + sinVar;
     console.log(result);
     return result;
+}
+
+function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
+    const actualRainfall = inputValue + 1;
+    console.log("actualRainfall: ", actualRainfall);
+    let additionalCheck = 1;
+
+    const payouts = {};
+    for (let season in averages) {
+        const mlExcess = (inputValue - cutoff[season]) / 2; // adjusts cutoff
+        if (inputValue < mlExcess) {
+            additionalCheck = inputValue / Math.pow(mlExcess, 2);
+        }
+
+        console.log(`Season: ${season}, Mean: ${averages[season]}, SD: ${sds[season]}`);
+        const pActualRainfall = normDist(actualRainfall, averages[season], sds[season], true);
+        console.log(`Probability of Actual Rainfall: ${pActualRainfall}`);
+        const pMyRainfall = normDist(inputValue, averages[season], sds[season], true);
+        console.log(`Probability of My Rainfall: ${pMyRainfall}`);
+        const pDifference = (1 - (pActualRainfall - pMyRainfall)) * sum;
+        let firstTest, secondTest;
+        // checks if rainFall is <= actualRainfall
+        if (actualRainfall <= inputValue) {
+            firstTest = 0;
+        } else {
+            firstTest = 1;
+        }
+        // checks if inputValue is < cutoff/2
+        if (inputValue < cutoff / 2) {
+            secondTest = inputValue / Math.pow(cutoff / 2, 2);
+        } else {
+            secondTest = 1;
+        }
+        const payout = pDifference - mlExcess * (1 / area) * (firstTest * secondTest);
+        payouts[season] = payout;
+    }
+    return payouts;
 }
 
 export async function estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center) {
@@ -54,11 +91,11 @@ export async function estimateRainfall(rectangleBounds, area, dateRange, aboveOr
     console.log(center);
 
     try {
-        const { zone, description } = await getKoppenGeigerZones(rectangleBounds);
-        console.log("Zone: ", zone);
-        console.log("Description: ", description);
+        // const { zone, description } = await getKoppenGeigerZones(rectangleBounds);
+        // console.log("Zone: ", zone);
+        // console.log("Description: ", description);
 
-        const cutoffs = await getAverageRainfall(dateRange.from, center.lat, center.lng);
+        const { cutoffs, averages, sds } = await getAverageRainfall(dateRange.from, center.lat, center.lng);
         for (let season in cutoffs) {
             console.log(`Season: ${season}, Cutoff: ${cutoffs[season]}`);
         }
@@ -66,6 +103,8 @@ export async function estimateRainfall(rectangleBounds, area, dateRange, aboveOr
         console.log("Start Day of Year:", startDateIndex);
         let endDateIndex = getDayOfYear(dateRange.to);
         console.log("End Day of Year:", endDateIndex);
+        var timeDifference = dateRange.to.getTime() - dateRange.from.getTime();
+        var daysDifference = timeDifference / (1000 * 3600 * 24);
 
         var currentDate = dateRange.from;
         var season;
@@ -123,7 +162,7 @@ export async function estimateRainfall(rectangleBounds, area, dateRange, aboveOr
             }
             dailyPrice.push({
                 date: new Date(currentDate),
-                price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, inputValue),
+                price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, Number(inputValue)),
             });
             console.log(dayNumber, season, cutoffs[season]);
             currentDate.setDate(currentDate.getDate() + 1);
@@ -135,10 +174,12 @@ export async function estimateRainfall(rectangleBounds, area, dateRange, aboveOr
         // Average
         const average = sum / dailyPrice.length;
 
+        const payouts = calculatePayout(cutoffs, averages, sds, area, Number(inputValue), sum);
+        console.log("Payout: ", payouts);
         console.log("Sum of daily prices: ", sum);
         console.log("Average daily price: ", average);
-        return { sum, average };
+        return { sum, average, payouts };
     } catch (error) {
-        console.error(err);
+        console.error(error);
     }
 }

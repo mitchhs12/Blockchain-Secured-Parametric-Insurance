@@ -5,9 +5,22 @@ import { estimateTemperature } from "../insurance_estimators/temperature.jsx";
 import { estimateRainfall } from "../insurance_estimators/rainfall.jsx";
 import { estimateSnowfall } from "../insurance_estimators/snowfall.jsx";
 import { estimateEarthquake } from "../insurance_estimators/earthquake.jsx";
-import { format, set } from "date-fns";
+import { format, set, differenceInDays } from "date-fns";
+import { ethers } from "ethers";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
+    // The provider can be hard-coded to use the mainnet
+    const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+
+    // You should replace this with your actual contract address
+    const contractAddress = "your-contract-address";
+
+    // Replace this with your contract's ABI
+    const contractABI = "your-contract-abi";
+
+    // Create a new ethers contract instance
+    //const contract = new ethers.Contract(contractAddress, contractABI, provider.getSigner());
+
     const [coordinatesSelected, setCoordinatesSelected] = useState(false);
     const [aboveOrBelow, setAboveOrBelow] = useState("above");
     const [inputValue, setInputValue] = useState("");
@@ -18,7 +31,29 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const [area, setArea] = useState("");
     const [totalCost, setTotalCost] = useState("");
     const [averageDaily, setAverageDaily] = useState("");
+    const [payouts, setPayouts] = useState("");
     const [isEstimating, setIsEstimating] = useState(false);
+    const [contractSuccess, setContractSuccess] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [inputValueFinal, setInputValueFinal] = useState("");
+
+    const submitToContract = async () => {
+        try {
+            // You need to call the appropriate contract method here
+            // The method name and arguments depend on your contract
+            // This example assumes a method named 'myMethod' that doesn't take any arguments
+            const tx = await contract.myMethod();
+
+            // wait for the transaction to be mined
+            const receipt = await tx.wait();
+
+            console.log(receipt);
+
+            setContractSuccess(true);
+        } catch (error) {
+            console.error("Error submitting to contract: ", error);
+        }
+    };
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -94,6 +129,8 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
             return "Please select a start date";
         } else if (!toDate) {
             return "Please select an end date";
+        } else if (differenceInDays(new Date(toDate), new Date(fromDate)) > 365) {
+            return "Please select a date range less than 1 year";
         } else {
             return "Please fill out the form";
         }
@@ -101,7 +138,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
 
     const onButtonClick = () => {
         setIsEstimating(true);
-        const dateRange = { from: fromDate, to: toDate };
+        const dateRange = { from: new Date(fromDate), to: new Date(toDate) };
         let averageDailyEstimate, totalEstimate;
 
         switch (configLabel) {
@@ -127,10 +164,11 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 break;
             case "Rainfall":
                 estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center).then(
-                    ({ sum: totalEstimate, average: averageDailyEstimate }) => {
+                    ({ sum: totalEstimate, average: averageDailyEstimate, payouts: payouts }) => {
                         console.log(totalEstimate, averageDailyEstimate);
                         setTotalCost(totalEstimate);
                         setAverageDaily(averageDailyEstimate);
+                        setPayouts(payouts);
                         setIsEstimating(false);
                     }
                 );
@@ -148,6 +186,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
             default:
                 console.error("Invalid configLabel provided!");
         }
+        setInputValueFinal(inputValue);
     };
 
     return (
@@ -222,44 +261,54 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                     {renderButtonOrMessage()}
                 </div>
             </div>
-            <div className="flex justify-center mb-6 mt-4">
-                {averageDaily ? (
-                    <div className="bg-green-900 text-white px-4 py-1 rounded-lg text-lg">
-                        Daily Cost Estimate: ${averageDaily.toFixed(2)} per day
+            <div className="flex flex-col justify-center items-center my-4 space-y-4">
+                {!isEstimating && payouts && averageDaily && totalCost && (
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-green-800 text-white px-4 py-2 rounded-lg text-center text-lg">
+                            Daily Cost Estimate:
+                            <br /> ${averageDaily.toFixed(2)} per day
+                        </div>
+                        <div className="bg-green-800 text-white px-4 py-2 rounded-lg text-center text-lg">
+                            Total Cost Estimate:
+                            <br /> ${totalCost.toFixed(2)}
+                        </div>
+                        <div className="bg-gray-500 text-white px-4 py-2 rounded-lg text-center text-lg">
+                            Winter Payout for:
+                            <br /> {Number(inputValueFinal) + 1} {units}: ${payouts["Winter"].toFixed(2)}
+                        </div>
+                        <div className="bg-yellow-600 text-white px-4 py-2 rounded-lg text-center text-lg">
+                            Summer Payout for:
+                            <br /> {Number(inputValueFinal) + 1} {units}: ${payouts["Summer"].toFixed(2)}
+                        </div>
                     </div>
-                ) : (
-                    ""
                 )}
-            </div>
-            <div className="flex justify-center mb-6">
-                {totalCost ? (
-                    <div className="bg-green-900 text-white px-4 py-1 rounded-lg text-lg">
-                        Total Cost Estimate: ${totalCost.toFixed(2)}
-                    </div>
-                ) : (
-                    ""
-                )}
-            </div>
-            {averageDaily > 1000000 && (
-                <div className="flex justify-center mb-6">
-                    <div className="text-red-500 px-4 rounded-lg text-xl justify-center text-center">
+                {!isEstimating && averageDaily > 1000000 && (
+                    <div className="text-red-500 px-4 py-2 rounded-lg text-center text-xl mt-4">
                         <div>WARNING! Your insurance is expensive!</div>
                         <div> Consider changing area, {units}, and / or dates.</div>
                     </div>
-                </div>
-            )}
-            <div className="flex justify-center">
-                {totalCost ? (
-                    <div className="text-white px-4 py-2 rounded-lg text-lg">
+                )}
+                {!isEstimating && totalCost && (
+                    <div className="text-white px-4 py-2 rounded-lg text-center">
                         <button
-                            className="w-auto sm:w-auto h-10 sm:h-auto bg-green-800 hover:bg-green-500 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
-                            // onClick={submitToContract}
+                            className="w-auto sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
+                            onClick={submitToContract}
+                            disabled={isLoading}
                         >
-                            Submit to Contract
+                            {isLoading ? "Processing..." : "Generate Insurance\nContract On-chain"}
                         </button>
                     </div>
-                ) : (
-                    ""
+                )}
+                {contractSuccess && (
+                    <div className="text-white px-4 py-2 rounded-lg text-center">
+                        <button
+                            className="w-auto sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
+                            onClick={submitToContract}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? "Processing..." : "Pay and\nStart"}
+                        </button>
+                    </div>
                 )}
             </div>
         </div>

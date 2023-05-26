@@ -88,6 +88,7 @@ async function getAverageRainfall(startDate, latitude, longitude) {
     // Convert daily rainfall objects to arrays and calculate averages after removing outliers
     let averages = {};
     let cutoffs = {};
+    let sds = {};
     for (let season in seasonsData) {
         let dailyRainfalls = Object.values(seasonsData[season]); // convert daily rainfall data to array
         let mean = dailyRainfalls.reduce((a, b) => a + b) / dailyRainfalls.length;
@@ -105,9 +106,10 @@ async function getAverageRainfall(startDate, latitude, longitude) {
 
         // calculate new average and new cutoff: 99.7% chance that it will not rain this much in a day in a given season
         averages[season] = filteredData.reduce((a, b) => a + b) / filteredData.length;
+        sds[season] = sd;
         cutoffs[season] = averages[season] + 3 * sd; // 99.7% chance that it will not rain this much in a day in a given season
     }
-    return cutoffs;
+    return { cutoffs, averages, sds };
 }
 
 module.exports = getAverageRainfall;
