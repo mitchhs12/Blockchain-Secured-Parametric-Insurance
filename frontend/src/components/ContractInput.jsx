@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     // The provider can be hard-coded to use the mainnet
-    const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+    //const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 
     // You should replace this with your actual contract address
     const contractAddress = "your-contract-address";

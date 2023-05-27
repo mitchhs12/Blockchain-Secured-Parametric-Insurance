@@ -9,10 +9,10 @@ contract PriceConsumerV3 {
   /**
    * Network: Matic
    * Aggregator: LINK/MATIC
-   * Address: 0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43
+   * Address: 0x12162c3E810393dEC01362aBf156D7ecf6159528
    */
   constructor() {
-    priceFeed = AggregatorV3Interface(0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43);
+    priceFeed = AggregatorV3Interface(0x12162c3E810393dEC01362aBf156D7ecf6159528);
   }
 
   /**
