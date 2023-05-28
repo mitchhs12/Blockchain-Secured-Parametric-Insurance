@@ -5,11 +5,21 @@ import "./insurances/Rain.sol";
 import "./insurances/Drought.sol";
 import "./insurances/Earthquake.sol";
 import "./insurances/Snow.sol";
-import {getLatestPrice} from "./LinkMaticPrice.sol";
+import "hardhat/console.sol";
+import "./PriceConsumerV3.sol";
+import "./VRFv2Consumer.sol";
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
+interface RandomnessReceiver {
+  function receiveRandomness(uint256 requestId, uint256[] calldata randomWords) external;
+}
+
 contract Insurance is FunctionsClient, ConfirmedOwner {
+  // Instantiate the price feed
+  PriceConsumerV3 public priceFeed;
+  VRFv2Consumer public randomFeed;
+
   using Functions for Functions.Request;
 
   bytes32 public latestRequestId;
@@ -18,21 +28,43 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
 
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
-  constructor(address oracle) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {}
+  constructor(
+    address oracle,
+    address linkMaticPrice,
+    address randomness
+  ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
+    priceFeed = PriceConsumerV3(linkMaticPrice);
+    randomFeed = VRFv2Consumer(randomness);
+  }
+
+  uint256 public currentTime = block.timestamp;
 
   struct InsuranceData {
-    string latNw;
-    string longNw;
-    string latNe;
+    string latNe; //0
     string longNe;
     string latSe;
     string longSe;
     string latSw;
     string longSw;
-    string insuranceType;
+    string latNw;
+    string longNw;
     string configParam;
-    string numDays;
+    string currentDay;
     string startDay;
+    string endDay;
+    uint256[] randomPoints;
+  }
+
+  modifier hasPendingPolicy(address user) {
+    InsuranceData[] storage policies = insuranceDataMapping[user];
+    require(policies.length > 0, "No insurance data found for the user");
+
+    InsuranceData storage latestPolicy = policies[policies.length - 1];
+    uint256[] storage randomPoints = latestPolicy.randomPoints;
+    for (uint256 i = 0; i < randomPoints.length; i++) {
+      require(randomPoints[i] == 0, "Non-zero random points found");
+    }
+    _;
   }
 
   mapping(address => InsuranceData[]) public insuranceDataMapping;
@@ -40,29 +72,40 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
   function estimateInsurance(
     string calldata source,
     bytes calldata secrets,
+    string[] calldata args,
     uint64 subscriptionId,
-    uint32 gasLimit,
-    string[] calldata args
+    uint32 gasLimit
   ) public payable returns (bytes32) {
     // Ensure at least 1 Matic is sent
-    require(msg.value >= 1 ether, "Not enough Matic sent");
+    //require(msg.value >= uint256(getLatestPrice()), "Not enough Matic sent");
     require(args.length == 12, "Invalid number of arguments");
 
-    InsuranceData[] storage policies = insuranceDataMapping[msg.sender];
-    InsuranceData storage newInsuranceData = policies[policies.length - 1];
+    console.log("Got the latest price!");
 
-    newInsuranceData.latNw = args[0];
-    newInsuranceData.longNw = args[1];
-    newInsuranceData.latNe = args[2];
-    newInsuranceData.longNe = args[3];
-    newInsuranceData.latSe = args[4];
-    newInsuranceData.longSe = args[5];
-    newInsuranceData.latSw = args[6];
-    newInsuranceData.longSw = args[7];
-    newInsuranceData.configParam = args[8];
-    newInsuranceData.insuranceType = args[9];
-    newInsuranceData.numDays = args[10];
-    newInsuranceData.startDay = args[11];
+    InsuranceData[] storage policies = insuranceDataMapping[msg.sender];
+    InsuranceData storage newInsuranceData;
+    if (policies.length == 0) {
+      policies.push(
+        InsuranceData({
+          latNe: args[0],
+          longNe: args[1],
+          latSe: args[2],
+          longSe: args[3],
+          latSw: args[4],
+          longSw: args[5],
+          latNw: args[6],
+          longNw: args[7],
+          configParam: args[8],
+          currentDay: args[9],
+          startDay: args[10],
+          endDay: args[11],
+          randomPoints: new uint256[](3)
+        })
+      );
+      newInsuranceData = policies[policies.length - 1];
+    }
+
+    console.log("at request");
 
     Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
@@ -92,10 +135,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
         bytes(data.longSe).length != 0 &&
         bytes(data.latSw).length != 0 &&
         bytes(data.longSw).length != 0 &&
-        bytes(data.configParam).length != 0 &&
-        bytes(data.insuranceType).length != 0 &&
-        bytes(data.numDays).length != 0 &&
-        bytes(data.startDay).length != 0
+        bytes(data.configParam).length != 0
       ) {
         return true;
       }
@@ -104,30 +144,48 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
     return false;
   }
 
-  /**
-   * @notice Callback that is invoked once the DON has resolved the request or hit an error
-   *
-   * @param requestId The request ID, returned by sendRequest()
-   * @param response Aggregated response from the user code
-   * @param err Aggregated error from the user code or from the execution pipeline
-   * Either response or error parameter will be set, but never both
-   */
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
     latestResponse = response;
     latestError = err;
     emit OCRResponse(requestId, response, err);
   }
 
-  /**
-   * @notice Allows the Functions oracle address to be updated
-   *
-   * @param oracle New oracle address
-   */
+  function getRandomWords() public hasPendingPolicy(msg.sender) returns (bytes memory) {
+    randomFeed.requestRandomWords();
+  }
+
+  function receiveRandomness(uint256 requestId, uint256[] memory randomWords) external {
+    require(msg.sender == address(randomFeed), "Only VRFv2Consumer can call this function");
+    require(randomWords.length == 3, "Unexpected number of random numbers");
+
+    // Update the latest insurance data for the sender with random points
+    InsuranceData[] storage policies = insuranceDataMapping[msg.sender];
+    require(policies.length > 0, "No insurance data found for the request sender");
+
+    InsuranceData storage latestPolicy = policies[policies.length - 1];
+    for (uint i = 0; i < 3; i++) {
+      latestPolicy.randomPoints[i] = randomWords[i];
+    }
+  }
+
   function updateOracleAddress(address oracle) public onlyOwner {
     setOracle(oracle);
   }
 
   function addSimulatedRequestId(address oracleAddress, bytes32 requestId) public onlyOwner {
     addExternalRequest(oracleAddress, requestId);
+  }
+
+  function helloWorld() public view returns (string memory) {
+    console.log("Test");
+    return "Hello World!";
+  }
+
+  function getLatestPrice() public view returns (int) {
+    return priceFeed.getLatestPrice();
+  }
+
+  function getCurrentTime() public view returns (uint256) {
+    return currentTime;
   }
 }

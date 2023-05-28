@@ -1,0 +1,2 @@
+Subscription Details:
+npx hardhat functions-sub-info --subid REPLACE_SUBSCRIPTION_ID --network REPLACE_NETWORK

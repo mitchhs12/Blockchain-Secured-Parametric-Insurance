@@ -45,6 +45,7 @@ const networks = {
     functionsOracleProxy: "0xeA6721aC65BCeD841B8ec3fc5fEdeA6141a0aDE4",
     functionsBillingRegistryProxy: "0xEe9Bf52E5Ea228404bB54BCFbbDa8c21131b9039",
     functionsPublicKey: SHARED_DON_PUBLIC_KEY,
+    gasPrice: 20000000000, // 20 Gwei
   },
   avalancheFuji: {
     url: process.env.AVALANCHE_FUJI_RPC_URL || "UNSET",
