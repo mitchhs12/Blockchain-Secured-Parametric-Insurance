@@ -75,7 +75,13 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
 
             const latitudes = rectangleBounds.map((corner) => corner.lat);
             const longitudes = rectangleBounds.map((corner) => corner.lng);
-            const estimatedArea = estimate_area(latitudes, longitudes);
+            console.log(latitudes);
+            console.log(longitudes);
+            const latNe = rectangleBounds[0].lat;
+            const longNe = rectangleBounds[0].lng;
+            const latSw = rectangleBounds[2].lat;
+            const longSw = rectangleBounds[2].lng;
+            const estimatedArea = estimate_area([latNe, latSw], [longNe, longSw]);
             setArea(estimatedArea);
             console.log(`The area of the region is approximately ${area} square kilometers.`);
         }
@@ -163,6 +169,15 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 ));
                 break;
             case "Rainfall":
+                let currentUnixTiem = Date.now() / 1000;
+                console.log("Current Unix Timestamp:", currentUnixTiem);
+                console.log(dateRange.from);
+                let startUnixTime = Date.parse(dateRange.from) / 1000;
+                console.log("Start Unix Timestamp:", startUnixTime);
+                console.log(dateRange.to);
+                let endUnixTime = Date.parse(dateRange.to) / 1000;
+                console.log("End Unix Timestamp:", endUnixTime);
+
                 estimateRainfall(rectangleBounds, area, dateRange, aboveOrBelow, inputValue, center).then(
                     ({ sum: totalEstimate, average: averageDailyEstimate, payouts: payouts }) => {
                         console.log(totalEstimate, averageDailyEstimate);

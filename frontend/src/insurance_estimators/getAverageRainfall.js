@@ -1,17 +1,15 @@
 async function getAverageRainfall(startDate, latitude, longitude) {
     // Calculate one year ago date
 
-    let n = new Date().getFullYear() - startDate.getFullYear();
-    if (n == 0) {
-        n++;
-    }
     let dataStartDate = new Date();
-    let oneYearAgoDate = new Date(dataStartDate.getFullYear() - 1);
+    let oneYearAgoDate = new Date();
+    oneYearAgoDate.setFullYear(dataStartDate.getFullYear() - 1);
 
     // Build the URL
     let url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latitude}&longitude=${longitude}&start_date=${
         oneYearAgoDate.toISOString().split("T")[0]
     }&end_date=${dataStartDate.toISOString().split("T")[0]}&hourly=rain`;
+    console.log(url);
 
     // Fetch data from the URL
     let response = await fetch(url);
