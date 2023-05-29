@@ -13,7 +13,6 @@ const configParam = args[8]
 const currentDayString = args[9] // unix
 const startDayString = args[10] // unix
 const endDayString = args[11] // unix
-console.log(currentDayString, startDayString, endDayString)
 // const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
 const constructionTimeString = "1685323810"
 
@@ -65,15 +64,12 @@ function timestampToDate(ts) {
   return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
 }
 
-async function getAverageRainfall(startDay, latCenter, longCenter) {
+async function getAverageRainfall(currentDay, latCenter, longCenter) {
   // Calculate one year ago date
-  let currentYear = parseInt(startDay.split("-")[0])
-  let oneYearAgoDate = `${currentYear - 1}-${startDay.split("-")[1]}-${startDay.split("-")[2]}`
-
-  // Build the URL
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${oneYearAgoDate}&end_date=${startDay}&hourly=rain`
-
-  // Fetch data from the URL
+  let currentYear = parseInt(currentDay.split("-")[0])
+  let oneYearAgoDate = `${currentYear - 1}-${currentDay.split("-")[1]}-${currentDay.split("-")[2]}`
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${oneYearAgoDate}&end_date=${currentDay}&hourly=rain`
+  console.log(url)
   const request = await Functions.makeHttpRequest({ url: url })
   const response = await request
   if (response.error) {
@@ -94,6 +90,7 @@ async function getAverageRainfall(startDay, latCenter, longCenter) {
     }
 
     let season
+    let daysDate = date.substring(0, 10)
 
     // Adjust seasons based on the hemisphere and solstice/equinox dates
     if (latCenter >= 0) {
@@ -140,11 +137,11 @@ async function getAverageRainfall(startDay, latCenter, longCenter) {
       else season = "Spring"
     }
 
-    if (!seasonsData[season][date]) {
-      seasonsData[season][date] = 0 // initialize if not already present
+    if (!seasonsData[season][daysDate]) {
+      seasonsData[season][daysDate] = 0 // initialize if not already present
     }
 
-    seasonsData[season][date] += rain // accumulate daily rainfall
+    seasonsData[season][daysDate] += rain // accumulate daily rainfall
   }
 
   // Convert daily rainfall objects to arrays and calculate averages after removing outliers
@@ -198,9 +195,7 @@ function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
   const mlExcess = (inputValue - cutoff) / 2 // adjusts cutoff
   const constant = 500
   const exponent = Math.exp(mlExcess * (constant ^ (sinVar / dayNumber)))
-  console.log(exponent)
   const result = exponent * (area ^ 4) + sinVar
-  console.log(result)
   return result
 }
 
@@ -249,12 +244,11 @@ function incrementDate(date) {
 // Main
 const area = estimateArea([latNe, latSw], [longNe, longSw])
 console.log("Area: ", area)
-const startDay = timestampToDate(currentDayString)
 const currentDay = timestampToDate(currentDayString)
+const startDay = timestampToDate(startDayString)
 const endDay = timestampToDate(endDayString)
-const constructionTime = timestampToDate(constructionTimeString)
-console.log(currentDay, startDay, endDay, constructionTime)
-const { cutoffs } = await getAverageRainfall(startDay, latCenter, longCenter)
+console.log(currentDay, startDay, endDay)
+const { cutoffs } = await getAverageRainfall(currentDay, latCenter, longCenter)
 for (let season in cutoffs) {
   console.log(`Season: ${season}, Cutoff: ${cutoffs[season]}`)
 }
@@ -264,7 +258,6 @@ var season
 var dayNumber = 0
 let sinVar
 let dailyPrice = []
-console.log(currentDate)
 while (currentDate <= endDay) {
   console.log(currentDate)
 
@@ -305,7 +298,7 @@ while (currentDate <= endDay) {
     )
       season = "Fall"
     else if (
-      (currentDate.getMonth(currentDate) === 5 && getDate(currentDate) >= 20) ||
+      (getMonth(currentDate) === 5 && getDate(currentDate) >= 20) ||
       getMonth(currentDate) < 8 ||
       (getMonth(currentDate) === 8 && getDate(currentDate) < 22)
     )
@@ -326,10 +319,22 @@ while (currentDate <= endDay) {
 const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0)
 console.log("Sum of daily prices: ", sum)
 
+const constructionTimeNumber = parseInt(constructionTimeString)
+const startDayNumber = parseInt(startDayString)
+const endDayNumber = parseInt(endDayString)
+
+const secondsPerDay = 24 * 60 * 60 // Number of milliseconds in a day
+
+const differenceStart = Math.floor(Math.abs(startDayNumber - constructionTimeNumber) / secondsPerDay)
+const differenceEnd = Math.floor(Math.abs(endDayNumber - constructionTimeNumber) / secondsPerDay)
+
+console.log("Difference between start day and construction time: ", differenceStart)
+console.log("Difference between end day and construction time: ", differenceEnd)
+
 const result = {
   cost: sum,
-  startDay: startDay,
-  endDay: endDay,
+  startDay: differenceStart,
+  endDay: differenceEnd,
 }
 
 return Functions.encodeString(JSON.stringify(result))

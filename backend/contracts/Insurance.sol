@@ -68,6 +68,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
     _;
   }
 
+  mapping(bytes32 => address) public requestOwners;
   mapping(address => InsuranceData[]) public insuranceDataMapping;
 
   function estimateInsurance(
@@ -123,6 +124,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
 
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;
+    requestOwners[assignedReqID] = msg.sender;
     return assignedReqID;
   }
 
@@ -153,6 +155,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
 
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
     latestResponse = response;
+    string memory str = abi.decode(response, (string));
     latestError = err;
     emit OCRResponse(requestId, response, err);
   }
