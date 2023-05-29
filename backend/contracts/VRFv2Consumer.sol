@@ -4,13 +4,12 @@ pragma solidity ^0.8.7;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
 interface IRandomnessReceiver {
   function receiveRandomness(uint256 requestId, uint256[] memory randomWords) external;
 }
 
-contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
+contract VRFv2Consumer is VRFConsumerBaseV2 {
   event RequestSent(uint256 requestId, uint32 numWords);
   event RequestFulfilled(uint256 requestId, uint256[] randomWords);
 
@@ -28,19 +27,17 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
   address public allowedContract;
   bool public isAllowedContractSet = false;
   bytes32 keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
-  uint32 callbackGasLimit = 100000;
+  uint32 callbackGasLimit = 300000;
   uint16 requestConfirmations = 3;
   uint32 numWords = 3;
 
-  constructor(
-    uint64 subscriptionId
-  ) VRFConsumerBaseV2(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255) ConfirmedOwner(msg.sender) {
+  constructor(uint64 subscriptionId) VRFConsumerBaseV2(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255) {
     COORDINATOR = VRFCoordinatorV2Interface(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255);
     s_subscriptionId = subscriptionId;
   }
 
-  function requestRandomWords() external onlyOwner returns (uint256 requestId) {
-    require(msg.sender == allowedContract, "Not the allowed contract");
+  function requestRandomWords() public returns (uint256 requestId) {
+    //require(msg.sender == allowedContract, "Not the allowed contract");
     requestId = COORDINATOR.requestRandomWords(
       keyHash,
       s_subscriptionId,
@@ -55,7 +52,7 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
     return requestId;
   }
 
-  function setAllowedContract(address _allowedContract) external onlyOwner {
+  function setAllowedContract(address _allowedContract) external {
     require(!isAllowedContractSet, "Allowed contract is already set");
     allowedContract = _allowedContract;
     isAllowedContractSet = true;

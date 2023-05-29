@@ -61,11 +61,11 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
     InsuranceData[] storage policies = insuranceDataMapping[user];
     require(policies.length > 0, "No insurance data found for the user");
 
-    InsuranceData storage latestPolicy = policies[policies.length - 1];
-    uint256[] storage randomPoints = latestPolicy.randomPoints;
-    for (uint256 i = 0; i < randomPoints.length; i++) {
-      require(randomPoints[i] == 0, "Non-zero random points found");
-    }
+    // InsuranceData storage latestPolicy = policies[policies.length - 1];
+    // uint256[] storage randomPoints = latestPolicy.randomPoints;
+    // for (uint256 i = 0; i < randomPoints.length; i++) {
+    //   require(randomPoints[i] == 0, "Non-zero random points found");
+    // }
     _;
   }
 

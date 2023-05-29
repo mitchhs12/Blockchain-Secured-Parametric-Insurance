@@ -1210,8 +1210,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/Insurance.sol": {
-      "lastModificationDate": 1685367491167,
-      "contentHash": "39cfaa80592211ad6f9dabfdfb35d448",
+      "lastModificationDate": 1685378751787,
+      "contentHash": "192bb43090e2233aefcd646a88c3ad39",
       "sourceName": "contracts/Insurance.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -1254,8 +1254,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/VRFv2Consumer.sol": {
-      "lastModificationDate": 1685315703247,
-      "contentHash": "84dc03da88128f99ccebbc04cb5b1317",
+      "lastModificationDate": 1685379614837,
+      "contentHash": "5c5ed8ca5a71d631a152d13100109b4c",
       "sourceName": "contracts/VRFv2Consumer.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -1283,8 +1283,7 @@
       },
       "imports": [
         "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
-        "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol",
-        "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol"
+        "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol"
       ],
       "versionPragmas": [
         "^0.8.7"
@@ -1635,8 +1634,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/CheckInsurance.sol": {
-      "lastModificationDate": 1685366756397,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "lastModificationDate": 1685372044677,
+      "contentHash": "2d565265c16f3e176960e74df75a9095",
       "sourceName": "contracts/CheckInsurance.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -1662,9 +1661,17 @@
           }
         }
       },
-      "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
+      "imports": [
+        "./dev/functions/FunctionsClient.sol",
+        "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol",
+        "@chainlink/contracts/src/v0.8/AutomationCompatible.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.7"
+      ],
+      "artifacts": [
+        "AutomatedFunctionsConsumer"
+      ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/functions/vendor/ProxyAdmin.sol": {
       "lastModificationDate": 1683162032881,

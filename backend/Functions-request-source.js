@@ -13,7 +13,7 @@ const configParam = args[8]
 const currentDayString = args[9] // unix
 const startDayString = args[10] // unix
 const endDayString = args[11] // unix
-const constructionTimeString = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
+const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
 //const constructionTimeString = "1685323810"
 
 // Changes to the arguments
@@ -319,14 +319,13 @@ while (currentDate <= endDay) {
 const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0)
 console.log("Sum of daily prices: ", sum)
 
-const constructionTimeNumber = parseInt(constructionTimeString)
 const startDayNumber = parseInt(startDayString)
 const endDayNumber = parseInt(endDayString)
 
 const secondsPerDay = 24 * 60 * 60 // Number of milliseconds in a day
 
-const differenceStart = Math.floor(Math.abs(startDayNumber - constructionTimeNumber) / secondsPerDay)
-const differenceEnd = Math.floor(Math.abs(endDayNumber - constructionTimeNumber) / secondsPerDay)
+const differenceStart = Math.floor(Math.abs(startDayNumber - constructionTime) / secondsPerDay)
+const differenceEnd = Math.floor(Math.abs(endDayNumber - constructionTime) / secondsPerDay)
 
 console.log("Difference between start day and construction time: ", differenceStart)
 console.log("Difference between end day and construction time: ", differenceEnd)
