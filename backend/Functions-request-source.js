@@ -13,8 +13,8 @@ const configParam = args[8]
 const currentDayString = args[9] // unix
 const startDayString = args[10] // unix
 const endDayString = args[11] // unix
-// const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
-const constructionTimeString = "1685323810"
+const constructionTimeString = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
+//const constructionTimeString = "1685323810"
 
 // Changes to the arguments
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
@@ -66,18 +66,18 @@ function timestampToDate(ts) {
 
 async function getAverageRainfall(currentDay, latCenter, longCenter) {
   // Calculate one year ago date
-  let currentYear = parseInt(currentDay.split("-")[0])
-  let oneYearAgoDate = `${currentYear - 1}-${currentDay.split("-")[1]}-${currentDay.split("-")[2]}`
+  let [currentYear, month, day] = currentDay.split("-")
+  let oneYearAgoDate = `${currentYear - 1}-${month}-${day}`
+
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${oneYearAgoDate}&end_date=${currentDay}&hourly=rain`
-  console.log(url)
-  const request = await Functions.makeHttpRequest({ url: url })
-  const response = await request
+  const response = await Functions.makeHttpRequest({ url: url })
+
   if (response.error) {
     throw Error("Request Failed!")
   }
   const data = response.data
   // Initialize season sums, counts and data arrays
-  let seasonsData = { Winter: [], Spring: [], Summer: [], Fall: [] }
+  let seasonsData = { Winter: {}, Spring: {}, Summer: {}, Fall: {} }
 
   // Loop through the data and update season data arrays
   for (let i = 0; i < data.hourly.time.length; i++) {

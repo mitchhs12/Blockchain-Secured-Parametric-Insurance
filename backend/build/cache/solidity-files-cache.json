@@ -839,42 +839,6 @@
         "AuthorizedOriginReceiverInterface"
       ]
     },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol": {
-      "lastModificationDate": 1683162032881,
-      "contentHash": "bed9d6b2153a8c4afbf03d463faf5d7d",
-      "sourceName": "contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeCast"
-      ]
-    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/AuthorizedReceiver.sol": {
       "lastModificationDate": 1683162032881,
       "contentHash": "841553634437efcb12029c1a53a41ec1",
@@ -912,6 +876,42 @@
       ],
       "artifacts": [
         "AuthorizedReceiver"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol": {
+      "lastModificationDate": 1683162032881,
+      "contentHash": "bed9d6b2153a8c4afbf03d463faf5d7d",
+      "sourceName": "contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeCast"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol": {
@@ -953,42 +953,6 @@
         "PausableUpgradeable"
       ]
     },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol": {
-      "lastModificationDate": 1683162067071,
-      "contentHash": "da5a0c3bd86c896f6a407f909c57edf3",
-      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "LinkTokenInterface"
-      ]
-    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol": {
       "lastModificationDate": 1683162067071,
       "contentHash": "d9654a0fc044a31d4106ee6bca772add",
@@ -1023,6 +987,42 @@
       ],
       "artifacts": [
         "AggregatorV3Interface"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol": {
+      "lastModificationDate": 1683162067071,
+      "contentHash": "da5a0c3bd86c896f6a407f909c57edf3",
+      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "LinkTokenInterface"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/ERC677ReceiverInterface.sol": {
@@ -1210,8 +1210,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/Insurance.sol": {
-      "lastModificationDate": 1685322658367,
-      "contentHash": "c6caa80d1a22a40e0fc8842ac1e8b143",
+      "lastModificationDate": 1685367491167,
+      "contentHash": "39cfaa80592211ad6f9dabfdfb35d448",
       "sourceName": "contracts/Insurance.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -1634,6 +1634,38 @@
         "OCR2Base"
       ]
     },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/CheckInsurance.sol": {
+      "lastModificationDate": 1685366756397,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/CheckInsurance.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/functions/vendor/ProxyAdmin.sol": {
       "lastModificationDate": 1683162032881,
       "contentHash": "318b615fd4918b4e1c571cf330708113",
@@ -1901,42 +1933,6 @@
         "ERC1967Upgrade"
       ]
     },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol": {
-      "lastModificationDate": 1683162062331,
-      "contentHash": "2858d98e74e67987ec81b39605230b74",
-      "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC1822Proxiable"
-      ]
-    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/utils/Address.sol": {
       "lastModificationDate": 1683162062321,
       "contentHash": "f31ad6fc4bbf9c06203987220156a6ba",
@@ -1971,6 +1967,42 @@
       ],
       "artifacts": [
         "Address"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol": {
+      "lastModificationDate": 1683162062331,
+      "contentHash": "2858d98e74e67987ec81b39605230b74",
+      "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1822Proxiable"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol": {

@@ -12,8 +12,7 @@ My Functions Subscription ID:
 1316
 
 My Most Recent Insurance Contract:
-0x8aBbE8d597417B2439A2bD55a8c651CEB699fCb6
-
+0x10E0522Fc07089d09d0994b55B0BE79307334f5d
 
 Command to add a functions consumer:
 npx hardhat functions-sub-add --subid 1316 --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network polygonMumbai

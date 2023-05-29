@@ -25,6 +25,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
   int256 public globalDayNumber;
   uint256 public constructionTime;
 
+  event OCRRequest(bytes32 indexed requestId);
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
   constructor(
@@ -68,6 +69,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
     _;
   }
 
+  mapping(bytes32 => bytes) public responses;
   mapping(bytes32 => address) public requestOwners;
   mapping(address => InsuranceData[]) public insuranceDataMapping;
 
@@ -125,6 +127,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;
     requestOwners[assignedReqID] = msg.sender;
+    emit OCRRequest(assignedReqID);
     return assignedReqID;
   }
 
@@ -154,8 +157,8 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
   }
 
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
+    responses[requestId] = response;
     latestResponse = response;
-    string memory str = abi.decode(response, (string));
     latestError = err;
     emit OCRResponse(requestId, response, err);
   }
