@@ -81,6 +81,44 @@
         "FunctionsClient"
       ]
     },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/ConfirmedOwner.sol": {
+      "lastModificationDate": 1683162066941,
+      "contentHash": "16d64572b0310127fc8a771e63be6d20",
+      "sourceName": "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ConfirmedOwnerWithProposal.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ConfirmedOwner"
+      ]
+    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/AutomationCompatible.sol": {
       "lastModificationDate": 1683162066941,
       "contentHash": "c962c53a75d722542c83859d848edd5b",
@@ -118,44 +156,6 @@
       ],
       "artifacts": [
         "AutomationCompatible"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/ConfirmedOwner.sol": {
-      "lastModificationDate": 1683162066941,
-      "contentHash": "16d64572b0310127fc8a771e63be6d20",
-      "sourceName": "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./ConfirmedOwnerWithProposal.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "ConfirmedOwner"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/functions/Functions.sol": {
@@ -380,78 +380,6 @@
         "FunctionsBillingRegistryInterface"
       ]
     },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/AutomationBase.sol": {
-      "lastModificationDate": 1683162066941,
-      "contentHash": "80067f44d8bddd615599f8d73b9726a5",
-      "sourceName": "@chainlink/contracts/src/v0.8/AutomationBase.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "AutomationBase"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol": {
-      "lastModificationDate": 1683162067071,
-      "contentHash": "c52969cee392918edbf23f914e01c0dc",
-      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "AutomationCompatibleInterface"
-      ]
-    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/ConfirmedOwnerWithProposal.sol": {
       "lastModificationDate": 1683162066941,
       "contentHash": "8b1c5f02622cd87472493bda6595d1be",
@@ -524,6 +452,78 @@
       ],
       "artifacts": [
         "OwnableInterface"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/AutomationBase.sol": {
+      "lastModificationDate": 1683162066941,
+      "contentHash": "80067f44d8bddd615599f8d73b9726a5",
+      "sourceName": "@chainlink/contracts/src/v0.8/AutomationBase.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AutomationBase"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol": {
+      "lastModificationDate": 1683162067071,
+      "contentHash": "c52969cee392918edbf23f914e01c0dc",
+      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AutomationCompatibleInterface"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/functions/ConfirmedOwnerUpgradeable.sol": {
@@ -839,6 +839,42 @@
         "AuthorizedOriginReceiverInterface"
       ]
     },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol": {
+      "lastModificationDate": 1683162032881,
+      "contentHash": "bed9d6b2153a8c4afbf03d463faf5d7d",
+      "sourceName": "contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeCast"
+      ]
+    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/AuthorizedReceiver.sol": {
       "lastModificationDate": 1683162032881,
       "contentHash": "841553634437efcb12029c1a53a41ec1",
@@ -876,42 +912,6 @@
       ],
       "artifacts": [
         "AuthorizedReceiver"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol": {
-      "lastModificationDate": 1683162032881,
-      "contentHash": "bed9d6b2153a8c4afbf03d463faf5d7d",
-      "sourceName": "contracts/dev/vendor/openzeppelin-solidity/v.4.8.0/contracts/utils/SafeCast.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeCast"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol": {
@@ -1210,8 +1210,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/Insurance.sol": {
-      "lastModificationDate": 1685317187067,
-      "contentHash": "94f7ff4afbce3fb55f996414af4c720c",
+      "lastModificationDate": 1685322658367,
+      "contentHash": "c6caa80d1a22a40e0fc8842ac1e8b143",
       "sourceName": "contracts/Insurance.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -1238,13 +1238,10 @@
         }
       },
       "imports": [
-        "./insurances/Rain.sol",
-        "./insurances/Drought.sol",
-        "./insurances/Earthquake.sol",
-        "./insurances/Snow.sol",
         "hardhat/console.sol",
         "./PriceConsumerV3.sol",
         "./VRFv2Consumer.sol",
+        "@openzeppelin/contracts/utils/Strings.sol",
         "./dev/functions/FunctionsClient.sol",
         "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol"
       ],
@@ -1256,10 +1253,10 @@
         "RandomnessReceiver"
       ]
     },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Rain.sol": {
-      "lastModificationDate": 1683247356279,
-      "contentHash": "ae67d7d45c682081d9e4dda580e380dc",
-      "sourceName": "contracts/insurances/Rain.sol",
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/VRFv2Consumer.sol": {
+      "lastModificationDate": 1685315703247,
+      "contentHash": "84dc03da88128f99ccebbc04cb5b1317",
+      "sourceName": "contracts/VRFv2Consumer.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -1284,120 +1281,17 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
+        "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol",
+        "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol"
+      ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.7"
       ],
       "artifacts": [
-        "Rain"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Drought.sol": {
-      "lastModificationDate": 1683247382769,
-      "contentHash": "66194d71016f223f79405d1da680062f",
-      "sourceName": "contracts/insurances/Drought.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Drought"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Earthquake.sol": {
-      "lastModificationDate": 1683247375769,
-      "contentHash": "d79c37a29704025ddf3e5f866cfaea8b",
-      "sourceName": "contracts/insurances/Earthquake.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Earthquake"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Snow.sol": {
-      "lastModificationDate": 1683247364479,
-      "contentHash": "1fa4ed925fbb82f52d8d4890afaf870f",
-      "sourceName": "contracts/insurances/Snow.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Snow"
+        "IRandomnessReceiver",
+        "VRFv2Consumer"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/hardhat/console.sol": {
@@ -1434,6 +1328,152 @@
       ],
       "artifacts": [
         "console"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1683162062381,
+      "contentHash": "396031251978f8febfd90cb62cb240ec",
+      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./math/Math.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Strings"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol": {
+      "lastModificationDate": 1683162066941,
+      "contentHash": "eb9cc526ef59dfc4d644f56ddca0633a",
+      "sourceName": "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "VRFConsumerBaseV2"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol": {
+      "lastModificationDate": 1683162067071,
+      "contentHash": "8c9ed3426b676f67ee200a2bec96e224",
+      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "VRFCoordinatorV2Interface"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
+      "lastModificationDate": 1683162062381,
+      "contentHash": "b9c58920ce74d6dc819161786112e7ee",
+      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Math"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/functions/FunctionsOracle.sol": {
@@ -1517,7 +1557,7 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/FunctionsConsumer.sol": {
-      "lastModificationDate": 1683162032871,
+      "lastModificationDate": 1685321076297,
       "contentHash": "1de6777e8a26a3c265769e5e2ec60925",
       "sourceName": "contracts/FunctionsConsumer.sol",
       "solcConfig": {
@@ -1592,119 +1632,6 @@
       ],
       "artifacts": [
         "OCR2Base"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/VRFv2Consumer.sol": {
-      "lastModificationDate": 1685315703247,
-      "contentHash": "84dc03da88128f99ccebbc04cb5b1317",
-      "sourceName": "contracts/VRFv2Consumer.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
-        "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol",
-        "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.7"
-      ],
-      "artifacts": [
-        "IRandomnessReceiver",
-        "VRFv2Consumer"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol": {
-      "lastModificationDate": 1683162066941,
-      "contentHash": "eb9cc526ef59dfc4d644f56ddca0633a",
-      "sourceName": "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.4"
-      ],
-      "artifacts": [
-        "VRFConsumerBaseV2"
-      ]
-    },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol": {
-      "lastModificationDate": 1683162067071,
-      "contentHash": "8c9ed3426b676f67ee200a2bec96e224",
-      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "VRFCoordinatorV2Interface"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/dev/functions/vendor/ProxyAdmin.sol": {
@@ -2046,42 +1973,6 @@
         "Address"
       ]
     },
-    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol": {
-      "lastModificationDate": 1683162062361,
-      "contentHash": "b6bd23bf19e90b771337037706470933",
-      "sourceName": "@openzeppelin/contracts/proxy/beacon/IBeacon.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "storageLayout"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IBeacon"
-      ]
-    },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol": {
       "lastModificationDate": 1683162062381,
       "contentHash": "f993f8f50186952a59ee5e3a30b68222",
@@ -2116,6 +2007,42 @@
       ],
       "artifacts": [
         "StorageSlot"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol": {
+      "lastModificationDate": 1683162062361,
+      "contentHash": "b6bd23bf19e90b771337037706470933",
+      "sourceName": "@openzeppelin/contracts/proxy/beacon/IBeacon.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IBeacon"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/node_modules/@openzeppelin/contracts/utils/Context.sol": {
@@ -2298,6 +2225,150 @@
       ],
       "artifacts": [
         "Address"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Drought.sol": {
+      "lastModificationDate": 1683247382769,
+      "contentHash": "66194d71016f223f79405d1da680062f",
+      "sourceName": "contracts/insurances/Drought.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Drought"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Earthquake.sol": {
+      "lastModificationDate": 1683247375769,
+      "contentHash": "d79c37a29704025ddf3e5f866cfaea8b",
+      "sourceName": "contracts/insurances/Earthquake.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Earthquake"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Rain.sol": {
+      "lastModificationDate": 1683247356279,
+      "contentHash": "ae67d7d45c682081d9e4dda580e380dc",
+      "sourceName": "contracts/insurances/Rain.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Rain"
+      ]
+    },
+    "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/insurances/Snow.sol": {
+      "lastModificationDate": 1683247364479,
+      "contentHash": "1fa4ed925fbb82f52d8d4890afaf870f",
+      "sourceName": "contracts/insurances/Snow.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Snow"
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/test/LinkToken.sol": {

@@ -1,4 +1,3 @@
-const { types } = require("hardhat/config")
 const { VERIFICATION_BLOCK_CONFIRMATIONS, networkConfig } = require("../../network-config")
 
 task("functions-deploy-randomness", "Deploys the VRFv2Consumer contract")

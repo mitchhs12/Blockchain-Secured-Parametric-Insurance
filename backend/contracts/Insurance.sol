@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "./insurances/Rain.sol";
-import "./insurances/Drought.sol";
-import "./insurances/Earthquake.sol";
-import "./insurances/Snow.sol";
 import "hardhat/console.sol";
 import "./PriceConsumerV3.sol";
 import "./VRFv2Consumer.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
@@ -25,6 +22,8 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
   bytes32 public latestRequestId;
   bytes public latestResponse;
   bytes public latestError;
+  int256 public globalDayNumber;
+  uint256 public constructionTime;
 
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
@@ -35,6 +34,8 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
   ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
     priceFeed = PriceConsumerV3(linkMaticPrice);
     randomFeed = VRFv2Consumer(randomness);
+    constructionTime = block.timestamp;
+    globalDayNumber = 0;
   }
 
   uint256 public currentTime = block.timestamp;
@@ -49,9 +50,9 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
     string latNw;
     string longNw;
     string configParam;
-    string currentDay;
-    string startDay;
-    string endDay;
+    string currentTime;
+    string startTime;
+    string endTime;
     uint256[] randomPoints;
   }
 
@@ -78,7 +79,7 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
   ) public payable returns (bytes32) {
     // Ensure at least 1 Matic is sent
     //require(msg.value >= uint256(getLatestPrice()), "Not enough Matic sent");
-    require(args.length == 12, "Invalid number of arguments");
+    require(args.length == 12, "Invalid number of arguments"); // total of 13 arguments including the globalDayNumber
 
     console.log("Got the latest price!");
 
@@ -96,16 +97,14 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
           latNw: args[6],
           longNw: args[7],
           configParam: args[8],
-          currentDay: args[9],
-          startDay: args[10],
-          endDay: args[11],
+          currentTime: args[9],
+          startTime: args[10],
+          endTime: args[11],
           randomPoints: new uint256[](3)
         })
       );
       newInsuranceData = policies[policies.length - 1];
     }
-
-    console.log("at request");
 
     Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
@@ -113,6 +112,14 @@ contract Insurance is FunctionsClient, ConfirmedOwner {
       req.addRemoteSecrets(secrets);
     }
     if (args.length > 0) req.addArgs(args);
+    string memory constructionTimeString = Strings.toString(constructionTime);
+    string[] memory argsWithConstructionTime = new string[](args.length + 1);
+    for (uint256 i = 0; i < args.length; i++) {
+      argsWithConstructionTime[i] = args[i];
+    }
+    argsWithConstructionTime[args.length] = constructionTimeString;
+    console.log(argsWithConstructionTime[12]);
+    req.addArgs(argsWithConstructionTime);
 
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;

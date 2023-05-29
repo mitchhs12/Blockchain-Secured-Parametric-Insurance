@@ -10,48 +10,82 @@ const longSw = args[5]
 const latNw = args[6]
 const longNw = args[7]
 const configParam = args[8]
-const currentDayString = args[9]
-const startDayString = args[10]
-const endDayString = args[11]
+const currentDayString = args[9] // unix
+const startDayString = args[10] // unix
+const endDayString = args[11] // unix
+console.log(currentDayString, startDayString, endDayString)
+// const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
+const constructionTimeString = "1685323810"
 
 // Changes to the arguments
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
 const longCenter = (parseFloat(longNe) + parseFloat(longSe) + parseFloat(longSw) + parseFloat(longNw)) / 4
-let currentDay = new Date(currentDayString)
-let startDay = new Date(startDayString)
-let endDay = new Date(endDayString)
-console.log(startDay)
 
 // Functions
-async function getAverageRainfall(startDay, latCenter, longCenter) {
-  console.log(latCenter, longCenter, startDay)
+function estimateArea(latitudes, longitudes) {
+  const R = 6371 // Earth's radius in km
+  const toRadians = (degree) => degree * (Math.PI / 180)
 
+  // Convert latitudes and longitudes to radians
+  const lat1 = toRadians(latitudes[0])
+  const lat2 = toRadians(latitudes[1])
+  const lon1 = toRadians(longitudes[0])
+  const lon2 = toRadians(longitudes[1])
+
+  // Calculate the differences in latitude and longitude
+  const dLat = Math.abs(lat1 - lat2)
+  const dLon = Math.abs(lon1 - lon2)
+
+  // Calculate the length of the sides of the square using the Haversine formula
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const sideLength = R * c
+
+  // Calculate the area of the square
+  const area = sideLength * sideLength
+
+  return area
+}
+
+function timestampToDate(ts) {
+  let secondsInADay = 24 * 60 * 60
+  let daysSinceEpoch = Math.floor(ts / secondsInADay)
+  let epochAsJulianDay = 2440587.5 // Julian day at Unix epoch: 1970-01-01
+  let julianDay = Math.round(epochAsJulianDay + daysSinceEpoch) // Round the julianDay here
+  let a = julianDay + 32044
+  let b = Math.floor((4 * a + 3) / 146097)
+  let c = a - Math.floor((b * 146097) / 4)
+  let d = Math.floor((4 * c + 3) / 1461)
+  let e = c - Math.floor((1461 * d) / 4)
+  let m = Math.floor((5 * e + 2) / 153)
+  let day = e - Math.floor((153 * m + 2) / 5) + 1
+  let month = m + 3 - 12 * Math.floor(m / 10)
+  let year = b * 100 + d - 4800 + Math.floor(m / 10)
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
+}
+
+async function getAverageRainfall(startDay, latCenter, longCenter) {
   // Calculate one year ago date
-  let n = new Date().getFullYear() - startDay.getFullYear()
-  if (n == 0) {
-    n++
-  }
-  let dataStartDate = new Date()
-  let oneYearAgoDate = new Date(dataStartDate.getFullYear() - 1)
+  let currentYear = parseInt(startDay.split("-")[0])
+  let oneYearAgoDate = `${currentYear - 1}-${startDay.split("-")[1]}-${startDay.split("-")[2]}`
 
   // Build the URL
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${
-    oneYearAgoDate.toISOString().split("T")[0]
-  }&end_date=${dataStartDate.toISOString().split("T")[0]}&hourly=rain`
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${oneYearAgoDate}&end_date=${startDay}&hourly=rain`
 
   // Fetch data from the URL
-  let response = await Functions.makeHttpRequest(url)
+  const request = await Functions.makeHttpRequest({ url: url })
+  const response = await request
   if (response.error) {
     throw Error("Request Failed!")
   }
-  let data = await response.json()
-
+  const data = response.data
   // Initialize season sums, counts and data arrays
   let seasonsData = { Winter: [], Spring: [], Summer: [], Fall: [] }
 
   // Loop through the data and update season data arrays
   for (let i = 0; i < data.hourly.time.length; i++) {
-    let date = new Date(data.hourly.time[i])
+    let date = data.hourly.time[i]
     let rain = data.hourly.rain[i]
 
     // If rain is null or 0, skip the iteration
@@ -60,58 +94,57 @@ async function getAverageRainfall(startDay, latCenter, longCenter) {
     }
 
     let season
-    let dateStr = date.toISOString().split("T")[0] // to get the date part only
 
     // Adjust seasons based on the hemisphere and solstice/equinox dates
-    if (latitude >= 0) {
+    if (latCenter >= 0) {
       // Northern Hemisphere
       if (
-        (date.getMonth() === 11 && date.getDate() >= 21) ||
-        date.getMonth() < 2 ||
-        (date.getMonth() === 2 && date.getDate() < 20)
+        (getMonth(date) === 11 && getDate(date) >= 21) ||
+        getMonth(date) < 2 ||
+        (getMonth(date) === 2 && getDate(date) < 20)
       )
         season = "Winter"
       else if (
-        (date.getMonth() === 2 && date.getDate() >= 20) ||
-        date.getMonth() < 5 ||
-        (date.getMonth() === 5 && date.getDate() < 20)
+        (getMonth(date) === 2 && getDate(date) >= 20) ||
+        getMonth(date) < 5 ||
+        (getMonth(date) === 5 && getDate(date) < 20)
       )
         season = "Spring"
       else if (
-        (date.getMonth() === 5 && date.getDate() >= 20) ||
-        date.getMonth() < 8 ||
-        (date.getMonth() === 8 && date.getDate() < 22)
+        (getMonth(date) === 5 && getDate(date) >= 20) ||
+        getMonth(date) < 8 ||
+        (getMonth(date) === 8 && getDate(date) < 22)
       )
         season = "Summer"
       else season = "Fall"
     } else {
       // Southern Hemisphere
       if (
-        (date.getMonth() === 11 && date.getDate() >= 21) ||
-        date.getMonth() < 2 ||
-        (date.getMonth() === 2 && date.getDate() < 20)
+        (getMonth(date) === 11 && getDate(date) >= 21) ||
+        getMonth(date) < 2 ||
+        (getMonth(date) === 2 && getDate(date) < 20)
       )
         season = "Summer"
       else if (
-        (date.getMonth() === 2 && date.getDate() >= 20) ||
-        date.getMonth() < 5 ||
-        (date.getMonth() === 5 && date.getDate() < 20)
+        (getMonth(date) === 2 && getDate(date) >= 20) ||
+        getMonth(date) < 5 ||
+        (getMonth(date) === 5 && getDate(date) < 20)
       )
         season = "Fall"
       else if (
-        (date.getMonth() === 5 && date.getDate() >= 20) ||
-        date.getMonth() < 8 ||
-        (date.getMonth() === 8 && date.getDate() < 22)
+        (getMonth(date) === 5 && getDate(date) >= 20) ||
+        getMonth(date) < 8 ||
+        (getMonth(date) === 8 && getDate(date) < 22)
       )
         season = "Winter"
       else season = "Spring"
     }
 
-    if (!seasonsData[season][dateStr]) {
-      seasonsData[season][dateStr] = 0 // initialize if not already present
+    if (!seasonsData[season][date]) {
+      seasonsData[season][date] = 0 // initialize if not already present
     }
 
-    seasonsData[season][dateStr] += rain // accumulate daily rainfall
+    seasonsData[season][date] += rain // accumulate daily rainfall
   }
 
   // Convert daily rainfall objects to arrays and calculate averages after removing outliers
@@ -161,15 +194,6 @@ function sinCurveSouthern(x) {
   return result
 }
 
-function getDayOfYear(x) {
-  var date = new Date(x)
-  var year = date.getFullYear()
-  var firstDayOfYear = new Date(year, 0, 1)
-  var timeDifference = date.getTime() - firstDayOfYear.getTime()
-  var dayOfYear = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
-  return dayOfYear
-}
-
 function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
   const mlExcess = (inputValue - cutoff) / 2 // adjusts cutoff
   const constant = 500
@@ -180,7 +204,56 @@ function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
   return result
 }
 
+function getYear(date) {
+  return parseInt(date.split("-")[0], 10)
+}
+
+function getMonth(date) {
+  return parseInt(date.split("-")[1], 10)
+}
+
+function getDate(date) {
+  return parseInt(date.split("-")[2], 10)
+}
+
+function incrementDate(date) {
+  const year = getYear(date)
+  const month = getMonth(date)
+  const day = getDate(date)
+
+  // Assuming the month is 1-indexed
+  const monthLengths = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+  // Leap year check
+  if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
+    monthLengths[2] = 29
+  }
+
+  let newDay = day + 1
+  let newMonth = month
+  let newYear = year
+
+  if (newDay > monthLengths[month]) {
+    newDay = 1
+    newMonth++
+  }
+
+  if (newMonth > 12) {
+    newMonth = 1
+    newYear++
+  }
+
+  return `${newYear}-${newMonth.toString().padStart(2, "0")}-${newDay.toString().padStart(2, "0")}`
+}
+
 // Main
+const area = estimateArea([latNe, latSw], [longNe, longSw])
+console.log("Area: ", area)
+const startDay = timestampToDate(currentDayString)
+const currentDay = timestampToDate(currentDayString)
+const endDay = timestampToDate(endDayString)
+const constructionTime = timestampToDate(constructionTimeString)
+console.log(currentDay, startDay, endDay, constructionTime)
 const { cutoffs } = await getAverageRainfall(startDay, latCenter, longCenter)
 for (let season in cutoffs) {
   console.log(`Season: ${season}, Cutoff: ${cutoffs[season]}`)
@@ -191,28 +264,28 @@ var season
 var dayNumber = 0
 let sinVar
 let dailyPrice = []
-
+console.log(currentDate)
 while (currentDate <= endDay) {
   console.log(currentDate)
 
-  if (center.lat > 0) {
+  if (latCenter > 0) {
     // Northern Hemisphere
     if (
-      (currentDate.getMonth() === 11 && currentDate.getDate() >= 21) ||
-      currentDate.getMonth() < 2 ||
-      (currentDate.getMonth() === 2 && currentDate.getDate() < 20)
+      (getMonth(currentDate) === 11 && getDate(currentDate) >= 21) ||
+      getMonth(currentDate) < 2 ||
+      (getMonth(currentDate) === 2 && getDate(currentDate) < 20)
     )
       season = "Winter"
     else if (
-      (currentDate.getMonth() === 2 && currentDate.getDate() >= 20) ||
-      currentDate.getMonth() < 5 ||
-      (currentDate.getMonth() === 5 && currentDate.getDate() < 20)
+      (getMonth(currentDate) === 2 && getDate(currentDate) >= 20) ||
+      getMonth(currentDate) < 5 ||
+      (getMonth(currentDate) === 5 && getDate(currentDate) < 20)
     )
       season = "Spring"
     else if (
-      (currentDate.getMonth() === 5 && currentDate.getDate() >= 20) ||
-      currentDate.getMonth() < 8 ||
-      (currentDate.getMonth() === 8 && currentDate.getDate() < 22)
+      (getMonth(currentDate) === 5 && getDate(currentDate) >= 20) ||
+      getMonth(currentDate) < 8 ||
+      (getMonth(currentDate) === 8 && getDate(currentDate) < 22)
     )
       season = "Summer"
     else season = "Fall"
@@ -220,32 +293,32 @@ while (currentDate <= endDay) {
   } else {
     // Southern Hemisphere
     if (
-      (currentDate.getMonth() === 11 && currentDate.getDate() >= 21) ||
-      currentDate.getMonth() < 2 ||
-      (currentDate.getMonth() === 2 && currentDate.getDate() < 20)
+      (getMonth(currentDate) === 11 && getDate(currentDate) >= 21) ||
+      getMonth(currentDate) < 2 ||
+      (getMonth(currentDate) === 2 && getDate(currentDate) < 20)
     )
       season = "Summer"
     else if (
-      (currentDate.getMonth() === 2 && currentDate.getDate() >= 20) ||
-      currentDate.getMonth() < 5 ||
-      (currentDate.getMonth() === 5 && currentDate.getDate() < 20)
+      (getMonth(currentDate) === 2 && getDate(currentDate) >= 20) ||
+      getMonth(currentDate) < 5 ||
+      (getMonth(currentDate) === 5 && getDate(currentDate) < 20)
     )
       season = "Fall"
     else if (
-      (currentDate.getMonth() === 5 && currentDate.getDate() >= 20) ||
-      currentDate.getMonth() < 8 ||
-      (currentDate.getMonth() === 8 && currentDate.getDate() < 22)
+      (currentDate.getMonth(currentDate) === 5 && getDate(currentDate) >= 20) ||
+      getMonth(currentDate) < 8 ||
+      (getMonth(currentDate) === 8 && getDate(currentDate) < 22)
     )
       season = "Winter"
     else season = "Spring"
     sinVar = sinCurveSouthern(dayNumber)
   }
   dailyPrice.push({
-    date: new Date(currentDate),
-    price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, Number(inputValue)),
+    date: currentDate,
+    price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, Number(configParam)),
   })
   console.log(dayNumber, season, cutoffs[season])
-  currentDate.setDate(currentDate.getDate() + 1)
+  currentDate = incrementDate(currentDate)
   dayNumber++
 }
 
@@ -253,7 +326,10 @@ while (currentDate <= endDay) {
 const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0)
 console.log("Sum of daily prices: ", sum)
 
-// price * 100 to move by 2 decimals (Solidity doesn't support decimals)
-// Math.round() to round to the nearest integer
-// Functions.encodeUint256() helper function to encode the result from uint256 to bytes
-return Functions.encodeUint256(sum)
+const result = {
+  cost: sum,
+  startDay: startDay,
+  endDay: endDay,
+}
+
+return Functions.encodeString(JSON.stringify(result))

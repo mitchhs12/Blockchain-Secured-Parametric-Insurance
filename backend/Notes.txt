@@ -3,10 +3,20 @@ My Link/Matic PriceFeed Contract Address on Polygon-Mumbai:
 0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363
 
 My Most Recent Randomness Contract:
-0x20BB32C89f19C33eC3942536b0b8c796f87cA9FA
+0x1ccC39Dc47141dA554fD7Bf5acdC8fD0450A1438
 
-My Subscription ID:
+My Randomness Subscription ID:
+4862
+
+My Functions Subscription ID:
 1316
 
 My Most Recent Insurance Contract:
-0x3B2a6B4cfdd932c7d692109e1E19c44A5FbEFb25
+0x8aBbE8d597417B2439A2bD55a8c651CEB699fCb6
+
+
+Command to add a functions consumer:
+npx hardhat functions-sub-add --subid 1316 --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network polygonMumbai
+
+Command to delete a functions consumer:
+npx hardhat functions-sub-remove --subid 1316 --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network polygonMumbai

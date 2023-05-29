@@ -1,9 +1,7 @@
+const { types } = require("hardhat/config")
 const { VERIFICATION_BLOCK_CONFIRMATIONS, networkConfig } = require("../../network-config")
-const { network } = require("hardhat")
 
 task("functions-deploy-insurance", "Deploys the Insurance contract")
-  .addParam("priceFeedContract", "Contract address for the PriceFeed contract")
-  .addParam("randomFeedContract", "Contract address for the RandomFeed contract")
   .addOptionalParam("verify", "Set to true to verify insurance contract", false, types.boolean)
   .setAction(async (taskArgs) => {
     if (network.name === "hardhat") {
@@ -13,7 +11,6 @@ task("functions-deploy-insurance", "Deploys the Insurance contract")
     }
 
     console.log(`Deploying Insurance contract to ${network.name}`)
-
     const oracleAddress = networkConfig[network.name]["functionsOracleProxy"]
     const priceFeedAddress = networkConfig[network.name]["priceFeedAddress"]
     const randomFeedAddress = networkConfig[network.name]["randomFeedAddress"]
@@ -46,7 +43,7 @@ task("functions-deploy-insurance", "Deploys the Insurance contract")
         await insuranceContract.deployTransaction.wait(Math.max(6 - VERIFICATION_BLOCK_CONFIRMATIONS, 0))
         await run("verify:verify", {
           address: insuranceContract.address,
-          constructorArguments: [oracleAddress, priceFeedAddress, subscriptionId],
+          constructorArguments: [oracleAddress, priceFeedAddress, randomFeedAddress],
         })
         console.log("Insurance verified")
       } catch (error) {
