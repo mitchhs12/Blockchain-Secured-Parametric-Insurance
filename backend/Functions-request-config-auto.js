@@ -29,7 +29,7 @@ const requestConfig = {
   // code language (only JavaScript is currently supported)
   codeLanguage: CodeLanguage.JavaScript,
   // string containing the source code to be executed
-  source: fs.readFileSync("./Functions-request-source.js").toString(),
+  source: fs.readFileSync("./Functions-request-source-auto.js").toString(),
   // secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey)
   //secrets: { apiKey: process.env.COINMARKETCAP_API_KEY },
   // ETH wallet key used to sign secrets so they cannot be accessed by a 3rd party
@@ -50,7 +50,7 @@ const requestConfig = {
     "1686805200",
   ],
   // expected type of the returned value
-  expectedReturnType: ReturnType.string,
+  expectedReturnType: ReturnType.uint256,
 }
 
 module.exports = requestConfig

@@ -5,12 +5,8 @@ const {
   getRequestConfig,
 } = require("../../FunctionsSandboxLibrary")
 const { networks, SHARED_DON_PUBLIC_KEY } = require("../../networks")
-networkConfig = require("../../network-config")
 
-task(
-  "functions-simulate-payout",
-  "Simulates an end-to-end fulfillment locally for the FunctionsAutomationConsumer contract"
-)
+task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract")
   .addOptionalParam(
     "gaslimit",
     "Maximum amount of gas that can be used to call fulfillRequest in the client contract (defaults to 100,000)"
@@ -34,8 +30,8 @@ task(
     // Deploy a mock oracle & registry contract to simulate a fulfillment
     const { oracle, registry, linkToken } = await deployMockOracle()
     // Deploy the client contract
-    const clientFactory = await ethers.getContractFactory("CheckPayout")
-    const client = await clientFactory.deploy(oracle.address, priceFeedAddress, randomnessSubscriptionId)
+    const clientFactory = await ethers.getContractFactory("FunctionsConsumer")
+    const client = await clientFactory.deploy(oracle.address)
     await client.deployTransaction.wait(1)
 
     const accounts = await ethers.getSigners()
@@ -58,7 +54,7 @@ task(
     await registry.addConsumer(subscriptionId, client.address)
 
     // Build the parameters to make a request from the client contract
-    const unvalidatedRequestConfig = require("../../Functions-request-config.js")
+    const unvalidatedRequestConfig = require("../../Functions-request-config-auto.js")
     const requestConfig = getRequestConfig(unvalidatedRequestConfig)
     // Fetch the mock DON public key
     const DONPublicKey = await oracle.getDONPublicKey()
@@ -70,7 +66,7 @@ task(
     await new Promise(async (resolve) => {
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address)
-      const requestTx = await clientContract.estimateInsurance(
+      const requestTx = await clientContract.executeRequest(
         request.source,
         request.secrets ?? [],
         request.args ?? [],

@@ -21,7 +21,8 @@ const networkConfig = {
   },
   polygonMumbai: {
     vrfSubscriptionId: 4862,
-    priceFeedAddress: "0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363",
+    linkMaticPriceFeed: "0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363",
+    maticUsdPriceFeed: "0xd9Ae0d4e027a5EFa012c51bDB5dcBA097E5E65fd",
     linkToken: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
     linkEthPriceFeed: "0x12162c3E810393dEC01362aBf156D7ecf6159528",
     functionsOracleProxy: "0xeA6721aC65BCeD841B8ec3fc5fEdeA6141a0aDE4",

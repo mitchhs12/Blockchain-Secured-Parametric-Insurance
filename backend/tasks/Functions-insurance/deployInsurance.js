@@ -12,13 +12,9 @@ task("functions-deploy-insurance", "Deploys the Insurance contract")
 
     console.log(`Deploying Insurance contract to ${network.name}`)
     const oracleAddress = networkConfig[network.name]["functionsOracleProxy"]
-    const priceFeedAddress = networkConfig[network.name]["priceFeedAddress"]
+    const linkMaticPriceFeed = networkConfig[network.name]["linkMaticPriceFeed"]
+    const maticUsdPriceFeed = networkConfig[network.name]["maticUsdPriceFeed"]
     const vrfSubscriptionId = networkConfig[network.name]["vrfSubscriptionId"]
-
-    console.log(`Here is pricefeed:\n${priceFeedAddress}`)
-
-    if (!ethers.utils.isAddress(priceFeedAddress))
-      throw Error("Please provide a valid contract address for the PriceFeed contract")
 
     console.log("\n__Compiling Contracts__")
     await run("compile")
@@ -27,7 +23,12 @@ task("functions-deploy-insurance", "Deploys the Insurance contract")
 
     // Deploy Insurance
     const insuranceContractFactory = await ethers.getContractFactory("Insurance")
-    const insuranceContract = await insuranceContractFactory.deploy(oracleAddress, priceFeedAddress, vrfSubscriptionId)
+    const insuranceContract = await insuranceContractFactory.deploy(
+      oracleAddress,
+      linkMaticPriceFeed,
+      maticUsdPriceFeed,
+      vrfSubscriptionId
+    )
 
     console.log(
       `\nWaiting ${VERIFICATION_BLOCK_CONFIRMATIONS} blocks for transaction ${insuranceContract.deployTransaction.hash} to be confirmed...`
@@ -43,7 +44,7 @@ task("functions-deploy-insurance", "Deploys the Insurance contract")
         await insuranceContract.deployTransaction.wait(Math.max(6 - VERIFICATION_BLOCK_CONFIRMATIONS, 0))
         await run("verify:verify", {
           address: insuranceContract.address,
-          constructorArguments: [oracleAddress, priceFeedAddress, vrfSubscriptionId],
+          constructorArguments: [oracleAddress, linkMaticPriceFeed, maticUsdPriceFeed, vrfSubscriptionId],
         })
         console.log("Insurance verified")
       } catch (error) {

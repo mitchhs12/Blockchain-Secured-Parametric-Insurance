@@ -6,7 +6,13 @@ import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 
-contract AutomatedFunctionsConsumer is FunctionsClient, ConfirmedOwner, AutomationCompatibleInterface {
+interface IInsurance {
+  function getRequestStatus(uint256 _requestId) external view returns (bool fulfilled, uint256[] memory randomWords);
+
+  function lastRequestId() external view returns (uint256);
+}
+
+contract CheckPayout is FunctionsClient, ConfirmedOwner, AutomationCompatibleInterface {
   using Functions for Functions.Request;
 
   bytes public requestCBOR;
@@ -20,18 +26,22 @@ contract AutomatedFunctionsConsumer is FunctionsClient, ConfirmedOwner, Automati
   uint256 public upkeepCounter;
   uint256 public responseCounter;
 
+  IInsurance insuranceContract;
+
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
   constructor(
     address oracle,
     uint64 _subscriptionId,
     uint32 _fulfillGasLimit,
-    uint256 _updateInterval
+    uint256 _updateInterval,
+    address _insuranceAddress
   ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
     updateInterval = _updateInterval;
     subscriptionId = _subscriptionId;
     fulfillGasLimit = _fulfillGasLimit;
     lastUpkeepTimeStamp = block.timestamp;
+    insuranceContract = IInsurance(_insuranceAddress);
   }
 
   function generateRequest(
@@ -87,5 +97,14 @@ contract AutomatedFunctionsConsumer is FunctionsClient, ConfirmedOwner, Automati
 
   function updateOracleAddress(address oracle) public onlyOwner {
     setOracle(oracle);
+  }
+
+  function getLastRequestId() external view returns (uint256) {
+    return insuranceContract.lastRequestId();
+  }
+
+  function getRandomWords(uint256 _requestId) external view returns (uint256[] memory) {
+    (bool fulfilled, uint256[] memory randomWords) = insuranceContract.getRequestStatus(_requestId);
+    return randomWords;
   }
 }

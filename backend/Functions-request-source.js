@@ -1,5 +1,3 @@
-// This example shows how to make a decentralized price feed using multiple APIs
-
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
 const latNe = args[0]
 const longNe = args[1]
@@ -16,11 +14,11 @@ const endDayString = args[11] // unix
 const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
 //const constructionTimeString = "1685323810"
 
-// Changes to the arguments
+// Additional vars that can be calculated from the arguments above
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
 const longCenter = (parseFloat(longNe) + parseFloat(longSe) + parseFloat(longSw) + parseFloat(longNw)) / 4
 
-// Functions
+// ----- FUNCTIONS -----
 function estimateArea(latitudes, longitudes) {
   const R = 6371 // Earth's radius in km
   const toRadians = (degree) => degree * (Math.PI / 180)
@@ -241,7 +239,7 @@ function incrementDate(date) {
   return `${newYear}-${newMonth.toString().padStart(2, "0")}-${newDay.toString().padStart(2, "0")}`
 }
 
-// Main
+// ----- MAIN -----
 const area = estimateArea([latNe, latSw], [longNe, longSw])
 console.log("Area: ", area)
 const currentDay = timestampToDate(currentDayString)
@@ -330,10 +328,6 @@ const differenceEnd = Math.floor(Math.abs(endDayNumber - constructionTime) / sec
 console.log("Difference between start day and construction time: ", differenceStart)
 console.log("Difference between end day and construction time: ", differenceEnd)
 
-const result = {
-  cost: sum,
-  startDay: differenceStart,
-  endDay: differenceEnd,
-}
+const result = sum.toFixed(2)
 
-return Functions.encodeString(JSON.stringify(result))
+return Functions.encodeUint256(Math.round(result * 100))

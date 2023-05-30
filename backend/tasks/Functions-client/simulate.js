@@ -66,7 +66,7 @@ task("functions-simulate", "Simulates an end-to-end fulfillment locally for the 
     await new Promise(async (resolve) => {
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address)
-      const requestTx = await clientContract.estimateInsurance(
+      const requestTx = await clientContract.executeRequest(
         request.source,
         request.secrets ?? [],
         request.args ?? [],

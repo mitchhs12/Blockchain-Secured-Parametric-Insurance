@@ -5,7 +5,7 @@ const { setAutoRequest } = require("./setAutoRequest")
 
 task("functions-deploy-payout", "Deploys the CheckPayout contract")
   .addParam("subid", "Billing subscription ID used to pay for Functions requests")
-  .addOptionalParam("interval", "Update interval in seconds for Automation to call performUpkeep", 300, types.int)
+  .addOptionalParam("interval", "Update interval in seconds for Automation to call performUpkeep", 300, types.int) // set to 86400 later
   .addOptionalParam("verify", "Set to true to verify client contract", false, types.boolean)
   .addOptionalParam(
     "gaslimit",

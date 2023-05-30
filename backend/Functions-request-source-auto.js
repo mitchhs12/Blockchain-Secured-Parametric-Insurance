@@ -1,5 +1,3 @@
-// This example shows how to make a decentralized price feed using multiple APIs
-
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
 const latNe = args[0]
 const longNe = args[1]
@@ -10,17 +8,17 @@ const longSw = args[5]
 const latNw = args[6]
 const longNw = args[7]
 const configParam = args[8]
-const currentDayString = args[9] // unix
+const policyCreationDayString = args[9] // unix
 const startDayString = args[10] // unix
 const endDayString = args[11] // unix
-const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
-//const constructionTimeString = "1685323810"
+//const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
+const constructionTimeString = "1685323810"
 
-// Changes to the arguments
+// Additional vars that can be calculated from the arguments above
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
 const longCenter = (parseFloat(longNe) + parseFloat(longSe) + parseFloat(longSw) + parseFloat(longNw)) / 4
 
-// Functions
+// ----- FUNCTIONS -----
 function estimateArea(latitudes, longitudes) {
   const R = 6371 // Earth's radius in km
   const toRadians = (degree) => degree * (Math.PI / 180)
@@ -64,12 +62,12 @@ function timestampToDate(ts) {
   return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
 }
 
-async function getAverageRainfall(currentDay, latCenter, longCenter) {
+async function getAverageRainfall(policyCreationDay, latCenter, longCenter) {
   // Calculate one year ago date
-  let [currentYear, month, day] = currentDay.split("-")
-  let oneYearAgoDate = `${currentYear - 1}-${month}-${day}`
+  let [policyCreationYear, month, day] = policyCreationDay.split("-")
+  let oneYearAgoDate = `${policyCreationYear - 1}-${month}-${day}`
 
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${oneYearAgoDate}&end_date=${currentDay}&hourly=rain`
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${oneYearAgoDate}&end_date=${policyCreationDay}&hourly=rain`
   const response = await Functions.makeHttpRequest({ url: url })
 
   if (response.error) {
@@ -241,99 +239,54 @@ function incrementDate(date) {
   return `${newYear}-${newMonth.toString().padStart(2, "0")}-${newDay.toString().padStart(2, "0")}`
 }
 
-// Main
+function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
+  const actualRainfall = inputValue + 1
+  console.log("actualRainfall: ", actualRainfall)
+  let additionalCheck = 1
+
+  const payouts = {}
+  for (let season in averages) {
+    const mlExcess = (inputValue - cutoff[season]) / 2 // adjusts cutoff
+    if (inputValue < mlExcess) {
+      additionalCheck = inputValue / Math.pow(mlExcess, 2)
+    }
+
+    console.log(`Season: ${season}, Mean: ${averages[season]}, SD: ${sds[season]}`)
+    const pActualRainfall = normDist(actualRainfall, averages[season], sds[season], true)
+    console.log(`Probability of Actual Rainfall: ${pActualRainfall}`)
+    const pMyRainfall = normDist(inputValue, averages[season], sds[season], true)
+    console.log(`Probability of My Rainfall: ${pMyRainfall}`)
+    const pDifference = (1 - (pActualRainfall - pMyRainfall)) * sum
+    let firstTest, secondTest
+    // checks if rainFall is <= actualRainfall
+    if (actualRainfall <= inputValue) {
+      firstTest = 0
+    } else {
+      firstTest = 1
+    }
+    // checks if inputValue is < cutoff/2
+    if (inputValue < cutoff / 2) {
+      secondTest = inputValue / Math.pow(cutoff / 2, 2)
+    } else {
+      secondTest = 1
+    }
+    const payout = pDifference - mlExcess * (1 / area) * (firstTest * secondTest)
+    payouts[season] = payout
+  }
+  return payouts
+}
+
+// ----- MAIN -----
 const area = estimateArea([latNe, latSw], [longNe, longSw])
 console.log("Area: ", area)
-const currentDay = timestampToDate(currentDayString)
-const startDay = timestampToDate(startDayString)
-const endDay = timestampToDate(endDayString)
-console.log(currentDay, startDay, endDay)
-const { cutoffs } = await getAverageRainfall(currentDay, latCenter, longCenter)
-for (let season in cutoffs) {
-  console.log(`Season: ${season}, Cutoff: ${cutoffs[season]}`)
-}
+const policyCreationDay = timestampToDate(policyCreationDayString)
+const { cutoffs, averages, sds } = await getAverageRainfall(policyCreationDay, latCenter, longCenter)
 
-var currentDate = startDay
-var season
-var dayNumber = 0
-let sinVar
-let dailyPrice = []
-while (currentDate <= endDay) {
-  console.log(currentDate)
+const payouts = calculatePayout(cutoffs, averages, sds, area, Number(configParam), sum)
 
-  if (latCenter > 0) {
-    // Northern Hemisphere
-    if (
-      (getMonth(currentDate) === 11 && getDate(currentDate) >= 21) ||
-      getMonth(currentDate) < 2 ||
-      (getMonth(currentDate) === 2 && getDate(currentDate) < 20)
-    )
-      season = "Winter"
-    else if (
-      (getMonth(currentDate) === 2 && getDate(currentDate) >= 20) ||
-      getMonth(currentDate) < 5 ||
-      (getMonth(currentDate) === 5 && getDate(currentDate) < 20)
-    )
-      season = "Spring"
-    else if (
-      (getMonth(currentDate) === 5 && getDate(currentDate) >= 20) ||
-      getMonth(currentDate) < 8 ||
-      (getMonth(currentDate) === 8 && getDate(currentDate) < 22)
-    )
-      season = "Summer"
-    else season = "Fall"
-    sinVar = sinCurveNothern(dayNumber)
-  } else {
-    // Southern Hemisphere
-    if (
-      (getMonth(currentDate) === 11 && getDate(currentDate) >= 21) ||
-      getMonth(currentDate) < 2 ||
-      (getMonth(currentDate) === 2 && getDate(currentDate) < 20)
-    )
-      season = "Summer"
-    else if (
-      (getMonth(currentDate) === 2 && getDate(currentDate) >= 20) ||
-      getMonth(currentDate) < 5 ||
-      (getMonth(currentDate) === 5 && getDate(currentDate) < 20)
-    )
-      season = "Fall"
-    else if (
-      (getMonth(currentDate) === 5 && getDate(currentDate) >= 20) ||
-      getMonth(currentDate) < 8 ||
-      (getMonth(currentDate) === 8 && getDate(currentDate) < 22)
-    )
-      season = "Winter"
-    else season = "Spring"
-    sinVar = sinCurveSouthern(dayNumber)
-  }
-  dailyPrice.push({
-    date: currentDate,
-    price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, Number(configParam)),
-  })
-  console.log(dayNumber, season, cutoffs[season])
-  currentDate = incrementDate(currentDate)
-  dayNumber++
-}
+// need to determine if / how much the user is owed:
 
-// Sum
-const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0)
-console.log("Sum of daily prices: ", sum)
+// 1. get the current season
+// 2. get the historic rainfall for the current season
 
-const startDayNumber = parseInt(startDayString)
-const endDayNumber = parseInt(endDayString)
-
-const secondsPerDay = 24 * 60 * 60 // Number of milliseconds in a day
-
-const differenceStart = Math.floor(Math.abs(startDayNumber - constructionTime) / secondsPerDay)
-const differenceEnd = Math.floor(Math.abs(endDayNumber - constructionTime) / secondsPerDay)
-
-console.log("Difference between start day and construction time: ", differenceStart)
-console.log("Difference between end day and construction time: ", differenceEnd)
-
-const result = {
-  cost: sum,
-  startDay: differenceStart,
-  endDay: differenceEnd,
-}
-
-return Functions.encodeString(JSON.stringify(result))
+return Functions.encodeUint256(payout)

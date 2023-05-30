@@ -2,11 +2,13 @@
 pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
-import "./PriceConsumerV3.sol";
-import "./VRFv2Consumer.sol";
+import "./LinkMaticPriceFeed.sol";
+import "./MaticUsdPriceFeed.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
-import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
 contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   event RequestSent(uint256 requestId, uint32 numWords);
@@ -21,7 +23,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   struct InsuranceQuoteData {
     address user;
     uint256 policyIndex;
-    bytes response;
+    uint256 cost;
   }
 
   mapping(uint256 => RequestStatus) public s_requests;
@@ -37,7 +39,8 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   uint32 numWords = 3;
 
   // Instantiate the price feed
-  PriceConsumerV3 public priceFeed;
+  LinkMaticPriceFeed public linkMaticPriceFeed;
+  MaticUsdPriceFeed public maticUsdPriceFeed;
 
   using Functions for Functions.Request;
 
@@ -52,10 +55,12 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   constructor(
     address oracle,
-    address linkMaticPrice,
+    address linkMaticAddress,
+    address maticUsdAddress,
     uint64 subscriptionId
   ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) VRFConsumerBaseV2(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed) {
-    priceFeed = PriceConsumerV3(linkMaticPrice);
+    linkMaticPriceFeed = LinkMaticPriceFeed(linkMaticAddress);
+    maticUsdPriceFeed = MaticUsdPriceFeed(maticUsdAddress);
     COORDINATOR = VRFCoordinatorV2Interface(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed);
     s_subscriptionId = subscriptionId;
     constructionTime = block.timestamp;
@@ -162,7 +167,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     req.addArgs(argsWithConstructionTime);
 
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
-    responseData[assignedReqID] = InsuranceQuoteData({user: msg.sender, policyIndex: newPolicyIndex, response: ""});
+    responseData[assignedReqID] = InsuranceQuoteData({user: msg.sender, policyIndex: newPolicyIndex, cost: 0});
     latestRequestId = assignedReqID;
     functionsRequesterAddresses[assignedReqID] = msg.sender;
     emit OCRRequest(assignedReqID);
@@ -171,7 +176,8 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
     InsuranceQuoteData storage quote = responseData[requestId];
-    quote.response = response;
+    uint256 numResponse = bytesToUint256(response);
+    quote.cost = numResponse;
     latestResponse = response;
     latestError = err;
     emit OCRResponse(requestId, response, err);
@@ -233,8 +239,12 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   // END VRF METHODS
 
   // Datafeed Method
-  function getLatestPrice() public view returns (int) {
-    return priceFeed.getLatestPrice();
+  function getPriceLinkMatic() public view returns (int) {
+    return linkMaticPriceFeed.getLatestPrice();
+  }
+
+  function getPriceMaticUsd() public view returns (int) {
+    return maticUsdPriceFeed.getLatestPrice();
   }
 
   function helloWorld() public view returns (string memory) {
@@ -246,10 +256,19 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     return currentTime;
   }
 
-  function startPolicy() public returns (uint256) {
+  function startPolicy(bytes32 requestId) public payable returns (uint256) {
+    uint256 cost = responseData[requestId].cost;
+    uint256 priceOfMatic = uint256(getPriceMaticUsd());
+    // Multiply by 10^8 to preserve decimal points as we're working with int
+    uint256 amountInMatic = (cost * 10 ** 8) / priceOfMatic;
     require(insurancePoliciesMapping[msg.sender].length > 0, "No insurance data found");
+    require(msg.value >= amountInMatic, "Not enough Matic sent");
     InsuranceData storage insuranceData = insurancePoliciesMapping[msg.sender][0];
-    insuranceData.startTime = Strings.toString(currentTime);
-    return currentTime;
+  }
+
+  function bytesToUint256(bytes memory input) public pure returns (uint256 result) {
+    assembly {
+      result := mload(add(input, 0x20))
+    }
   }
 }

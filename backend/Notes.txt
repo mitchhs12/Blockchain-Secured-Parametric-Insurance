@@ -2,6 +2,9 @@ Polygon Mumbai Details:
 My Link/Matic PriceFeed Contract Address on Polygon-Mumbai:
 0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363
 
+My Matic/Usd PriceFeed Contract Address on Polygon-Mumbai:
+0xd9Ae0d4e027a5EFa012c51bDB5dcBA097E5E65fd
+
 My Randomness Subscription ID:
 4862
 
@@ -9,7 +12,7 @@ My Functions Subscription ID:
 1316
 
 My Most Recent Insurance Contract:
-0x2b10E811785397FA74Ad1DF62Cf830ACd5be8402
+0xE7895b31F58d2C596eba1fD4f530303A80993543
 
 Command to add a functions consumer:
 npx hardhat functions-sub-add --subid 1316 --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network polygonMumbai
@@ -19,3 +22,6 @@ npx hardhat functions-sub-remove --subid 1316 --contract REPLACE_CONSUMER_CONTRA
 
 Command to request insurance:
 npx hardhat functions-request-insurance --network polygonMumbai --subid 1316 --gaslimit 300000 --contract CONTRACT_ADDRESS
+
+
+// FIX CURRENT DAY VULNERABILITY IN OFFCHAIN INSURANCE CODE

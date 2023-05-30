@@ -50,7 +50,7 @@ const requestConfig = {
     "1686805200",
   ],
   // expected type of the returned value
-  expectedReturnType: ReturnType.string,
+  expectedReturnType: ReturnType.uint256,
 }
 
 module.exports = requestConfig
