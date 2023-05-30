@@ -2,9 +2,6 @@ Polygon Mumbai Details:
 My Link/Matic PriceFeed Contract Address on Polygon-Mumbai:
 0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363
 
-My Most Recent Randomness Contract:
-0x908DBA18d644714938Df3E1d87875e0aB79ca7aF
-
 My Randomness Subscription ID:
 4862
 
@@ -12,7 +9,7 @@ My Functions Subscription ID:
 1316
 
 My Most Recent Insurance Contract:
-0xEdb90b00fC9C1AeaF6Fe04CBc71f6d957AF6B57e
+0x2b10E811785397FA74Ad1DF62Cf830ACd5be8402
 
 Command to add a functions consumer:
 npx hardhat functions-sub-add --subid 1316 --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network polygonMumbai

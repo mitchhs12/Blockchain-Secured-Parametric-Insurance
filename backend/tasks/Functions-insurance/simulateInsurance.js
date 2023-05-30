@@ -33,8 +33,8 @@ task("functions-simulate-insurance", "Simulates an end-to-end fulfillment locall
     // Deploy the client contract
     const clientFactory = await ethers.getContractFactory("Insurance")
     const priceFeedAddress = "0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363"
-    const randomFeedAddress = "0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363"
-    const client = await clientFactory.deploy(oracle.address, priceFeedAddress, randomFeedAddress)
+    const randomnessSubscriptionId = 4862
+    const client = await clientFactory.deploy(oracle.address, priceFeedAddress, randomnessSubscriptionId)
     await client.deployTransaction.wait(1)
 
     const accounts = await ethers.getSigners()
