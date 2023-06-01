@@ -5,6 +5,7 @@ const {
   getRequestConfig,
 } = require("../../FunctionsSandboxLibrary")
 const { networks, SHARED_DON_PUBLIC_KEY } = require("../../networks")
+networkConfig = require("../../network-config")
 
 task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract")
   .addOptionalParam(
@@ -30,8 +31,9 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
     // Deploy a mock oracle & registry contract to simulate a fulfillment
     const { oracle, registry, linkToken } = await deployMockOracle()
     // Deploy the client contract
-    const clientFactory = await ethers.getContractFactory("FunctionsConsumer")
-    const client = await clientFactory.deploy(oracle.address)
+    const clientFactory = await ethers.getContractFactory("CheckPayout")
+    const insuranceContractAddress = "0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363" // random contract address
+    const client = await clientFactory.deploy(oracle.address, insuranceContractAddress)
     await client.deployTransaction.wait(1)
 
     const accounts = await ethers.getSigners()
@@ -54,7 +56,7 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
     await registry.addConsumer(subscriptionId, client.address)
 
     // Build the parameters to make a request from the client contract
-    const unvalidatedRequestConfig = require("../../Functions-request-config-auto.js")
+    const unvalidatedRequestConfig = require("../../Functions-request-config.js")
     const requestConfig = getRequestConfig(unvalidatedRequestConfig)
     // Fetch the mock DON public key
     const DONPublicKey = await oracle.getDONPublicKey()
@@ -66,7 +68,7 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
     await new Promise(async (resolve) => {
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address)
-      const requestTx = await clientContract.executeRequest(
+      const requestTx = await clientContract.checkPolicy(
         request.source,
         request.secrets ?? [],
         request.args ?? [],

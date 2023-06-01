@@ -20,16 +20,28 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     uint256[] randomWords;
   }
 
+  enum PolicyStatus {
+    Pending,
+    Started,
+    Ended
+  }
+
   struct InsuranceQuoteData {
     address user;
     uint256 policyIndex;
     uint256 cost;
   }
 
-  mapping(uint256 => RequestStatus) public s_requests;
-  VRFCoordinatorV2Interface COORDINATOR;
+  modifier onlyCheckPayout() {
+    require(msg.sender == checkPayoutContract, "Caller is not the CheckPayout contract");
+    _;
+  }
+
+  address public checkPayoutContract;
+  uint256 public constructionTime;
 
   //vrf variables
+  VRFCoordinatorV2Interface COORDINATOR;
   uint64 s_subscriptionId;
   uint256[] public requestIds;
   uint256 public lastRequestId;
@@ -42,13 +54,11 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   LinkMaticPriceFeed public linkMaticPriceFeed;
   MaticUsdPriceFeed public maticUsdPriceFeed;
 
+  // Functions variables
   using Functions for Functions.Request;
-
   bytes32 public latestRequestId;
   bytes public latestResponse;
   bytes public latestError;
-  int256 public globalDayNumber;
-  uint256 public constructionTime;
 
   event OCRRequest(bytes32 indexed requestId);
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
@@ -64,7 +74,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     COORDINATOR = VRFCoordinatorV2Interface(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed);
     s_subscriptionId = subscriptionId;
     constructionTime = block.timestamp;
-    globalDayNumber = 0;
+    checkPayoutContract = msg.sender;
   }
 
   uint256 public currentTime = block.timestamp;
@@ -79,15 +89,17 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     string latNw;
     string longNw;
     string configParam;
-    string currentTime;
     string startTime;
     string endTime;
+    string policyCreationTime;
   }
 
+  mapping(address => mapping(uint256 => PolicyStatus)) public policyStatus;
   mapping(bytes32 => InsuranceQuoteData) public responseData;
   mapping(bytes32 => address) public functionsRequesterAddresses;
   mapping(address => InsuranceData[]) public insurancePoliciesMapping;
   mapping(uint256 => address) public randomnessRequesterAddress;
+  mapping(uint256 => RequestStatus) public s_requests;
 
   function checkInsuranceData() public view returns (bool) {
     InsuranceData[] storage insuranceData = insurancePoliciesMapping[msg.sender];
@@ -124,47 +136,38 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   ) public payable returns (bytes32) {
     // Ensure at least 1 Matic is sent
     //require(msg.value >= uint256(getLatestPrice()), "Not enough Matic sent");
-    require(args.length == 12, "Invalid number of arguments"); // total of 13 arguments including the globalDayNumber
-
-    console.log("Got the latest price!");
+    require(args.length == 11, "Invalid number of arguments"); // total of 12 arguments
 
     InsuranceData[] storage policies = insurancePoliciesMapping[msg.sender];
-    InsuranceData storage newInsuranceData;
-    if (policies.length == 0) {
-      policies.push(
-        InsuranceData({
-          latNe: args[0],
-          longNe: args[1],
-          latSe: args[2],
-          longSe: args[3],
-          latSw: args[4],
-          longSw: args[5],
-          latNw: args[6],
-          longNw: args[7],
-          configParam: args[8],
-          currentTime: args[9],
-          startTime: args[10],
-          endTime: args[11]
-        })
-      );
-      newInsuranceData = policies[policies.length - 1];
-    }
+    string memory policyCreationTimeString = Strings.toString(block.timestamp);
+
+    policies.push(
+      InsuranceData({
+        latNe: args[0],
+        longNe: args[1],
+        latSe: args[2],
+        longSe: args[3],
+        latSw: args[4],
+        longSw: args[5],
+        latNw: args[6],
+        longNw: args[7],
+        configParam: args[8],
+        startTime: args[9],
+        endTime: args[10],
+        policyCreationTime: policyCreationTimeString
+      })
+    );
+
     uint256 newPolicyIndex = insurancePoliciesMapping[msg.sender].length - 1;
 
     Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
-    if (secrets.length > 0) {
-      req.addRemoteSecrets(secrets);
-    }
-    if (args.length > 0) req.addArgs(args);
-    string memory constructionTimeString = Strings.toString(constructionTime);
-    string[] memory argsWithConstructionTime = new string[](args.length + 1);
+    string[] memory adjustedArgs = new string[](args.length + 1);
     for (uint256 i = 0; i < args.length; i++) {
-      argsWithConstructionTime[i] = args[i];
+      adjustedArgs[i] = args[i];
     }
-    argsWithConstructionTime[args.length] = constructionTimeString;
-    console.log(argsWithConstructionTime[12]);
-    req.addArgs(argsWithConstructionTime);
+    adjustedArgs[args.length] = policyCreationTimeString;
+    req.addArgs(adjustedArgs);
 
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     responseData[assignedReqID] = InsuranceQuoteData({user: msg.sender, policyIndex: newPolicyIndex, cost: 0});
@@ -257,13 +260,44 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   }
 
   function startPolicy(bytes32 requestId) public payable returns (uint256) {
-    uint256 cost = responseData[requestId].cost;
+    InsuranceQuoteData storage quote = responseData[requestId];
+    uint256 cost = quote.cost;
+    uint256 policyIndex = quote.policyIndex;
+
+    // Get the insurance policy and check if it's pending
+    InsuranceData storage policy = insurancePoliciesMapping[msg.sender][policyIndex];
+    require(policyStatus[msg.sender][policyIndex] == PolicyStatus.Pending, "Policy is not pending");
+
+    // Check the Matic price and calculate the cost of the insurance in Matic
     uint256 priceOfMatic = uint256(getPriceMaticUsd());
     // Multiply by 10^8 to preserve decimal points as we're working with int
     uint256 amountInMatic = (cost * 10 ** 8) / priceOfMatic;
-    require(insurancePoliciesMapping[msg.sender].length > 0, "No insurance data found");
     require(msg.value >= amountInMatic, "Not enough Matic sent");
-    InsuranceData storage insuranceData = insurancePoliciesMapping[msg.sender][0];
+
+    policyStatus[msg.sender][policyIndex] = PolicyStatus.Started;
+  }
+
+  function setCheckPayoutContract(address _checkPayoutContract) external {
+    require(msg.sender == checkPayoutContract, "Caller is not the current CheckPayout contract");
+    checkPayoutContract = _checkPayoutContract;
+  }
+
+  function endPolicy(address policyOwner, uint256 policyIndex) external onlyCheckPayout {
+    policyStatus[policyOwner][policyIndex] = PolicyStatus.Ended;
+  }
+
+  function payUser(address payable userAddress, uint256 payoutAmount) external onlyCheckPayout {
+    uint256 priceOfMatic = uint256(getPriceMaticUsd());
+    uint256 payoutAmountInMatic = (payoutAmount * 10 ** 8) / priceOfMatic;
+    userAddress.transfer(payoutAmountInMatic);
+  }
+
+  function getPolicyData(address user, uint256 policyIndex) public view returns (InsuranceData memory) {
+    return insurancePoliciesMapping[user][policyIndex];
+  }
+
+  function getAllUserPolicies(address user) public view returns (InsuranceData[] memory) {
+    return insurancePoliciesMapping[user];
   }
 
   function bytesToUint256(bytes memory input) public pure returns (uint256 result) {

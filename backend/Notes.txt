@@ -25,3 +25,4 @@ npx hardhat functions-request-insurance --network polygonMumbai --subid 1316 --g
 
 
 // FIX CURRENT DAY VULNERABILITY IN OFFCHAIN INSURANCE CODE
+

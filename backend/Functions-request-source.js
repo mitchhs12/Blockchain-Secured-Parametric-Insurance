@@ -8,11 +8,10 @@ const longSw = args[5]
 const latNw = args[6]
 const longNw = args[7]
 const configParam = args[8]
-const currentDayString = args[9] // unix
-const startDayString = args[10] // unix
-const endDayString = args[11] // unix
-const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
-//const constructionTimeString = "1685323810"
+const startDayString = args[9] // unix
+const endDayString = args[10] // unix
+const currentDayString = args[11]
+console.log(currentDayString)
 
 // Additional vars that can be calculated from the arguments above
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
@@ -321,12 +320,6 @@ const startDayNumber = parseInt(startDayString)
 const endDayNumber = parseInt(endDayString)
 
 const secondsPerDay = 24 * 60 * 60 // Number of milliseconds in a day
-
-const differenceStart = Math.floor(Math.abs(startDayNumber - constructionTime) / secondsPerDay)
-const differenceEnd = Math.floor(Math.abs(endDayNumber - constructionTime) / secondsPerDay)
-
-console.log("Difference between start day and construction time: ", differenceStart)
-console.log("Difference between end day and construction time: ", differenceEnd)
 
 const result = sum.toFixed(2)
 
