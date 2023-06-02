@@ -5,8 +5,14 @@ import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "./Insurance.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract CheckPayout is FunctionsClient, ConfirmedOwner {
+  struct PolicyData {
+    Insurance.InsuranceData insuranceData;
+    Insurance.InsuranceQuoteData quoteData;
+  }
+
   using Functions for Functions.Request;
 
   bytes32 public latestRequestId;
@@ -26,38 +32,41 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
 
   function checkPolicy(
     string calldata source,
-    bytes calldata secrets,
     string[] calldata args,
     uint64 subscriptionId,
     uint32 gasLimit,
     uint256 policyIndex
   ) public returns (bytes32) {
-    Insurance.InsuranceData memory insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
+    // PolicyData memory policyData;
+    // policyData.insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
+    // bytes32 requestId = insuranceContract.getPolicyRequestId(msg.sender, policyIndex);
+    // policyData.quoteData = insuranceContract.getInsuranceQuoteData(requestId);
+    // uint256 cost = policyData.quoteData.cost;
 
-    // Use the retrieved values as arguments in the args parameter
-    string[] memory argsWithInsuranceData = new string[](args.length + 12);
-    for (uint256 i = 0; i < args.length; i++) {
-      argsWithInsuranceData[i] = args[i];
-    }
+    // // Use the retrieved values as arguments in the args parameter
+    // string[] memory argsWithInsuranceData = new string[](args.length + 12);
+    // for (uint256 i = 0; i < args.length; i++) {
+    //   argsWithInsuranceData[i] = args[i];
+    // }
 
-    argsWithInsuranceData[args.length] = insuranceData.latNe;
-    argsWithInsuranceData[args.length + 1] = insuranceData.longNe;
-    argsWithInsuranceData[args.length + 2] = insuranceData.latSe;
-    argsWithInsuranceData[args.length + 3] = insuranceData.longSe;
-    argsWithInsuranceData[args.length + 4] = insuranceData.latSw;
-    argsWithInsuranceData[args.length + 5] = insuranceData.longSw;
-    argsWithInsuranceData[args.length + 6] = insuranceData.latNw;
-    argsWithInsuranceData[args.length + 7] = insuranceData.longNw;
-    argsWithInsuranceData[args.length + 8] = insuranceData.configParam;
-    argsWithInsuranceData[args.length + 9] = insuranceData.startTime;
-    argsWithInsuranceData[args.length + 10] = insuranceData.endTime;
+    // argsWithInsuranceData[args.length] = policyData.insuranceData.latNe;
+    // argsWithInsuranceData[args.length + 1] = policyData.insuranceData.longNe;
+    // argsWithInsuranceData[args.length + 2] = policyData.insuranceData.latSe;
+    // argsWithInsuranceData[args.length + 3] = policyData.insuranceData.longSe;
+    // argsWithInsuranceData[args.length + 4] = policyData.insuranceData.latSw;
+    // argsWithInsuranceData[args.length + 5] = policyData.insuranceData.longSw;
+    // argsWithInsuranceData[args.length + 6] = policyData.insuranceData.latNw;
+    // argsWithInsuranceData[args.length + 7] = policyData.insuranceData.longNw;
+    // argsWithInsuranceData[args.length + 8] = policyData.insuranceData.configParam;
+    // argsWithInsuranceData[args.length + 9] = policyData.insuranceData.startTime;
+    // argsWithInsuranceData[args.length + 10] = policyData.insuranceData.endTime;
+    // argsWithInsuranceData[args.length + 11] = Strings.toString(block.timestamp);
+    // argsWithInsuranceData[args.length + 12] = policyData.insuranceData.policyCreationTime;
+    // argsWithInsuranceData[args.length + 13] = Strings.toString(cost);
 
     Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
-    if (secrets.length > 0) {
-      req.addRemoteSecrets(secrets);
-    }
-    if (args.length > 0) req.addArgs(args);
+    if (args.length > 0) req.addArgs(args); //should be argsWithInsuranceData for final deployment
 
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;

@@ -1,4 +1,5 @@
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
+console.log("Generate Insurance Policy")
 const latNe = args[0]
 const longNe = args[1]
 const latSe = args[2]
@@ -7,11 +8,10 @@ const latSw = args[4]
 const longSw = args[5]
 const latNw = args[6]
 const longNw = args[7]
-const configParam = args[8]
+const configParam = args[8] // amount of rainfall to insure for
 const startDayString = args[9] // unix
 const endDayString = args[10] // unix
-const currentDayString = args[11]
-console.log(currentDayString)
+const currentDayString = args[11] // unix
 
 // Additional vars that can be calculated from the arguments above
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4

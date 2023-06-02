@@ -77,7 +77,6 @@ task("functions-simulate-insurance", "Simulates an end-to-end fulfillment locall
       const clientContract = await clientFactory.attach(client.address)
       const requestTx = await clientContract.estimateInsurance(
         request.source,
-        request.secrets ?? [],
         request.args ?? [],
         subscriptionId,
         gasLimit

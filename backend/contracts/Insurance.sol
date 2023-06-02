@@ -13,6 +13,10 @@ import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   event RequestSent(uint256 requestId, uint32 numWords);
   event RequestFulfilled(uint256 requestId, uint256[] randomWords);
+  event UserPaid(address userAddress, uint256 payoutAmountInMatic);
+  event PolicyCreated(address policyOwner, uint256 policyIndex, uint256 cost);
+  event PolicyStarted(address policyOwner, uint256 policyIndex);
+  event PolicyEnded(address policyOwner, uint256 policyIndex);
 
   struct RequestStatus {
     bool fulfilled;
@@ -94,14 +98,14 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     string policyCreationTime;
   }
 
+  mapping(address => mapping(uint256 => bytes32)) public policyRequestIdMapping;
   mapping(address => mapping(uint256 => PolicyStatus)) public policyStatus;
-  mapping(bytes32 => InsuranceQuoteData) public responseData;
-  mapping(bytes32 => address) public functionsRequesterAddresses;
+  mapping(bytes32 => InsuranceQuoteData) public insuranceQuoteData;
   mapping(address => InsuranceData[]) public insurancePoliciesMapping;
   mapping(uint256 => address) public randomnessRequesterAddress;
   mapping(uint256 => RequestStatus) public s_requests;
 
-  function checkInsuranceData() public view returns (bool) {
+  function boolInsuranceData() public view returns (bool) {
     InsuranceData[] storage insuranceData = insurancePoliciesMapping[msg.sender];
     require(insuranceData.length > 0, "No insurance data found");
 
@@ -129,7 +133,6 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   // START FUNCTIONS METHODS
   function estimateInsurance(
     string calldata source,
-    bytes calldata secrets,
     string[] calldata args,
     uint64 subscriptionId,
     uint32 gasLimit
@@ -140,6 +143,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
     InsuranceData[] storage policies = insurancePoliciesMapping[msg.sender];
     string memory policyCreationTimeString = Strings.toString(block.timestamp);
+    console.log(policyCreationTimeString);
 
     policies.push(
       InsuranceData({
@@ -170,20 +174,21 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     req.addArgs(adjustedArgs);
 
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
-    responseData[assignedReqID] = InsuranceQuoteData({user: msg.sender, policyIndex: newPolicyIndex, cost: 0});
+    insuranceQuoteData[assignedReqID] = InsuranceQuoteData({user: msg.sender, policyIndex: newPolicyIndex, cost: 0});
     latestRequestId = assignedReqID;
-    functionsRequesterAddresses[assignedReqID] = msg.sender;
+    policyRequestIdMapping[msg.sender][newPolicyIndex] = assignedReqID;
     emit OCRRequest(assignedReqID);
     return assignedReqID;
   }
 
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
-    InsuranceQuoteData storage quote = responseData[requestId];
+    InsuranceQuoteData storage quote = insuranceQuoteData[requestId];
     uint256 numResponse = bytesToUint256(response);
     quote.cost = numResponse;
     latestResponse = response;
     latestError = err;
     emit OCRResponse(requestId, response, err);
+    emit PolicyCreated(quote.user, quote.policyIndex, quote.cost);
   }
 
   function updateOracleAddress(address oracle) public onlyOwner {
@@ -260,7 +265,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   }
 
   function startPolicy(bytes32 requestId) public payable returns (uint256) {
-    InsuranceQuoteData storage quote = responseData[requestId];
+    InsuranceQuoteData storage quote = insuranceQuoteData[requestId];
     uint256 cost = quote.cost;
     uint256 policyIndex = quote.policyIndex;
 
@@ -275,6 +280,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     require(msg.value >= amountInMatic, "Not enough Matic sent");
 
     policyStatus[msg.sender][policyIndex] = PolicyStatus.Started;
+    emit PolicyStarted(msg.sender, policyIndex);
   }
 
   function setCheckPayoutContract(address _checkPayoutContract) external {
@@ -284,12 +290,14 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   function endPolicy(address policyOwner, uint256 policyIndex) external onlyCheckPayout {
     policyStatus[policyOwner][policyIndex] = PolicyStatus.Ended;
+    emit PolicyEnded(policyOwner, policyIndex);
   }
 
   function payUser(address payable userAddress, uint256 payoutAmount) external onlyCheckPayout {
     uint256 priceOfMatic = uint256(getPriceMaticUsd());
     uint256 payoutAmountInMatic = (payoutAmount * 10 ** 8) / priceOfMatic;
     userAddress.transfer(payoutAmountInMatic);
+    emit UserPaid(userAddress, payoutAmountInMatic);
   }
 
   function getPolicyData(address user, uint256 policyIndex) public view returns (InsuranceData memory) {
@@ -298,6 +306,15 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   function getAllUserPolicies(address user) public view returns (InsuranceData[] memory) {
     return insurancePoliciesMapping[user];
+  }
+
+  function getInsuranceQuoteData(bytes32 requestId) public view returns (InsuranceQuoteData memory) {
+    require(insuranceQuoteData[requestId].user != address(0), "No data found for the given requestId");
+    return insuranceQuoteData[requestId];
+  }
+
+  function getPolicyRequestId(address _address, uint256 _policyIndex) public view returns (bytes32) {
+    return policyRequestIdMapping[_address][_policyIndex];
   }
 
   function bytesToUint256(bytes memory input) public pure returns (uint256 result) {

@@ -104,7 +104,6 @@ task("functions-request-insurance", "Initiates a request from a Functions client
 
     const transactionEstimateGas = await clientContract.estimateGas.estimateInsurance(
       requestConfig.source,
-      requestConfig.secrets && Object.keys(requestConfig.secrets).length > 0 ? simulatedSecretsURLBytes : [],
       requestConfig.args ?? [],
       subscriptionId,
       gasLimit,
@@ -241,7 +240,6 @@ task("functions-request-insurance", "Initiates a request from a Functions client
       // Initiate the on-chain request after all listeners are initialized
       const requestTx = await clientContract.estimateInsurance(
         request.source,
-        request.secrets ?? [],
         request.args ?? [],
         subscriptionId,
         gasLimit,

@@ -1,4 +1,5 @@
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
+console.log("Check Insurance Payout")
 const latNe = args[0]
 const longNe = args[1]
 const latSe = args[2]
@@ -7,13 +8,20 @@ const latSw = args[4]
 const longSw = args[5]
 const latNw = args[6]
 const longNw = args[7]
-const configParam = args[8]
-const startDayString = args[10] // unix
-const endDayString = args[11] // unix
-//const constructionTime = args[12] // MAKE SURE TO RECOMMENT THIS LINE WHEN DEPLOYING TO PRODUCTION
-const constructionTimeString = "1685323810"
+const configParam = args[8] // amount of rainfall
+const startDayString = args[9] // unix
+const endDayString = args[10] // unix
+const policyCreationDayString = args[11] // unix
+const currentDayString = args[12]
+const cost = args[13] // as a string in usd
 
 // Additional vars that can be calculated from the arguments above
+const costNumber = Number(cost) / 100
+const startDay = timestampToDate(startDayString)
+const endDay = timestampToDate(endDayString)
+const policyCreationDay = timestampToDate(policyCreationDayString)
+const currentDay = timestampToDate(currentDayString)
+console.log(policyCreationDay)
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
 const longCenter = (parseFloat(longNe) + parseFloat(longSe) + parseFloat(longSw) + parseFloat(longNw)) / 4
 
@@ -61,6 +69,91 @@ function timestampToDate(ts) {
   return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
 }
 
+function getSeason(date, latitude) {
+  let season
+
+  // Adjust seasons based on the hemisphere and solstice/equinox dates
+  if (latitude >= 0) {
+    // Northern Hemisphere
+    if (
+      (getMonth(date) === 11 && getDate(date) >= 21) ||
+      getMonth(date) < 2 ||
+      (getMonth(date) === 2 && getDate(date) < 20)
+    )
+      season = "Winter"
+    else if (
+      (getMonth(date) === 2 && getDate(date) >= 20) ||
+      getMonth(date) < 5 ||
+      (getMonth(date) === 5 && getDate(date) < 20)
+    )
+      season = "Spring"
+    else if (
+      (getMonth(date) === 5 && getDate(date) >= 20) ||
+      getMonth(date) < 8 ||
+      (getMonth(date) === 8 && getDate(date) < 22)
+    )
+      season = "Summer"
+    else season = "Fall"
+  } else {
+    // Southern Hemisphere
+    if (
+      (getMonth(date) === 11 && getDate(date) >= 21) ||
+      getMonth(date) < 2 ||
+      (getMonth(date) === 2 && getDate(date) < 20)
+    )
+      season = "Summer"
+    else if (
+      (getMonth(date) === 2 && getDate(date) >= 20) ||
+      getMonth(date) < 5 ||
+      (getMonth(date) === 5 && getDate(date) < 20)
+    )
+      season = "Fall"
+    else if (
+      (getMonth(date) === 5 && getDate(date) >= 20) ||
+      getMonth(date) < 8 ||
+      (getMonth(date) === 8 && getDate(date) < 22)
+    )
+      season = "Winter"
+    else season = "Spring"
+  }
+  return season
+}
+
+function normDist(x, mean, stdDev, cumulative) {
+  // Normal Distribution Factor
+  var factor = 1 / Math.sqrt(2 * Math.PI * Math.pow(stdDev, 2))
+
+  // Exponential part of formula
+  var expFactor = Math.exp(-Math.pow(x - mean, 2) / (2 * Math.pow(stdDev, 2)))
+
+  var pdf = factor * expFactor
+
+  if (cumulative) {
+    var z = (x - mean) / stdDev
+    var cdf = 0.5 * (1 + erf(z / Math.sqrt(2)))
+    return cdf
+  } else {
+    return pdf
+  }
+}
+
+function erf(x) {
+  var sign = x < 0 ? -1 : 1
+  x = Math.abs(x)
+
+  var a1 = 0.254829592
+  var a2 = -0.284496736
+  var a3 = 1.421413741
+  var a4 = -1.453152027
+  var a5 = 1.061405429
+  var p = 0.3275911
+
+  var t = 1.0 / (1.0 + p * x)
+  var y = ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t
+
+  return sign * (1 - y * Math.exp(-x * x))
+}
+
 async function getAverageRainfall(policyCreationDay, latCenter, longCenter) {
   // Calculate one year ago date
   let [policyCreationYear, month, day] = policyCreationDay.split("-")
@@ -89,50 +182,7 @@ async function getAverageRainfall(policyCreationDay, latCenter, longCenter) {
     let season
     let daysDate = date.substring(0, 10)
 
-    // Adjust seasons based on the hemisphere and solstice/equinox dates
-    if (latCenter >= 0) {
-      // Northern Hemisphere
-      if (
-        (getMonth(date) === 11 && getDate(date) >= 21) ||
-        getMonth(date) < 2 ||
-        (getMonth(date) === 2 && getDate(date) < 20)
-      )
-        season = "Winter"
-      else if (
-        (getMonth(date) === 2 && getDate(date) >= 20) ||
-        getMonth(date) < 5 ||
-        (getMonth(date) === 5 && getDate(date) < 20)
-      )
-        season = "Spring"
-      else if (
-        (getMonth(date) === 5 && getDate(date) >= 20) ||
-        getMonth(date) < 8 ||
-        (getMonth(date) === 8 && getDate(date) < 22)
-      )
-        season = "Summer"
-      else season = "Fall"
-    } else {
-      // Southern Hemisphere
-      if (
-        (getMonth(date) === 11 && getDate(date) >= 21) ||
-        getMonth(date) < 2 ||
-        (getMonth(date) === 2 && getDate(date) < 20)
-      )
-        season = "Summer"
-      else if (
-        (getMonth(date) === 2 && getDate(date) >= 20) ||
-        getMonth(date) < 5 ||
-        (getMonth(date) === 5 && getDate(date) < 20)
-      )
-        season = "Fall"
-      else if (
-        (getMonth(date) === 5 && getDate(date) >= 20) ||
-        getMonth(date) < 8 ||
-        (getMonth(date) === 8 && getDate(date) < 22)
-      )
-        season = "Winter"
-      else season = "Spring"
-    }
+    season = getSeason(date, latCenter)
 
     if (!seasonsData[season][daysDate]) {
       seasonsData[season][daysDate] = 0 // initialize if not already present
@@ -275,20 +325,63 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
   return payouts
 }
 
+async function exceedsRainfallLimit(latCenter, longCenter, seasonalLimits) {
+  // Ensure that we do not search beyond today's date
+  console.log(Number(currentDayString), Number(endDayString))
+  let endDate = Number(currentDayString) < Number(endDayString) ? currentDay : endDay
+  console.log(endDate)
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${startDay}&end_date=${endDate}&hourly=rain`
+  const response = await Functions.makeHttpRequest({ url: url })
+
+  if (response.error) {
+    throw Error("Request Failed!")
+  }
+  const data = response.data
+
+  let dailyRainfall = {}
+
+  for (let i = 0; i < data.hourly.time.length; i++) {
+    let date = data.hourly.time[i]
+    let rain = data.hourly.rain[i]
+
+    if (rain === null || rain === 0) {
+      continue
+    }
+
+    let daysDate = date.substring(0, 10)
+    if (!dailyRainfall[daysDate]) {
+      dailyRainfall[daysDate] = 0
+    }
+
+    dailyRainfall[daysDate] += rain
+  }
+
+  // Check if rainfall on any day exceeds the seasonal limit
+  for (let day in dailyRainfall) {
+    let season = getSeason(day, latCenter)
+    if (dailyRainfall[day] > seasonalLimits[season]) {
+      return season
+    }
+  }
+
+  return false
+}
+
 // ----- MAIN -----
 const area = estimateArea([latNe, latSw], [longNe, longSw])
 console.log("Area: ", area)
-const policyCreationDay = timestampToDate(policyCreationDayString)
 const { cutoffs, averages, sds } = await getAverageRainfall(policyCreationDay, latCenter, longCenter)
 
-const payouts = calculatePayout(cutoffs, averages, sds, area, Number(configParam), sum)
+const payouts = calculatePayout(cutoffs, averages, sds, area, Number(configParam), costNumber)
+console.log(payouts)
 
-// need to determine if / how much the user is owed:
+const seasonOrFalse = await exceedsRainfallLimit(latCenter, longCenter, cutoffs)
+console.log(seasonOrFalse)
 
-// 1. get the current season (for this we need the current time and center position)
-// 2. get the historical rainfall since the policy start day
-// 3. Loop through historical rainfall from start day to current day
-// 4. Check if the rainfall on a given day was > configParam
-// 5. If it was, calculate the payout. If not, return 0.
-
-return Functions.encodeUint256(payout)
+if (!seasonOrFalse) {
+  console.log("Payout: ", 0)
+  return Functions.encodeUint256(0)
+} else {
+  console.log("Payout: ", payouts[seasonOrFalse])
+  return Functions.encodeUint256(payouts[seasonOrFalse])
+}

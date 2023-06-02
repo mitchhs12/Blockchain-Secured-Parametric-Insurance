@@ -46,6 +46,7 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
     const createSubscriptionTx = await registry.createSubscription()
     const createSubscriptionReceipt = await createSubscriptionTx.wait(1)
     const subscriptionId = createSubscriptionReceipt.events[0].args["subscriptionId"].toNumber()
+    const policyIndex = 0
     const juelsAmount = ethers.utils.parseUnits("10")
     await linkToken.transferAndCall(
       registry.address,
@@ -56,7 +57,7 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
     await registry.addConsumer(subscriptionId, client.address)
 
     // Build the parameters to make a request from the client contract
-    const unvalidatedRequestConfig = require("../../Functions-request-config.js")
+    const unvalidatedRequestConfig = require("../../Functions-request-config-payout.js")
     const requestConfig = getRequestConfig(unvalidatedRequestConfig)
     // Fetch the mock DON public key
     const DONPublicKey = await oracle.getDONPublicKey()
@@ -70,10 +71,10 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
       const clientContract = await clientFactory.attach(client.address)
       const requestTx = await clientContract.checkPolicy(
         request.source,
-        request.secrets ?? [],
         request.args ?? [],
         subscriptionId,
-        gasLimit
+        gasLimit,
+        policyIndex
       )
       const requestTxReceipt = await requestTx.wait(1)
       const requestId = requestTxReceipt.events[2].args.id
