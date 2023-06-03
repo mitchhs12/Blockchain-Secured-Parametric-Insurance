@@ -13,19 +13,25 @@ const startDayString = args[9] // unix
 const endDayString = args[10] // unix
 const policyCreationDayString = args[11] // unix
 const currentDayString = args[12]
-const cost = args[13] // as a string in usd
+const randomSeedString = args[13] // as a string in usd
 
 // Additional vars that can be calculated from the arguments above
-const costNumber = Number(cost) / 100
 const startDay = timestampToDate(startDayString)
 const endDay = timestampToDate(endDayString)
 const policyCreationDay = timestampToDate(policyCreationDayString)
 const currentDay = timestampToDate(currentDayString)
-console.log(policyCreationDay)
-const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
-const longCenter = (parseFloat(longNe) + parseFloat(longSe) + parseFloat(longSw) + parseFloat(longNw)) / 4
+const latitudes = [parseFloat(latNe), parseFloat(latSe), parseFloat(latSw), parseFloat(latNw)]
+const longitudes = [parseFloat(longNe), parseFloat(longSe), parseFloat(longSw), parseFloat(longNw)]
+const minLat = Math.min(...latitudes)
+const maxLat = Math.max(...latitudes)
+const minLong = Math.min(...longitudes)
+const maxLong = Math.max(...longitudes)
+const latCenter = (latitudes[0] + latitudes[1] + latitudes[2] + latitudes[3]) / 4
+const longCenter = (longitudes[0] + longitudes[1] + longitudes[2] + longitudes[3]) / 4
+const latRange = Math.abs(maxLat - minLat)
+const longRange = Math.abs(maxLong - minLong)
+const slicedRandomness = [randomSeedString.slice(0, 25), randomSeedString.slice(26, 51), randomSeedString.slice(52, 77)]
 
-// ----- FUNCTIONS -----
 function estimateArea(latitudes, longitudes) {
   const R = 6371 // Earth's radius in km
   const toRadians = (degree) => degree * (Math.PI / 180)
@@ -198,10 +204,7 @@ async function getAverageRainfall(policyCreationDay, latCenter, longCenter) {
   for (let season in seasonsData) {
     let dailyRainfalls = Object.values(seasonsData[season]) // convert daily rainfall data to array
     let mean = dailyRainfalls.reduce((a, b) => a + b) / dailyRainfalls.length
-    let max = Math.max(...dailyRainfalls)
-    let min = Math.min(...dailyRainfalls)
     let sd = Math.sqrt(dailyRainfalls.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / dailyRainfalls.length)
-    console.log("season:", season, "mean:", mean, "sd:", sd, "max:", max, "min:", min)
 
     // outliers: remove values that are more than 3 standard deviations away from the mean
     let lowerCutoff = mean - 3 * sd
@@ -216,26 +219,20 @@ async function getAverageRainfall(policyCreationDay, latCenter, longCenter) {
   return { cutoffs, averages, sds }
 }
 
-function sinCurveNothern(x) {
+function sinCurve(x, hemisphere) {
   // returns a multiplier between 1 and 2 given a day of the year.
-  const pi = Math.PI
-  const term1 = (2 * pi * x) / 365.25
-  const term2 = 365.25 / 4 / 2
-  const term3 = (2 * pi) / 365.25
-  const result = 0.5 * Math.sin(term1 + term2 * term3) + 1.5
-  console.log(result)
-  return result
-}
-function sinCurveSouthern(x) {
-  // returns a multiplier between 1 and 2 given a day of the year.
+  let sinResult
   const pi = Math.PI
   const term1 = (2 * pi * x) / 365.25
   const term2 = 365.25 / 4 / 2
   const term3 = (2 * pi) / 365.25
   const term4 = 365.25 / 2
-  const result = 0.5 * Math.sin(term1 + (term2 + term4) * term3) + 1.5
-  console.log(result)
-  return result
+  if (hemisphere == "northern") {
+    sinResult = 0.5 * Math.sin(term1 + term2 * term3) + 1.5
+  } else {
+    sinResult = 0.5 * Math.sin(term1 + (term2 + term4) * term3) + 1.5
+  }
+  return sinResult
 }
 
 function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
@@ -244,10 +241,6 @@ function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
   const exponent = Math.exp(mlExcess * (constant ^ (sinVar / dayNumber)))
   const result = exponent * (area ^ 4) + sinVar
   return result
-}
-
-function getYear(date) {
-  return parseInt(date.split("-")[0], 10)
 }
 
 function getMonth(date) {
@@ -259,7 +252,7 @@ function getDate(date) {
 }
 
 function incrementDate(date) {
-  const year = getYear(date)
+  const year = parseInt(date.split("-")[0], 10)
   const month = getMonth(date)
   const day = getDate(date)
 
@@ -270,7 +263,6 @@ function incrementDate(date) {
   if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
     monthLengths[2] = 29
   }
-
   let newDay = day + 1
   let newMonth = month
   let newYear = year
@@ -279,18 +271,15 @@ function incrementDate(date) {
     newDay = 1
     newMonth++
   }
-
   if (newMonth > 12) {
     newMonth = 1
     newYear++
   }
-
   return `${newYear}-${newMonth.toString().padStart(2, "0")}-${newDay.toString().padStart(2, "0")}`
 }
 
 function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
   const actualRainfall = inputValue + 1
-  console.log("actualRainfall: ", actualRainfall)
   let additionalCheck = 1
 
   const payouts = {}
@@ -302,9 +291,7 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
 
     console.log(`Season: ${season}, Mean: ${averages[season]}, SD: ${sds[season]}`)
     const pActualRainfall = normDist(actualRainfall, averages[season], sds[season], true)
-    console.log(`Probability of Actual Rainfall: ${pActualRainfall}`)
     const pMyRainfall = normDist(inputValue, averages[season], sds[season], true)
-    console.log(`Probability of My Rainfall: ${pMyRainfall}`)
     const pDifference = (1 - (pActualRainfall - pMyRainfall)) * sum
     let firstTest, secondTest
     // checks if rainFall is <= actualRainfall
@@ -327,9 +314,7 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
 
 async function exceedsRainfallLimit(latCenter, longCenter, seasonalLimits) {
   // Ensure that we do not search beyond today's date
-  console.log(Number(currentDayString), Number(endDayString))
   let endDate = Number(currentDayString) < Number(endDayString) ? currentDay : endDay
-  console.log(endDate)
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${startDay}&end_date=${endDate}&hourly=rain`
   const response = await Functions.makeHttpRequest({ url: url })
 
@@ -367,21 +352,65 @@ async function exceedsRainfallLimit(latCenter, longCenter, seasonalLimits) {
   return false
 }
 
+function calculateCost(startDay, endDay, latCenter, cutoffs, area, configParam) {
+  var currentDate = startDay
+  var season
+  var dayNumber = 0
+  let sinVar
+  let dailyPrice = []
+  while (currentDate <= endDay) {
+    season = getSeason(currentDate, latCenter)
+    if (latCenter > 0) {
+      sinVar = sinCurve(dayNumber, "northern")
+    } else {
+      sinVar = sinCurve(dayNumber, "southern")
+    }
+    dailyPrice.push({
+      date: currentDate,
+      price: calculateDailyPrice(sinVar, dayNumber, cutoffs[season], area, Number(configParam)),
+    })
+    currentDate = incrementDate(currentDate)
+    dayNumber++
+  }
+  const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0)
+  return sum.toFixed(2)
+}
+
+function getRandomCoordinate(i, min, range) {
+  const randomBigInt = BigInt(slicedRandomness[i])
+  const rangeBigInt = BigInt(Math.round(range * 1e7)) // Convert range to an integer representation
+  const minBigInt = BigInt(Math.round(min * 1e7)) // Convert min to an integer representation
+  const randomOffset = Number((randomBigInt % rangeBigInt) + minBigInt)
+  return randomOffset / 1e7 // Convert it back to the float representation
+}
+
 // ----- MAIN -----
 const area = estimateArea([latNe, latSw], [longNe, longSw])
-console.log("Area: ", area)
 const { cutoffs, averages, sds } = await getAverageRainfall(policyCreationDay, latCenter, longCenter)
 
-const payouts = calculatePayout(cutoffs, averages, sds, area, Number(configParam), costNumber)
+const cost = calculateCost(startDay, endDay, latCenter, cutoffs, area, configParam)
+console.log("Cost: ", cost)
+
+const payouts = calculatePayout(cutoffs, averages, sds, area, Number(configParam), cost)
 console.log(payouts)
 
-const seasonOrFalse = await exceedsRainfallLimit(latCenter, longCenter, cutoffs)
-console.log(seasonOrFalse)
-
-if (!seasonOrFalse) {
-  console.log("Payout: ", 0)
-  return Functions.encodeUint256(0)
-} else {
+let successfulSeasonCount = 0
+let falseCount = 0
+for (let i = 0; i < 3; i++) {
+  const lat = getRandomCoordinate(i, minLat, latRange)
+  const long = getRandomCoordinate(i, minLong, longRange)
+  console.log("Lat: ", lat, "Long: ", long)
+  const seasonOrFalse = await exceedsRainfallLimit(lat.toString(), long.toString(), cutoffs)
+  console.log("Season or false: ", seasonOrFalse, i)
+  if (!seasonOrFalse) {
+    falseCount++
+  } else {
+    successfulSeasonCount++
+  }
+}
+if (successfulSeasonCount > 2) {
   console.log("Payout: ", payouts[seasonOrFalse])
   return Functions.encodeUint256(payouts[seasonOrFalse])
+} else if (falseCount >= 2) {
+  return Functions.encodeUint256(0)
 }

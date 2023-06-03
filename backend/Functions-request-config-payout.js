@@ -36,7 +36,7 @@ const requestConfig = {
   walletPrivateKey: process.env["PRIVATE_KEY"],
   // args can be accessed within the source code with `args[index]` (ie: args[0])
   args: [
-    "-31.938937397265736",
+    "-31.938937397265736", //0
     "115.87084258812696",
     "-31.956222418661227",
     "115.87084258812696",
@@ -48,8 +48,8 @@ const requestConfig = {
     "1685595600",
     "1686805200",
     "1685675621",
-    "1685683288",
-    "1661",
+    "1685683288", //12
+    "20773467577315316228717618355224136206294198045762223235985219514567276661670",
   ],
   // expected type of the returned value
   expectedReturnType: ReturnType.uint256,

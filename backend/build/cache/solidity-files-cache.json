@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/CheckPayout.sol": {
-      "lastModificationDate": 1685683379078,
-      "contentHash": "d15ae3f98258a9f4642690cadfe187aa",
+      "lastModificationDate": 1685764559746,
+      "contentHash": "fb994d36889068093672d2cbf0e7e994",
       "sourceName": "contracts/CheckPayout.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -83,8 +83,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/Insurance.sol": {
-      "lastModificationDate": 1685683790338,
-      "contentHash": "e4fbef72c30ad447f47aa072b1076a33",
+      "lastModificationDate": 1685769289937,
+      "contentHash": "2e24a3b06d766bcd1aef07f6d6d7a2ae",
       "sourceName": "contracts/Insurance.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -111,7 +111,6 @@
         }
       },
       "imports": [
-        "hardhat/console.sol",
         "./LinkMaticPriceFeed.sol",
         "./MaticUsdPriceFeed.sol",
         "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol",

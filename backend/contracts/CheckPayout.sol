@@ -42,9 +42,10 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     // bytes32 requestId = insuranceContract.getPolicyRequestId(msg.sender, policyIndex);
     // policyData.quoteData = insuranceContract.getInsuranceQuoteData(requestId);
     // uint256 cost = policyData.quoteData.cost;
+    // uint256 randomWord = insuranceContract.getLastRandomWord();
 
     // // Use the retrieved values as arguments in the args parameter
-    // string[] memory argsWithInsuranceData = new string[](args.length + 12);
+    // string[] memory argsWithInsuranceData = new string[](args.length + 14);
     // for (uint256 i = 0; i < args.length; i++) {
     //   argsWithInsuranceData[i] = args[i];
     // }
@@ -62,7 +63,7 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     // argsWithInsuranceData[args.length + 10] = policyData.insuranceData.endTime;
     // argsWithInsuranceData[args.length + 11] = Strings.toString(block.timestamp);
     // argsWithInsuranceData[args.length + 12] = policyData.insuranceData.policyCreationTime;
-    // argsWithInsuranceData[args.length + 13] = Strings.toString(cost);
+    // argsWithInsuranceData[args.length + 13] = Strings.toString(randomWord);
 
     Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);

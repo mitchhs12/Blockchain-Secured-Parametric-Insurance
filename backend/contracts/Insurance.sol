@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "hardhat/console.sol";
 import "./LinkMaticPriceFeed.sol";
 import "./MaticUsdPriceFeed.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
@@ -52,7 +51,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
   uint32 callbackGasLimit = 300000;
   uint16 requestConfirmations = 3;
-  uint32 numWords = 3;
+  uint32 numWords = 1;
 
   // Instantiate the price feed
   LinkMaticPriceFeed public linkMaticPriceFeed;
@@ -143,7 +142,6 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
     InsuranceData[] storage policies = insurancePoliciesMapping[msg.sender];
     string memory policyCreationTimeString = Strings.toString(block.timestamp);
-    console.log(policyCreationTimeString);
 
     policies.push(
       InsuranceData({
@@ -233,17 +231,6 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     emit RequestFulfilled(_requestId, _randomWords);
   }
 
-  function getLastRandomWords(uint256 _requestId) public view returns (uint256[] memory) {
-    require(s_requests[lastRequestId].exists, "No random words have been generated yet");
-
-    uint256[] memory lastRandomWords = new uint256[](3);
-    for (uint i = 0; i < 3; i++) {
-      lastRandomWords[i] = s_requests[lastRequestId].randomWords[i];
-    }
-
-    return lastRandomWords;
-  }
-
   // END VRF METHODS
 
   // Datafeed Method
@@ -256,7 +243,6 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   }
 
   function helloWorld() public view returns (string memory) {
-    console.log("Test");
     return "Hello World!";
   }
 
@@ -311,6 +297,12 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   function getInsuranceQuoteData(bytes32 requestId) public view returns (InsuranceQuoteData memory) {
     require(insuranceQuoteData[requestId].user != address(0), "No data found for the given requestId");
     return insuranceQuoteData[requestId];
+  }
+
+  function getLastRandomWord() public view returns (uint256) {
+    require(s_requests[lastRequestId].exists, "No random words have been generated yet");
+    uint256 lastRandomWord = s_requests[lastRequestId].randomWords[0]; // Retrieve only the first word
+    return lastRandomWord;
   }
 
   function getPolicyRequestId(address _address, uint256 _policyIndex) public view returns (bytes32) {
