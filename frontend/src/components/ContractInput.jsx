@@ -6,21 +6,14 @@ import { estimateRainfall } from "../insurance_estimators/rainfall.jsx";
 import { estimateSnowfall } from "../insurance_estimators/snowfall.jsx";
 import { estimateEarthquake } from "../insurance_estimators/earthquake.jsx";
 import { format, set, differenceInDays } from "date-fns";
-import { ethers } from "ethers";
+import { getInsuranceQuote } from "../contract_functions/getInsuranceQuote.js";
+import { checkPolicy } from "../contract_functions/checkPolicy.js";
+import { helloWorld } from "../contract_functions/helloWorld.js";
+import { startPolicy } from "../contract_functions/startPolicy.js";
+import { usePrepareContractWrite, useContractWrite } from "wagmi";
+import { abi as insuranceAbi } from "../../../backend/build/artifacts/contracts/Insurance.sol/Insurance.json";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
-    // The provider can be hard-coded to use the mainnet
-    //const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
-
-    // You should replace this with your actual contract address
-    const contractAddress = "your-contract-address";
-
-    // Replace this with your contract's ABI
-    const contractABI = "your-contract-abi";
-
-    // Create a new ethers contract instance
-    //const contract = new ethers.Contract(contractAddress, contractABI, provider.getSigner());
-
     const [coordinatesSelected, setCoordinatesSelected] = useState(false);
     const [aboveOrBelow, setAboveOrBelow] = useState("above");
     const [inputValue, setInputValue] = useState("");
@@ -36,32 +29,57 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const [contractSuccess, setContractSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [inputValueFinal, setInputValueFinal] = useState("");
-
-    const submitToContract = async () => {
-        try {
-            // You need to call the appropriate contract method here
-            // The method name and arguments depend on your contract
-            // This example assumes a method named 'myMethod' that doesn't take any arguments
-            const tx = await contract.myMethod();
-
-            // wait for the transaction to be mined
-            const receipt = await tx.wait();
-
-            console.log(receipt);
-
-            setContractSuccess(true);
-        } catch (error) {
-            console.error("Error submitting to contract: ", error);
-        }
-    };
+    const [config, setConfig] = useState(null);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
     };
 
+    const defaultInputs = [["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"], 1316, 300000];
+
+    const inputs =
+        rectangleBounds && rectangleBounds.length === 4
+            ? [
+                  [
+                      rectangleBounds[0].lat.toString(),
+                      rectangleBounds[0].lng.toString(),
+                      rectangleBounds[1].lat.toString(),
+                      rectangleBounds[1].lng.toString(),
+                      rectangleBounds[2].lat.toString(),
+                      rectangleBounds[2].lng.toString(),
+                      rectangleBounds[3].lat.toString(),
+                      rectangleBounds[3].lng.toString(),
+                      inputValue.toString(),
+                      Math.floor(fromDate.getTime() / 1000).toString(),
+                      Math.floor(toDate.getTime() / 1000).toString(),
+                  ],
+                  1316,
+                  300000,
+              ]
+            : defaultInputs;
+
+    const { insuranceConfig } = usePrepareContractWrite({
+        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        abi: insuranceAbi,
+        functionName: "estimateInsurance",
+        inputs: inputs,
+    });
+
+    const { write } = useContractWrite(insuranceConfig);
+
     const handleDropdownChange = (e) => {
         setAboveOrBelow(e.target.value);
     };
+
+    const { send, error, status, data } = useContractWrite(config || {});
+
+    useEffect(() => {
+        if (status === "Success") {
+            console.log("Success");
+        } else if (status === "Exception") {
+            console.log("Exception");
+        }
+    }, [status, data, error]);
 
     useEffect(() => {
         if (rectangleBounds) {
@@ -307,7 +325,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                     <div className="text-white px-4 py-2 rounded-lg text-center">
                         <button
                             className="w-auto sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
-                            onClick={submitToContract}
+                            onClick={write}
                             disabled={isLoading}
                         >
                             {isLoading ? "Processing..." : "Generate Insurance\nContract On-chain"}
@@ -318,7 +336,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                     <div className="text-white px-4 py-2 rounded-lg text-center">
                         <button
                             className="w-auto sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
-                            onClick={submitToContract}
+                            onClick={startPolicy}
                             disabled={isLoading}
                         >
                             {isLoading ? "Processing..." : "Pay and\nStart"}
