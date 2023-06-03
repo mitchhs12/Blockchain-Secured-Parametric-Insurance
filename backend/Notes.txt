@@ -12,7 +12,10 @@ My Functions Subscription ID:
 1316
 
 My Most Recent Insurance Contract:
-0x79AE6624A9100bF4CB62bF5cA4d59B7770229F96
+0xd7cb5Af78DD0b2a9a3772b641A1a32C3212c346f
+
+My Most Recent Payout Contract:
+0x2Fdae8fc407ffBe8BBA74a5e21A14b5d4bf1925E
 
 Command to add a functions consumer:
 npx hardhat functions-sub-add --subid 1316 --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network polygonMumbai
@@ -23,6 +26,9 @@ npx hardhat functions-sub-remove --subid 1316 --contract REPLACE_CONSUMER_CONTRA
 Command to request insurance:
 npx hardhat functions-request-insurance --network polygonMumbai --subid 1316 --gaslimit 300000 --contract CONTRACT_ADDRESS
 
+Command to request payout:
+npx hardhat functions-request-payout --network polygonMumbai --subid 1316 --gaslimit 300000 --contract CONTRACT_ADDRESS
 
-// FIX CURRENT DAY VULNERABILITY IN OFFCHAIN INSURANCE CODE
+
+// REMEMBER TO FIX ONLY SET CHECKPAYOUT CONTRACT ONCE!
 

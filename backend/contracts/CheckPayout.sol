@@ -8,6 +8,11 @@ import "./Insurance.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract CheckPayout is FunctionsClient, ConfirmedOwner {
+  event UsingArgs(string[] args);
+  event Payout(address originalSender, uint256 payoutAmount);
+  event PolicyEnded(address originalSender, uint256 policyIndex);
+  event TimeRemaining(address originalSender, uint256 policyIndex, uint256 timeRemaining);
+
   struct PolicyData {
     Insurance.InsuranceData insuranceData;
     Insurance.InsuranceQuoteData quoteData;
@@ -37,38 +42,37 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     uint32 gasLimit,
     uint256 policyIndex
   ) public returns (bytes32) {
-    // PolicyData memory policyData;
-    // policyData.insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
-    // bytes32 requestId = insuranceContract.getPolicyRequestId(msg.sender, policyIndex);
-    // policyData.quoteData = insuranceContract.getInsuranceQuoteData(requestId);
-    // uint256 cost = policyData.quoteData.cost;
-    // uint256 randomWord = insuranceContract.getLastRandomWord();
+    PolicyData memory policyData;
+    policyData.insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
+    bytes32 requestId = insuranceContract.getPolicyRequestId(msg.sender, policyIndex);
+    policyData.quoteData = insuranceContract.getInsuranceQuoteData(requestId);
+    uint256 cost = policyData.quoteData.cost;
 
-    // // Use the retrieved values as arguments in the args parameter
-    // string[] memory argsWithInsuranceData = new string[](args.length + 14);
-    // for (uint256 i = 0; i < args.length; i++) {
-    //   argsWithInsuranceData[i] = args[i];
-    // }
+    // Use the retrieved values as arguments in the args parameter
+    string[] memory argsWithInsuranceData = new string[](args.length + 14);
+    for (uint256 i = 0; i < args.length; i++) {
+      argsWithInsuranceData[i] = args[i];
+    }
 
-    // argsWithInsuranceData[args.length] = policyData.insuranceData.latNe;
-    // argsWithInsuranceData[args.length + 1] = policyData.insuranceData.longNe;
-    // argsWithInsuranceData[args.length + 2] = policyData.insuranceData.latSe;
-    // argsWithInsuranceData[args.length + 3] = policyData.insuranceData.longSe;
-    // argsWithInsuranceData[args.length + 4] = policyData.insuranceData.latSw;
-    // argsWithInsuranceData[args.length + 5] = policyData.insuranceData.longSw;
-    // argsWithInsuranceData[args.length + 6] = policyData.insuranceData.latNw;
-    // argsWithInsuranceData[args.length + 7] = policyData.insuranceData.longNw;
-    // argsWithInsuranceData[args.length + 8] = policyData.insuranceData.configParam;
-    // argsWithInsuranceData[args.length + 9] = policyData.insuranceData.startTime;
-    // argsWithInsuranceData[args.length + 10] = policyData.insuranceData.endTime;
-    // argsWithInsuranceData[args.length + 11] = Strings.toString(block.timestamp);
-    // argsWithInsuranceData[args.length + 12] = policyData.insuranceData.policyCreationTime;
-    // argsWithInsuranceData[args.length + 13] = Strings.toString(randomWord);
+    argsWithInsuranceData[args.length] = policyData.insuranceData.latNe;
+    argsWithInsuranceData[args.length + 1] = policyData.insuranceData.longNe;
+    argsWithInsuranceData[args.length + 2] = policyData.insuranceData.latSe;
+    argsWithInsuranceData[args.length + 3] = policyData.insuranceData.longSe;
+    argsWithInsuranceData[args.length + 4] = policyData.insuranceData.latSw;
+    argsWithInsuranceData[args.length + 5] = policyData.insuranceData.longSw;
+    argsWithInsuranceData[args.length + 6] = policyData.insuranceData.latNw;
+    argsWithInsuranceData[args.length + 7] = policyData.insuranceData.longNw;
+    argsWithInsuranceData[args.length + 8] = policyData.insuranceData.configParam;
+    argsWithInsuranceData[args.length + 9] = policyData.insuranceData.startTime;
+    argsWithInsuranceData[args.length + 10] = policyData.insuranceData.endTime;
+    argsWithInsuranceData[args.length + 11] = Strings.toString(block.timestamp);
+    argsWithInsuranceData[args.length + 12] = policyData.insuranceData.policyCreationTime;
+    argsWithInsuranceData[args.length + 13] = Strings.toString(insuranceContract.getLastRandomWord());
 
     Functions.Request memory req;
     req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
-    if (args.length > 0) req.addArgs(args); //should be argsWithInsuranceData for final deployment
-
+    req.addArgs(argsWithInsuranceData); //should be argsWithInsuranceData for final deployment
+    emit UsingArgs(argsWithInsuranceData);
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;
 
@@ -85,19 +89,22 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     uint256 policyIndex = requestIdToPolicyIndex[requestId];
     address originalSender = requestIdToSender[requestId];
 
-    Insurance.InsuranceData memory insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
+    Insurance.InsuranceData memory insuranceData = insuranceContract.getPolicyData(originalSender, policyIndex);
 
     // Check for payout
     uint256 payoutAmount = insuranceContract.bytesToUint256(response);
     if (payoutAmount > 0) {
       insuranceContract.payUser(payable(originalSender), payoutAmount);
       insuranceContract.endPolicy(originalSender, policyIndex); // policyIndex must be stored for the request
+      emit Payout(originalSender, payoutAmount);
     } else {
       // Check for end of policy
       uint256 endTime = stringToUint256(insuranceData.endTime); // Conversion
       if (block.timestamp > endTime) {
         insuranceContract.endPolicy(originalSender, policyIndex);
+        emit PolicyEnded(originalSender, policyIndex);
       }
+      emit TimeRemaining(originalSender, policyIndex, endTime - block.timestamp);
     }
   }
 

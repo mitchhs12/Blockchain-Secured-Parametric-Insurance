@@ -269,8 +269,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     emit PolicyStarted(msg.sender, policyIndex);
   }
 
-  function setCheckPayoutContract(address _checkPayoutContract) external {
-    require(msg.sender == checkPayoutContract, "Caller is not the current CheckPayout contract");
+  function setCheckPayoutContract(address _checkPayoutContract) external onlyOwner {
     checkPayoutContract = _checkPayoutContract;
   }
 

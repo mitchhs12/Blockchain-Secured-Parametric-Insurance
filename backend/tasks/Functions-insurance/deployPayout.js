@@ -11,10 +11,8 @@ task("functions-deploy-payout", "Deploys the Payout contract")
     }
 
     console.log(`Deploying Payout contract to ${network.name}`)
+    const insuranceContract = networkConfig[network.name]["insuranceContract"]
     const oracleAddress = networkConfig[network.name]["functionsOracleProxy"]
-    const linkMaticPriceFeed = networkConfig[network.name]["linkMaticPriceFeed"]
-    const maticUsdPriceFeed = networkConfig[network.name]["maticUsdPriceFeed"]
-    const vrfSubscriptionId = networkConfig[network.name]["vrfSubscriptionId"]
 
     console.log("\n__Compiling Contracts__")
     await run("compile")
@@ -22,13 +20,8 @@ task("functions-deploy-payout", "Deploys the Payout contract")
     const accounts = await ethers.getSigners()
 
     // Deploy Payout
-    const payoutContractFactory = await ethers.getContractFactory("Payout")
-    const payoutContract = await payoutContractFactory.deploy(
-      oracleAddress,
-      linkMaticPriceFeed,
-      maticUsdPriceFeed,
-      vrfSubscriptionId
-    )
+    const payoutContractFactory = await ethers.getContractFactory("CheckPayout")
+    const payoutContract = await payoutContractFactory.deploy(oracleAddress, insuranceContract)
 
     console.log(
       `\nWaiting ${VERIFICATION_BLOCK_CONFIRMATIONS} blocks for transaction ${payoutContract.deployTransaction.hash} to be confirmed...`
@@ -44,7 +37,7 @@ task("functions-deploy-payout", "Deploys the Payout contract")
         await payoutContract.deployTransaction.wait(Math.max(6 - VERIFICATION_BLOCK_CONFIRMATIONS, 0))
         await run("verify:verify", {
           address: payoutContract.address,
-          constructorArguments: [oracleAddress, linkMaticPriceFeed, maticUsdPriceFeed, vrfSubscriptionId],
+          constructorArguments: [oracleAddress, insuranceContract],
         })
         console.log("Payout verified")
       } catch (error) {
