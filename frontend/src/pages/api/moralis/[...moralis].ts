@@ -1,6 +1,6 @@
 import { MoralisNextApi } from "@moralisweb3/next";
 
-const apiKey = process.env.MORALIS_API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY;
 const nextAuthUrl = process.env.NEXTAUTH_URL;
 
 if (!apiKey) {

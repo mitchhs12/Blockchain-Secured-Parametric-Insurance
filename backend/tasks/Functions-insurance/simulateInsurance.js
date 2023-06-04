@@ -75,12 +75,9 @@ task("functions-simulate-insurance", "Simulates an end-to-end fulfillment locall
     await new Promise(async (resolve) => {
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address)
-      const requestTx = await clientContract.estimateInsurance(
-        request.source,
-        request.args ?? [],
-        subscriptionId,
-        gasLimit
-      )
+      const setTx = await clientContract.setSourceCode(request.source)
+      const setTxReceipt = await setTx.wait(1)
+      const requestTx = await clientContract.estimateInsurance(request.args ?? [], subscriptionId, gasLimit)
       const requestTxReceipt = await requestTx.wait(1)
       const requestId = requestTxReceipt.events[2].args.id
       const requestGasUsed = requestTxReceipt.gasUsed.toString()

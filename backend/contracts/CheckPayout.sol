@@ -18,6 +18,8 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     Insurance.InsuranceQuoteData quoteData;
   }
 
+  string public sourceCode;
+
   using Functions for Functions.Request;
 
   bytes32 public latestRequestId;
@@ -35,13 +37,7 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     insuranceContract = Insurance(insuranceAddress);
   }
 
-  function checkPolicy(
-    string calldata source,
-    string[] calldata args,
-    uint64 subscriptionId,
-    uint32 gasLimit,
-    uint256 policyIndex
-  ) public returns (bytes32) {
+  function checkPolicy(uint64 subscriptionId, uint32 gasLimit, uint256 policyIndex) public returns (bytes32) {
     PolicyData memory policyData;
     policyData.insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
     bytes32 requestId = insuranceContract.getPolicyRequestId(msg.sender, policyIndex);
@@ -49,29 +45,26 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     uint256 cost = policyData.quoteData.cost;
 
     // Use the retrieved values as arguments in the args parameter
-    string[] memory argsWithInsuranceData = new string[](args.length + 14);
-    for (uint256 i = 0; i < args.length; i++) {
-      argsWithInsuranceData[i] = args[i];
-    }
+    string[] memory argsWithInsuranceData = new string[](14);
 
-    argsWithInsuranceData[args.length] = policyData.insuranceData.latNe;
-    argsWithInsuranceData[args.length + 1] = policyData.insuranceData.longNe;
-    argsWithInsuranceData[args.length + 2] = policyData.insuranceData.latSe;
-    argsWithInsuranceData[args.length + 3] = policyData.insuranceData.longSe;
-    argsWithInsuranceData[args.length + 4] = policyData.insuranceData.latSw;
-    argsWithInsuranceData[args.length + 5] = policyData.insuranceData.longSw;
-    argsWithInsuranceData[args.length + 6] = policyData.insuranceData.latNw;
-    argsWithInsuranceData[args.length + 7] = policyData.insuranceData.longNw;
-    argsWithInsuranceData[args.length + 8] = policyData.insuranceData.configParam;
-    argsWithInsuranceData[args.length + 9] = policyData.insuranceData.startTime;
-    argsWithInsuranceData[args.length + 10] = policyData.insuranceData.endTime;
-    argsWithInsuranceData[args.length + 11] = Strings.toString(block.timestamp);
-    argsWithInsuranceData[args.length + 12] = policyData.insuranceData.policyCreationTime;
-    argsWithInsuranceData[args.length + 13] = Strings.toString(insuranceContract.getLastRandomWord());
+    argsWithInsuranceData[0] = policyData.insuranceData.latNe;
+    argsWithInsuranceData[1] = policyData.insuranceData.longNe;
+    argsWithInsuranceData[2] = policyData.insuranceData.latSe;
+    argsWithInsuranceData[3] = policyData.insuranceData.longSe;
+    argsWithInsuranceData[4] = policyData.insuranceData.latSw;
+    argsWithInsuranceData[5] = policyData.insuranceData.longSw;
+    argsWithInsuranceData[6] = policyData.insuranceData.latNw;
+    argsWithInsuranceData[7] = policyData.insuranceData.longNw;
+    argsWithInsuranceData[8] = policyData.insuranceData.configParam;
+    argsWithInsuranceData[9] = policyData.insuranceData.startTime;
+    argsWithInsuranceData[10] = policyData.insuranceData.endTime;
+    argsWithInsuranceData[11] = Strings.toString(block.timestamp);
+    argsWithInsuranceData[12] = policyData.insuranceData.policyCreationTime;
+    argsWithInsuranceData[13] = Strings.toString(insuranceContract.getLastRandomWord());
 
     Functions.Request memory req;
-    req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
-    req.addArgs(argsWithInsuranceData); //should be argsWithInsuranceData for final deployment
+    req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, sourceCode);
+    req.addArgs(argsWithInsuranceData);
     emit UsingArgs(argsWithInsuranceData);
     bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;
@@ -131,5 +124,13 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
       }
     }
     return result;
+  }
+
+  function setSourceCode(string memory _sourceCode) public onlyOwner {
+    sourceCode = _sourceCode;
+  }
+
+  function getSourceCode() public view returns (string memory) {
+    return sourceCode;
   }
 }

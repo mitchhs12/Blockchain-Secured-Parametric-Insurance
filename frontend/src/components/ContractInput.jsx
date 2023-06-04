@@ -6,14 +6,13 @@ import { estimateRainfall } from "../insurance_estimators/rainfall.jsx";
 import { estimateSnowfall } from "../insurance_estimators/snowfall.jsx";
 import { estimateEarthquake } from "../insurance_estimators/earthquake.jsx";
 import { format, set, differenceInDays } from "date-fns";
-import { getInsuranceQuote } from "../contract_functions/getInsuranceQuote.js";
-import { checkPolicy } from "../contract_functions/checkPolicy.js";
-import { helloWorld } from "../contract_functions/helloWorld.js";
 import { startPolicy } from "../contract_functions/startPolicy.js";
-import { usePrepareContractWrite, useContractWrite } from "wagmi";
+import { useAccount, useContract, useProvider, useSigner, useBalance, useContractEvent } from "wagmi";
 import { abi as insuranceAbi } from "../../../backend/build/artifacts/contracts/Insurance.sol/Insurance.json";
+import { ethers } from "ethers";
 
 const ContractInput = ({ configLabel, units, rectangleBounds }) => {
+    const { isConnected, address } = useAccount();
     const [coordinatesSelected, setCoordinatesSelected] = useState(false);
     const [aboveOrBelow, setAboveOrBelow] = useState("above");
     const [inputValue, setInputValue] = useState("");
@@ -30,6 +29,23 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [inputValueFinal, setInputValueFinal] = useState("");
     const [config, setConfig] = useState(null);
+    const [policyStarted, setPolicyStarted] = useState(false);
+    const [amountInMatic, setAmountInMatic] = useState(null);
+    const [maticBalance, setMaticBalance] = useState(null);
+
+    const { data: signer } = useSigner();
+    const provider = useProvider({ chainId: 80001 });
+
+    const balanceQuery = useBalance({ address: address, chainId: 80001 });
+    console.log(maticBalance, amountInMatic);
+    useEffect(() => {
+        if (balanceQuery.isError) {
+            console.error("Error loading balance: ", balanceQuery.error);
+        } else if (balanceQuery.data) {
+            console.log("Balance: ", balanceQuery.data?.formatted, balanceQuery.data?.symbol);
+            setMaticBalance(balanceQuery.data?.formatted);
+        }
+    }, [balanceQuery.isError, balanceQuery.data]);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -37,49 +53,112 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
 
     const defaultInputs = [["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"], 1316, 300000];
 
-    const inputs =
+    const args =
         rectangleBounds && rectangleBounds.length === 4
             ? [
-                  [
-                      rectangleBounds[0].lat.toString(),
-                      rectangleBounds[0].lng.toString(),
-                      rectangleBounds[1].lat.toString(),
-                      rectangleBounds[1].lng.toString(),
-                      rectangleBounds[2].lat.toString(),
-                      rectangleBounds[2].lng.toString(),
-                      rectangleBounds[3].lat.toString(),
-                      rectangleBounds[3].lng.toString(),
-                      inputValue.toString(),
-                      Math.floor(fromDate.getTime() / 1000).toString(),
-                      Math.floor(toDate.getTime() / 1000).toString(),
-                  ],
-                  1316,
-                  300000,
+                  rectangleBounds[0].lat.toString(),
+                  rectangleBounds[0].lng.toString(),
+                  rectangleBounds[1].lat.toString(),
+                  rectangleBounds[1].lng.toString(),
+                  rectangleBounds[2].lat.toString(),
+                  rectangleBounds[2].lng.toString(),
+                  rectangleBounds[3].lat.toString(),
+                  rectangleBounds[3].lng.toString(),
+                  inputValue.toString(),
+                  Math.floor(fromDate.getTime() / 1000).toString(),
+                  Math.floor(toDate.getTime() / 1000).toString(),
               ]
             : defaultInputs;
 
-    const { insuranceConfig } = usePrepareContractWrite({
+    const contract = useContract({
         address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
         abi: insuranceAbi,
-        functionName: "estimateInsurance",
-        inputs: inputs,
+        signerOrProvider: signer || provider,
     });
 
-    const { write } = useContractWrite(insuranceConfig);
+    const getCost = async () => {
+        const result = await contract.getAllUserPolicies(address);
+        const requestId = await contract.policyRequestIdMapping(address, result.length - 1);
+        const { user, policyIndex, cost } = await contract.insuranceQuoteData(requestId);
+        return { cost, requestId };
+    };
+
+    useEffect(() => {
+        if (!contractSuccess) {
+            return;
+        }
+        const fetchCostAndCalculate = async () => {
+            const { cost } = await getCost();
+            const priceOfMatic = await contract.getPriceMaticUsd();
+            const amount = Math.round((cost * 10 ** 8) / priceOfMatic);
+            setAmountInMatic(amount);
+            //setAmountInMatic(0.01); //used to verify that the user can pay for the policy
+        };
+
+        fetchCostAndCalculate();
+    }, []);
+
+    const startPolicy = async () => {
+        setIsLoading(true);
+        try {
+            const options = { value: ethers.utils.parseUnits(amountInMatic.toString(), "ether") };
+            console.log(options);
+            const txReceipt = await contract.startPolicy(requestId, options);
+            await txReceipt.wait();
+        } catch (error) {
+            console.log("Failed to start policy: ", error);
+        }
+        setIsLoading(false);
+    };
+
+    useContractEvent({
+        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        abi: insuranceAbi,
+        eventName: "PolicyCreated",
+        listener(log) {
+            console.log("PolicyCreated event detected!", log);
+            setIsLoading(false);
+            setContractSuccess(true);
+        },
+    });
+
+    useContractEvent({
+        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        abi: insuranceAbi,
+        eventName: "PolicyStarted",
+        listener(log) {
+            console.log("PolicyStarted event detected!", log);
+            setIsLoading(false);
+            setPolicyStarted(true);
+        },
+    });
+
+    const estimateInsurance = async () => {
+        setIsLoading(true);
+        console.log(args);
+        const options = { gasLimit: 2100000 };
+        try {
+            await contract.estimateInsurance(args, 1316, 300000, options);
+        } catch (err) {
+            console.error(err);
+            setIsLoading(false);
+        }
+    };
 
     const handleDropdownChange = (e) => {
         setAboveOrBelow(e.target.value);
     };
 
-    const { send, error, status, data } = useContractWrite(config || {});
-
-    useEffect(() => {
-        if (status === "Success") {
-            console.log("Success");
-        } else if (status === "Exception") {
-            console.log("Exception");
-        }
-    }, [status, data, error]);
+    const Spinner = () => (
+        <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+        </svg>
+    );
 
     useEffect(() => {
         if (rectangleBounds) {
@@ -111,27 +190,10 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                 <>
                     {isEstimating ? ( // Check if loading state is true
                         <div className="flex items-center justify-center">
-                            <svg
-                                className="animate-spin h-5 w-5 mr-3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                            Estimating...
+                            <>
+                                <Spinner />
+                                Estimating...
+                            </>
                         </div>
                     ) : (
                         <button
@@ -162,6 +224,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
 
     const onButtonClick = () => {
         setIsEstimating(true);
+        setContractSuccess(false);
         const dateRange = { from: new Date(fromDate), to: new Date(toDate) };
         let averageDailyEstimate, totalEstimate;
 
@@ -321,26 +384,54 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                         <div> Consider changing area, {units}, and / or dates.</div>
                     </div>
                 )}
-                {!isEstimating && totalCost && (
+                {!contractSuccess && !isEstimating && totalCost && !policyStarted && (
                     <div className="text-white px-4 py-2 rounded-lg text-center">
                         <button
                             className="w-auto sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
-                            onClick={write}
-                            disabled={isLoading}
+                            onClick={() => estimateInsurance()}
                         >
-                            {isLoading ? "Processing..." : "Generate Insurance\nContract On-chain"}
+                            {isLoading ? (
+                                <div className="flex items-center justify-center">
+                                    <Spinner />
+                                    Processing...
+                                </div>
+                            ) : (
+                                "Generate Insurance\nContract On-chain"
+                            )}
                         </button>
                     </div>
                 )}
-                {contractSuccess && (
+                {contractSuccess && !isEstimating && !policyStarted && (
                     <div className="text-white px-4 py-2 rounded-lg text-center">
-                        <button
-                            className="w-auto sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
-                            onClick={startPolicy}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? "Processing..." : "Pay and\nStart"}
-                        </button>
+                        {Math.round(maticBalance) < amountInMatic ? (
+                            <>
+                                <div className="flex items-center justify-center">
+                                    You will need at least {amountInMatic} MATIC to pay and start the insurance.
+                                </div>
+                                <div>You currently have {Math.round(maticBalance)} MATIC.</div>
+                            </>
+                        ) : (
+                            <button
+                                className="w-auto sm:w-auto bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 items-center justify-center"
+                                onClick={startPolicy}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <div className="flex items-center justify-center">
+                                        <Spinner />
+                                        Processing...
+                                    </div>
+                                ) : (
+                                    "Pay and\nStart"
+                                )}
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {policyStarted && (
+                    <div className="text-white px-4 py-2 rounded-lg text-center">
+                        <div className="flex items-center justify-center">Policy Started Successfully 👍</div>
                     </div>
                 )}
             </div>

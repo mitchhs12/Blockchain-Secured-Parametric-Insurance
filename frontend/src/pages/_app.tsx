@@ -1,14 +1,15 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { createClient, configureChains, WagmiConfig } from "wagmi";
+import { createClient, configureChains, Chain, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { SessionProvider } from "next-auth/react";
-import { mainnet } from "wagmi/chains";
+import { polygonMumbai } from "wagmi/chains";
 import Background from "@/components/ParticlesBackground";
 import React, { useState, useCallback } from "react";
+import { ethers } from "ethers";
 import "react-day-picker/dist/style.css";
 
-const { provider, webSocketProvider } = configureChains([mainnet], [publicProvider()]);
+const { provider, webSocketProvider } = configureChains([polygonMumbai], [publicProvider()]);
 
 const client = createClient({
     provider,

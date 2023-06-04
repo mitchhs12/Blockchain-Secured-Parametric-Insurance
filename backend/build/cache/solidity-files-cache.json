@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/CheckPayout.sol": {
-      "lastModificationDate": 1685787127657,
-      "contentHash": "89a5b95b1d812a7e2dc6646323097d25",
+      "lastModificationDate": 1685792447827,
+      "contentHash": "6128f77d05edb64702eeeade6988da55",
       "sourceName": "contracts/CheckPayout.sol",
       "solcConfig": {
         "version": "0.8.7",
@@ -83,8 +83,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/Insurance.sol": {
-      "lastModificationDate": 1685787448677,
-      "contentHash": "96cf676791f8da1370423c7274b69f8b",
+      "lastModificationDate": 1685789340477,
+      "contentHash": "c3f741ce9ebe3f19911fdad2b2f90928",
       "sourceName": "contracts/Insurance.sol",
       "solcConfig": {
         "version": "0.8.7",

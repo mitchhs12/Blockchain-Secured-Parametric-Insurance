@@ -102,8 +102,9 @@ task("functions-request-insurance", "Initiates a request from a Functions client
       )
     }
 
+    console.log(requestConfig.args, subscriptionId, gasLimit)
+
     const transactionEstimateGas = await clientContract.estimateGas.estimateInsurance(
-      requestConfig.source,
       requestConfig.args ?? [],
       subscriptionId,
       gasLimit,
@@ -125,7 +126,6 @@ task("functions-request-insurance", "Initiates a request from a Functions client
     let doGistCleanup = !(requestConfig.secretsURLs && requestConfig.secretsURLs.length > 0)
     const request = await generateRequest(requestConfig, taskArgs)
     doGistCleanup = doGistCleanup && request.secrets
-
     const store = new RequestStore(hre.network.config.chainId, network.name, "consumer")
 
     const spinner = utils.spin({
@@ -236,16 +236,12 @@ task("functions-request-insurance", "Initiates a request from a Functions client
           }
         }
       )
-
+      // log the type of request.source
       // Initiate the on-chain request after all listeners are initialized
-      const requestTx = await clientContract.estimateInsurance(
-        request.source,
-        request.args ?? [],
-        subscriptionId,
-        gasLimit,
-        overrides
-      )
       console.log(request.args)
+      console.log(subscriptionId)
+      console.log(gasLimit)
+      const requestTx = await clientContract.estimateInsurance(request.args ?? [], subscriptionId, gasLimit, overrides)
       spinner.start("Waiting 2 blocks for transaction to be confirmed...")
       const requestTxReceipt = await requestTx.wait(2)
       spinner.info(

@@ -103,16 +103,15 @@ task("functions-request-payout", "Initiates a request from a Functions client co
       )
     }
 
-    const transactionEstimateGas = await clientContract.estimateGas.checkPolicy(
-      requestConfig.source,
-      requestConfig.args ?? [],
-      subscriptionId,
-      gasLimit,
-      policyIndex,
-      overrides
-    )
+    // const transactionEstimateGas = await clientContract.estimateGas.checkPolicy(
+    //   requestConfig.args ?? [],
+    //   subscriptionId,
+    //   gasLimit,
+    //   policyIndex,
+    //   overrides
+    // )
 
-    await utils.promptTxCost(transactionEstimateGas, hre, true)
+    // await utils.promptTxCost(transactionEstimateGas, hre, true)
 
     // Print the estimated cost of the request
     // Ask for confirmation before initiating the request on-chain
@@ -241,7 +240,6 @@ task("functions-request-payout", "Initiates a request from a Functions client co
 
       // Initiate the on-chain request after all listeners are initialized
       const requestTx = await clientContract.checkPolicy(
-        request.source,
         request.args ?? [],
         subscriptionId,
         gasLimit,

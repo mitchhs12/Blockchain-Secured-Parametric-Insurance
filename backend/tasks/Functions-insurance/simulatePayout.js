@@ -69,6 +69,8 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
     await new Promise(async (resolve) => {
       // Initiate the request from the client contract
       const clientContract = await clientFactory.attach(client.address)
+      const setTx = await clientContract.setSourceCode(request.source)
+      const setTxReceipt = await setTx.wait(1)
       const requestTx = await clientContract.checkPolicy(
         request.source,
         request.args ?? [],

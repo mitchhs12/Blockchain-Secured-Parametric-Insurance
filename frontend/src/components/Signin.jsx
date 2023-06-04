@@ -1,6 +1,6 @@
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { signIn } from "next-auth/react";
-import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useSigner, useSignMessage, useDisconnect } from "wagmi";
 import { useRouter } from "next/router";
 import { useAuthRequestChallengeEvm } from "@moralisweb3/next";
 import { useState } from "react";
@@ -12,6 +12,7 @@ function SignIn() {
     const { signMessageAsync } = useSignMessage();
     const { requestChallengeAsync } = useAuthRequestChallengeEvm();
     const { push } = useRouter();
+    const signer = useSigner();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleAuth = async () => {

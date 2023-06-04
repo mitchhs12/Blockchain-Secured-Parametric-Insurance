@@ -17,6 +17,8 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   event PolicyStarted(address policyOwner, uint256 policyIndex);
   event PolicyEnded(address policyOwner, uint256 policyIndex);
 
+  string public sourceCode;
+
   struct RequestStatus {
     bool fulfilled;
     bool exists;
@@ -131,7 +133,6 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   // START FUNCTIONS METHODS
   function estimateInsurance(
-    string calldata source,
     string[] calldata args,
     uint64 subscriptionId,
     uint32 gasLimit
@@ -163,7 +164,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     uint256 newPolicyIndex = insurancePoliciesMapping[msg.sender].length - 1;
 
     Functions.Request memory req;
-    req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, source);
+    req.initializeRequest(Functions.Location.Inline, Functions.CodeLanguage.JavaScript, sourceCode);
     string[] memory adjustedArgs = new string[](args.length + 1);
     for (uint256 i = 0; i < args.length; i++) {
       adjustedArgs[i] = args[i];
@@ -306,6 +307,14 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   function getPolicyRequestId(address _address, uint256 _policyIndex) public view returns (bytes32) {
     return policyRequestIdMapping[_address][_policyIndex];
+  }
+
+  function setSourceCode(string memory _sourceCode) public onlyOwner {
+    sourceCode = _sourceCode;
+  }
+
+  function getSourceCode() public view returns (string memory) {
+    return sourceCode;
   }
 
   function bytesToUint256(bytes memory input) public pure returns (uint256 result) {
