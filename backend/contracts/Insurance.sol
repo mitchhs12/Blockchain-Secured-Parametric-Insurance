@@ -16,6 +16,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
   event PolicyCreated(address policyOwner, uint256 policyIndex, uint256 cost);
   event PolicyStarted(address policyOwner, uint256 policyIndex);
   event PolicyEnded(address policyOwner, uint256 policyIndex);
+  event AdjustedArgs(string[] args);
 
   string public sourceCode;
 

@@ -12,7 +12,7 @@ const configParam = args[8] // amount of rainfall to insure for
 const startDayString = args[9] // unix
 const endDayString = args[10] // unix
 //const currentDayString = args[11] // unix
-const currentDayString = 1686101375
+const currentDayString = 1686100734
 
 // Additional vars that can be calculated from the arguments above
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4
@@ -316,6 +316,11 @@ while (currentDate <= endDay) {
 // Sum
 const sum = dailyPrice.reduce((accumulator, currentObject) => accumulator + currentObject.price, 0)
 console.log("Sum of daily prices: ", sum)
+
+const startDayNumber = parseInt(startDayString)
+const endDayNumber = parseInt(endDayString)
+
+const secondsPerDay = 24 * 60 * 60 // Number of milliseconds in a day
 
 const result = sum.toFixed(2)
 

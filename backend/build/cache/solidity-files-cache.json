@@ -83,8 +83,8 @@
       ]
     },
     "/home/valodax/PLAN_B/chainlink_hackathon_2023/backend/contracts/Insurance.sol": {
-      "lastModificationDate": 1685789340477,
-      "contentHash": "c3f741ce9ebe3f19911fdad2b2f90928",
+      "lastModificationDate": 1685945837458,
+      "contentHash": "fa500ed99b1c7b4e157b3b8eb9b1e73e",
       "sourceName": "contracts/Insurance.sol",
       "solcConfig": {
         "version": "0.8.7",

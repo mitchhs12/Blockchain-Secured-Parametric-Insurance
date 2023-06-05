@@ -10,3 +10,5 @@ exports.requestPayout = require("./requestPayout.js")
 exports.simulatePayout = require("./simulatePayout.js")
 
 exports.requestRandomness = require("./requestRandomness.js")
+exports.setInsuranceSource = require("./setInsuranceSource.js")
+exports.setPayoutSource = require("./setPayoutSource.js")

@@ -80,6 +80,7 @@ task("functions-simulate-insurance", "Simulates an end-to-end fulfillment locall
       const requestTx = await clientContract.estimateInsurance(request.args ?? [], subscriptionId, gasLimit)
       const requestTxReceipt = await requestTx.wait(1)
       const requestId = requestTxReceipt.events[2].args.id
+      console.log(requestId)
       const requestGasUsed = requestTxReceipt.gasUsed.toString()
 
       // Simulating the JavaScript code locally

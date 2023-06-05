@@ -30,7 +30,7 @@ const Buttons = ({ onButtonClick }) => {
     const provider = useProvider({ chainId: 80001 });
 
     const insuranceContract = useContract({
-        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        address: "0xF27b1e62aB5F7080aDc6a47D3BBe9E176a5E4c9c",
         abi: insuranceAbi,
         signerOrProvider: signer || provider,
     });
@@ -42,7 +42,7 @@ const Buttons = ({ onButtonClick }) => {
     });
 
     useContractEvent({
-        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        address: "0xF27b1e62aB5F7080aDc6a47D3BBe9E176a5E4c9c",
         abi: insuranceAbi,
         eventName: "PolicyStarted",
         listener(log) {

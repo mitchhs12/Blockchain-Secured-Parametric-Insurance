@@ -12,7 +12,7 @@ My Functions Subscription ID:
 1316
 
 My Most Recent Insurance Contract:
-0x0A99be0fA440C8931C3826F1A25EB92836cc9766
+0xF27b1e62aB5F7080aDc6a47D3BBe9E176a5E4c9c
 
 My Most Recent Payout Contract:
 0x80Ec7aa620a6e8a0689FdFaf8A219680d33241c4
