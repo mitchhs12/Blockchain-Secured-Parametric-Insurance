@@ -68,7 +68,7 @@ task("functions-set-payout", "Initiates a request from a Functions client contra
       throw Error(`Consumer contract ${contractAddr} is not registered to use subscription ${subscriptionId}`)
     }
 
-    const unvalidatedRequestConfig = require("../../Functions-request-config.js")
+    const unvalidatedRequestConfig = require("../../Functions-request-config-payout.js")
     const requestConfig = getRequestConfig(unvalidatedRequestConfig)
 
     const simulatedSecretsURLBytes = `0x${Buffer.from(
@@ -178,7 +178,7 @@ task("functions-set-payout", "Initiates a request from a Functions client contra
         if (result !== "0x") {
           console.log(
             `Response returned to client contract represented as a hex string: ${result}\n${getDecodedResultLog(
-              require("../../Functions-request-config"),
+              require("../../Functions-request-config-payout"),
               result
             )}`
           )

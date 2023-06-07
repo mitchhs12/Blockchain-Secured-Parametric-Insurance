@@ -20,7 +20,7 @@ const networkConfig = {
     linkToken: "0xb0897686c545045afc77cf20ec7a532e3120e0f1",
   },
   polygonMumbai: {
-    insuranceContract: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+    insuranceContract: "0x74297F3202e15b404ec59d6A67A999a34fefe4Da",
     vrfSubscriptionId: 4862,
     linkMaticPriceFeed: "0xf0F9FFB1d276A5D8d55EE81b038A4f21b164b363",
     maticUsdPriceFeed: "0xd9Ae0d4e027a5EFa012c51bDB5dcBA097E5E65fd",

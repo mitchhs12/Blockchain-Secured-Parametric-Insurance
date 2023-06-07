@@ -11,8 +11,12 @@ const Buttons = ({ onButtonClick }) => {
     const [isLoading, setIsLoading] = useState({});
     const [amountInMatic, setAmountInMatic] = useState(null);
     const [maticBalance, setMaticBalance] = useState(null);
+    const [pendingEvents, setPendingEvents] = useState({});
 
     const { isConnected, address } = useAccount();
+
+    const insuranceContractAddress = "0x74297F3202e15b404ec59d6A67A999a34fefe4Da";
+    const payoutContractAddress = "0xE16b24CBAd89e77650963d28bcfF945d28a10675";
 
     const balanceQuery = useBalance({ address: address, chainId: 80001 });
     console.log(maticBalance, amountInMatic);
@@ -23,6 +27,7 @@ const Buttons = ({ onButtonClick }) => {
         } else if (balanceQuery.data) {
             console.log("Balance: ", balanceQuery.data?.formatted, balanceQuery.data?.symbol);
             setMaticBalance(balanceQuery.data?.formatted);
+            getMaticPrice();
         }
     }, [balanceQuery.isError, balanceQuery.data]);
 
@@ -30,19 +35,19 @@ const Buttons = ({ onButtonClick }) => {
     const provider = useProvider({ chainId: 80001 });
 
     const insuranceContract = useContract({
-        address: "0xF27b1e62aB5F7080aDc6a47D3BBe9E176a5E4c9c",
+        address: insuranceContractAddress,
         abi: insuranceAbi,
         signerOrProvider: signer || provider,
     });
 
     const payoutContract = useContract({
-        address: "0x80Ec7aa620a6e8a0689FdFaf8A219680d33241c4",
+        address: payoutContractAddress,
         abi: payoutAbi,
         signerOrProvider: signer || provider,
     });
 
     useContractEvent({
-        address: "0xF27b1e62aB5F7080aDc6a47D3BBe9E176a5E4c9c",
+        address: insuranceContractAddress,
         abi: insuranceAbi,
         eventName: "PolicyStarted",
         listener(log) {
@@ -52,20 +57,17 @@ const Buttons = ({ onButtonClick }) => {
     });
 
     useContractEvent({
-        address: "0x80Ec7aa620a6e8a0689FdFaf8A219680d33241c4",
+        address: payoutContractAddress,
         abi: payoutAbi,
         eventName: "TimeRemaining",
         listener(log) {
             console.log("TimeRemaining event detected!", log);
-            setIsLoading((prevState) => ({ ...prevState, [policyIndex]: false }));
         },
     });
 
-    const fetchCostAndCalculate = async (cost) => {
-        const priceOfMatic = await contract.getPriceMaticUsd();
-        const amount = Math.round((cost * 10 ** 8) / priceOfMatic);
-        setAmountInMatic(amount);
-        //setAmountInMatic(0.01); //used to verify that the user can pay for the policy
+    const getMaticPrice = async () => {
+        const priceOfMatic = await insuranceContract.getPriceMaticUsd();
+        setAmountInMatic(priceOfMatic);
     };
 
     const POLICIES_PER_PAGE = 5;
@@ -90,28 +92,33 @@ const Buttons = ({ onButtonClick }) => {
         : null;
 
     const getPolicyData = async () => {
+        setIsLoading((prevState) => ({ ...prevState, global: true }));
         try {
             const result = await insuranceContract.getAllUserPolicies(address);
             setActivePolicyLength(result.length);
             const insuranceQuoteDataArray = await Promise.all(
                 result.map(async (policy, index) => {
+                    setIsLoading((prevState) => ({ ...prevState, [index]: true }));
                     const requestId = await insuranceContract.policyRequestIdMapping(address, index);
                     const { user, policyIndex, cost } = await insuranceContract.insuranceQuoteData(requestId);
                     const result = await insuranceContract.getPolicyData(address, policyIndex);
-                    const fromTime = result[result.length - 2];
-                    const toTime = result[result.length - 3];
+                    const fromTime = result[result.length - 3];
+                    const toTime = result[result.length - 2];
                     const fromDate = new Date(fromTime * 1000);
                     const toDate = new Date(toTime * 1000);
                     const policyStatus = await insuranceContract.policyStatus(address, policyIndex);
-                    setIsLoading(false);
+                    setIsLoading((prevState) => ({ ...prevState, [index]: false }));
                     return { policyIndex, cost, policyStatus, requestId, fromDate, toDate };
                 })
             );
             setInsuranceQuoteData(insuranceQuoteDataArray);
         } catch (error) {
             console.log("Failed to fetch policy data: ", error);
-            setIsLoading(false);
+            Object.keys(isLoading).forEach((policyIndex) => {
+                setIsLoading((prevState) => ({ ...prevState, [policyIndex]: false }));
+            });
         }
+        setIsLoading((prevState) => ({ ...prevState, global: false }));
     };
 
     useEffect(() => {
@@ -124,7 +131,7 @@ const Buttons = ({ onButtonClick }) => {
         try {
             const priceOfMatic = await insuranceContract.getPriceMaticUsd();
             console.log("matic:", priceOfMatic);
-            const amountInMatic = Math.round((cost * 10 ** 8) / priceOfMatic);
+            const amountInMatic = Math.round((cost * 10 ** 6) / priceOfMatic);
             console.log("amountInMatic:", amountInMatic);
             const options = { value: ethers.utils.parseUnits(amountInMatic.toString(), "ether") };
             console.log(options);
@@ -137,11 +144,11 @@ const Buttons = ({ onButtonClick }) => {
     };
 
     const checkPayout = async (policyIndex) => {
+        setPendingEvents((prevState) => ({ ...prevState, [policyIndex]: true }));
         setIsLoading((prevState) => ({ ...prevState, [policyIndex]: true }));
         try {
-            const options = { gasLimit: 2100000 };
+            const options = { gasLimit: 7920027 };
             const result = await payoutContract.checkPolicy(1316, 300000, policyIndex, options);
-            console.log(result);
         } catch (error) {
             console.log("Failed to check payout: ", error);
             setIsLoading((prevState) => ({ ...prevState, [policyIndex]: false }));
@@ -221,7 +228,17 @@ const Buttons = ({ onButtonClick }) => {
                                                         Processing...
                                                     </div>
                                                 ) : (
-                                                    <div>{`Start Cost: $${quote.cost}.00`}</div>
+                                                    <div>
+                                                        {(quote.cost * 10 ** 6) / amountInMatic < maticBalance
+                                                            ? `Start Cost: ${(
+                                                                  (quote.cost * 10 ** 6) /
+                                                                  amountInMatic
+                                                              ).toFixed(2)} MATIC`
+                                                            : `Approximately ${(
+                                                                  (quote.cost * 10 ** 6) /
+                                                                  amountInMatic
+                                                              ).toFixed(2)} MATIC required to start!`}
+                                                    </div>
                                                 )}
                                             </button>
                                         </>
@@ -232,21 +249,37 @@ const Buttons = ({ onButtonClick }) => {
                                                 {quote.fromDate.toLocaleDateString()} -{" "}
                                                 {quote.toDate.toLocaleDateString()}
                                             </h4>
-                                            <button
-                                                className="mt-2 sm:w-auto  bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mb-1 flex items-center justify-center text-center"
-                                                onClick={() => checkPayout(quote.policyIndex)}
-                                            >
-                                                {isLoading[quote.policyIndex] ? (
-                                                    <div className="flex items-center justify-center">
-                                                        <Spinner />
-                                                        Processing...
+                                            {new Date().setHours(0, 0, 0, 0) <=
+                                            new Date(quote.fromDate).setHours(0, 0, 0, 0) ? (
+                                                <div className="text-center text-green-400 font-bold">
+                                                    <div>You cannot check this policy yet since it hasn't started.</div>
+                                                </div>
+                                            ) : new Date().setHours(0, 0, 0, 0) ===
+                                              new Date(quote.toDate).setHours(0, 0, 0, 0) ? (
+                                                <div className="text-center text-green-400 font-bold">
+                                                    <div>
+                                                        You cannot check this policy today since it's the final day.
                                                     </div>
-                                                ) : (
-                                                    "Check Payout"
-                                                )}
-                                            </button>
+                                                    <div>Come back and check its status tomorrow.</div>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    className="mt-2 sm:w-auto  bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mb-1 flex items-center justify-center text-center"
+                                                    onClick={() => checkPayout(quote.policyIndex)}
+                                                >
+                                                    {isLoading[quote.policyIndex] ? (
+                                                        <div className="flex items-center justify-center">
+                                                            <Spinner />
+                                                            Processing...
+                                                        </div>
+                                                    ) : (
+                                                        "Check Payout"
+                                                    )}
+                                                </button>
+                                            )}
                                         </>
                                     )}
+
                                     {quote.policyStatus === 2 && (
                                         <>
                                             <h4 className="mt-2">
@@ -263,7 +296,7 @@ const Buttons = ({ onButtonClick }) => {
                                                         Processing...
                                                     </div>
                                                 ) : (
-                                                    "Check Payout"
+                                                    "Ended"
                                                 )}
                                             </button>
                                         </>

@@ -316,6 +316,7 @@ async function exceedsRainfallLimit(latCenter, longCenter, seasonalLimits) {
   // Ensure that we do not search beyond today's date
   let endDate = Number(currentDayString) < Number(endDayString) ? currentDay : endDay
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${startDay}&end_date=${endDate}&hourly=rain`
+  console.log(url)
   const response = await Functions.makeHttpRequest({ url: url })
 
   if (response.error) {

@@ -11,8 +11,7 @@ const longNw = args[7]
 const configParam = args[8] // amount of rainfall to insure for
 const startDayString = args[9] // unix
 const endDayString = args[10] // unix
-//const currentDayString = args[11] // unix
-const currentDayString = 1686101375
+const currentDayString = args[11] // unix
 
 // Additional vars that can be calculated from the arguments above
 const latCenter = (parseFloat(latNe) + parseFloat(latSe) + parseFloat(latSw) + parseFloat(latNw)) / 4

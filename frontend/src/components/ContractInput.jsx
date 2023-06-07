@@ -32,9 +32,13 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const [policyStarted, setPolicyStarted] = useState(false);
     const [amountInMatic, setAmountInMatic] = useState(null);
     const [maticBalance, setMaticBalance] = useState(null);
+    const [requestId, setRequestId] = useState(null);
 
     const { data: signer } = useSigner();
     const provider = useProvider({ chainId: 80001 });
+
+    const insuranceContractAddress = "0x74297F3202e15b404ec59d6A67A999a34fefe4Da";
+    const payoutContractAddress = "0xE16b24CBAd89e77650963d28bcfF945d28a10675";
 
     const balanceQuery = useBalance({ address: address, chainId: 80001 });
     console.log(maticBalance, amountInMatic);
@@ -46,6 +50,12 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
             setMaticBalance(balanceQuery.data?.formatted);
         }
     }, [balanceQuery.isError, balanceQuery.data]);
+
+    // useEffect(() => {
+    //     if (contractSuccess) {
+    //         fetchCostAndCalculate();
+    //     }
+    // }, [contractSuccess]);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -71,32 +81,24 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
             : defaultInputs;
 
     const contract = useContract({
-        address: "0xF27b1e62aB5F7080aDc6a47D3BBe9E176a5E4c9c",
+        address: insuranceContractAddress,
         abi: insuranceAbi,
         signerOrProvider: signer || provider,
     });
 
-    const getCost = async () => {
+    const fetchCostAndCalculate = async () => {
         const result = await contract.getAllUserPolicies(address);
-        const requestId = await contract.policyRequestIdMapping(address, result.length - 1);
-        const { user, policyIndex, cost } = await contract.insuranceQuoteData(requestId);
-        return { cost, requestId };
+        const localRequestId = await contract.policyRequestIdMapping(address, result.length - 1);
+        setRequestId(localRequestId);
+        console.log(localRequestId);
+        const { user, policyIndex, cost } = await contract.insuranceQuoteData(localRequestId);
+        console.log("cost:", cost);
+        const priceOfMatic = await contract.getPriceMaticUsd();
+        console.log(priceOfMatic);
+        const amount = Math.round((cost * 10 ** 6) / priceOfMatic);
+        setAmountInMatic(amount);
+        //setAmountInMatic(0.01); //used to verify that the user can pay for the policy
     };
-
-    useEffect(() => {
-        if (!contractSuccess) {
-            return;
-        }
-        const fetchCostAndCalculate = async () => {
-            const { cost } = await getCost();
-            const priceOfMatic = await contract.getPriceMaticUsd();
-            const amount = Math.round((cost * 10 ** 8) / priceOfMatic);
-            setAmountInMatic(amount);
-            //setAmountInMatic(0.01); //used to verify that the user can pay for the policy
-        };
-
-        fetchCostAndCalculate();
-    }, []);
 
     const startPolicy = async () => {
         setIsLoading(true);
@@ -109,21 +111,23 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
             console.log("Failed to start policy: ", error);
         }
         setIsLoading(false);
+        setRequestId(null);
     };
 
     useContractEvent({
-        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        address: insuranceContractAddress,
         abi: insuranceAbi,
         eventName: "PolicyCreated",
         listener(log) {
-            console.log("PolicyCreated event detected!", log);
+            console.log("PolicyCreated event detected!", log[2]);
             setIsLoading(false);
             setContractSuccess(true);
+            fetchCostAndCalculate();
         },
     });
 
     useContractEvent({
-        address: "0x0A99be0fA440C8931C3826F1A25EB92836cc9766",
+        address: insuranceContractAddress,
         abi: insuranceAbi,
         eventName: "PolicyStarted",
         listener(log) {
@@ -136,7 +140,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
     const estimateInsurance = async () => {
         setIsLoading(true);
         console.log(args);
-        const options = { gasLimit: 2100000 };
+        const options = { gasLimit: 7920027 };
         try {
             await contract.estimateInsurance(args, 1316, 300000, options);
         } catch (err) {
@@ -200,7 +204,7 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                             className="w-auto sm:w-auto h-10 sm:h-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 sm:mb-0 flex items-center justify-center text-center"
                             onClick={onButtonClick}
                         >
-                            Estimate Cost
+                            Estimate (off-chain)
                         </button>
                     )}
                 </>
@@ -406,9 +410,9 @@ const ContractInput = ({ configLabel, units, rectangleBounds }) => {
                         {Math.round(maticBalance) < amountInMatic ? (
                             <>
                                 <div className="flex items-center justify-center">
-                                    You will need at least {amountInMatic} MATIC to pay and start the insurance.
+                                    You will need roughly {amountInMatic} MATIC to pay and start the insurance.
                                 </div>
-                                <div>You currently have {Math.round(maticBalance)} MATIC.</div>
+                                <div>You currently only have around {Math.round(maticBalance)} MATIC.</div>
                             </>
                         ) : (
                             <button

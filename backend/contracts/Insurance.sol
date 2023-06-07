@@ -138,7 +138,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     uint64 subscriptionId,
     uint32 gasLimit
   ) public payable returns (bytes32) {
-    // Ensure at least 1 Matic is sent
+    // Ensure at least 1 Matic is sent to cover the cost of the offchain computation.
     //require(msg.value >= uint256(getLatestPrice()), "Not enough Matic sent");
     require(args.length == 11, "Invalid number of arguments"); // total of 12 arguments
 
@@ -264,7 +264,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     // Check the Matic price and calculate the cost of the insurance in Matic
     uint256 priceOfMatic = uint256(getPriceMaticUsd());
     // Multiply by 10^8 to preserve decimal points as we're working with int
-    uint256 amountInMatic = (cost * 10 ** 8) / priceOfMatic;
+    uint256 amountInMatic = (cost * 10 ** 6) / priceOfMatic;
     require(msg.value >= amountInMatic, "Not enough Matic sent");
 
     policyStatus[msg.sender][policyIndex] = PolicyStatus.Started;
@@ -282,7 +282,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
 
   function payUser(address payable userAddress, uint256 payoutAmount) external onlyCheckPayout {
     uint256 priceOfMatic = uint256(getPriceMaticUsd());
-    uint256 payoutAmountInMatic = (payoutAmount * 10 ** 8) / priceOfMatic;
+    uint256 payoutAmountInMatic = (payoutAmount * 10 ** 6) / priceOfMatic;
     userAddress.transfer(payoutAmountInMatic);
     emit UserPaid(userAddress, payoutAmountInMatic);
   }

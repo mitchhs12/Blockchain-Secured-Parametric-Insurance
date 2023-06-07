@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract CheckPayout is FunctionsClient, ConfirmedOwner {
   event UsingArgs(string[] args);
-  event Payout(address originalSender, uint256 payoutAmount);
+  event Payout(address originalSender, uint256 policyIndex, uint256 payoutAmount);
   event PolicyEnded(address originalSender, uint256 policyIndex);
   event TimeRemaining(address originalSender, uint256 policyIndex, uint256 timeRemaining);
 
@@ -38,6 +38,8 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
   }
 
   function checkPolicy(uint64 subscriptionId, uint32 gasLimit, uint256 policyIndex) public returns (bytes32) {
+    // Ensure that the user sends at least the cost of the offchain computation
+    // require(msg.value >= uint256(insuranceContract.getLatestPrice()), "Not enough MATIC to cover offchain cost")
     PolicyData memory policyData;
     policyData.insuranceData = insuranceContract.getPolicyData(msg.sender, policyIndex);
     bytes32 requestId = insuranceContract.getPolicyRequestId(msg.sender, policyIndex);
@@ -89,15 +91,16 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
     if (payoutAmount > 0) {
       insuranceContract.payUser(payable(originalSender), payoutAmount);
       insuranceContract.endPolicy(originalSender, policyIndex); // policyIndex must be stored for the request
-      emit Payout(originalSender, payoutAmount);
+      emit Payout(originalSender, policyIndex, payoutAmount);
     } else {
       // Check for end of policy
       uint256 endTime = stringToUint256(insuranceData.endTime); // Conversion
       if (block.timestamp > endTime) {
         insuranceContract.endPolicy(originalSender, policyIndex);
         emit PolicyEnded(originalSender, policyIndex);
+      } else {
+        emit TimeRemaining(originalSender, policyIndex, endTime - block.timestamp);
       }
-      emit TimeRemaining(originalSender, policyIndex, endTime - block.timestamp);
     }
   }
 

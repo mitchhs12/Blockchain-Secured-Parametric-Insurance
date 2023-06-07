@@ -71,13 +71,7 @@ task("functions-simulate-payout", "Simulates an end-to-end fulfillment locally f
       const clientContract = await clientFactory.attach(client.address)
       const setTx = await clientContract.setSourceCode(request.source)
       const setTxReceipt = await setTx.wait(1)
-      const requestTx = await clientContract.checkPolicy(
-        request.source,
-        request.args ?? [],
-        subscriptionId,
-        gasLimit,
-        policyIndex
-      )
+      const requestTx = await clientContract.checkPolicy(subscriptionId, gasLimit, policyIndex)
       const requestTxReceipt = await requestTx.wait(1)
       const requestId = requestTxReceipt.events[2].args.id
       const requestGasUsed = requestTxReceipt.gasUsed.toString()
