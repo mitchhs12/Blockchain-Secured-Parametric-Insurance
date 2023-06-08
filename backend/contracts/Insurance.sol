@@ -5,11 +5,11 @@ import "./LinkMaticPriceFeed.sol";
 import "./MaticUsdPriceFeed.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 
-contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
+contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
   event RequestSent(uint256 requestId, uint32 numWords);
   event RequestFulfilled(uint256 requestId, uint256[] randomWords);
   event UserPaid(address userAddress, uint256 payoutAmountInMatic);
@@ -74,7 +74,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, ConfirmedOwner {
     address linkMaticAddress,
     address maticUsdAddress,
     uint64 subscriptionId
-  ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) VRFConsumerBaseV2(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed) {
+  ) FunctionsClient(oracle) VRFConsumerBaseV2(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed) {
     linkMaticPriceFeed = LinkMaticPriceFeed(linkMaticAddress);
     maticUsdPriceFeed = MaticUsdPriceFeed(maticUsdAddress);
     COORDINATOR = VRFCoordinatorV2Interface(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed);

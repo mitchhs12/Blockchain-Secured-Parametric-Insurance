@@ -3,11 +3,11 @@ pragma solidity ^0.8.7;
 
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
-import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "./Insurance.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract CheckPayout is FunctionsClient, ConfirmedOwner {
+contract CheckPayout is FunctionsClient, Ownable {
   event UsingArgs(string[] args);
   event Payout(address originalSender, uint256 policyIndex, uint256 payoutAmount);
   event PolicyEnded(address originalSender, uint256 policyIndex);
@@ -33,7 +33,7 @@ contract CheckPayout is FunctionsClient, ConfirmedOwner {
   mapping(bytes32 => uint256) public requestIdToPolicyIndex;
   mapping(bytes32 => address) public requestIdToSender;
 
-  constructor(address oracle, address insuranceAddress) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
+  constructor(address oracle, address insuranceAddress) FunctionsClient(oracle) {
     insuranceContract = Insurance(insuranceAddress);
   }
 

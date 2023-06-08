@@ -191,8 +191,8 @@ function sinCurveSouthern(x) {
 function calculateDailyPrice(sinVar, dayNumber, cutoff, area, inputValue) {
   const mlExcess = (inputValue - cutoff) / 2 // adjusts cutoff
   const constant = 500
-  const exponent = Math.exp(mlExcess * Math.pow(constant, sinVar / dayNumber))
-  const result = exponent * Math.pow(area, 4) + sinVar
+  const exponent = Math.exp(mlExcess * (constant ^ (sinVar / dayNumber)))
+  const result = exponent * (area ^ 4) + sinVar
   return result
 }
 
