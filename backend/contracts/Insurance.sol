@@ -9,44 +9,36 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 
+/**
+ * @title Insurance Policy Generator Contract
+ * @author Mitchell Spencer
+ * @notice This contract is used to generate insurance policies for users (currently only supports rain insurance)
+ * @dev Implements Chainlink Functions, Chainlink VRF, Chainlink Pricefeeds.
+ **/
 contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
-  event RequestSent(uint256 requestId, uint32 numWords);
-  event RequestFulfilled(uint256 requestId, uint256[] randomWords);
-  event UserPaid(address userAddress, uint256 payoutAmountInMatic);
-  event PolicyCreated(address policyOwner, uint256 policyIndex, uint256 cost);
-  event PolicyStarted(address policyOwner, uint256 policyIndex);
-  event PolicyEnded(address policyOwner, uint256 policyIndex);
-  event AdjustedArgs(string[] args);
-
-  string public sourceCode;
-
+  // Type declarations
   struct RequestStatus {
     bool fulfilled;
     bool exists;
     uint256[] randomWords;
   }
-
   enum PolicyStatus {
     Pending,
     Started,
     Ended
   }
-
   struct InsuranceQuoteData {
     address user;
     uint256 policyIndex;
     uint256 cost;
   }
 
-  modifier onlyCheckPayout() {
-    require(msg.sender == checkPayoutContract, "Caller is not the CheckPayout contract");
-    _;
-  }
-
+  // State variables
+  string public sourceCode;
   address public checkPayoutContract;
   uint256 public constructionTime;
 
-  //vrf variables
+  // VRF variables
   VRFCoordinatorV2Interface COORDINATOR;
   uint64 s_subscriptionId;
   uint256[] public requestIds;
@@ -56,7 +48,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
   uint16 requestConfirmations = 3;
   uint32 numWords = 1;
 
-  // Instantiate the price feed
+  // Price Feed variables
   LinkMaticPriceFeed public linkMaticPriceFeed;
   MaticUsdPriceFeed public maticUsdPriceFeed;
 
@@ -66,8 +58,22 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
   bytes public latestResponse;
   bytes public latestError;
 
+  // Events
+  event RequestSent(uint256 requestId, uint32 numWords);
+  event RequestFulfilled(uint256 requestId, uint256[] randomWords);
+  event UserPaid(address userAddress, uint256 payoutAmountInMatic);
+  event PolicyCreated(address policyOwner, uint256 policyIndex, uint256 cost);
+  event PolicyStarted(address policyOwner, uint256 policyIndex);
+  event PolicyEnded(address policyOwner, uint256 policyIndex);
+  event AdjustedArgs(string[] args);
   event OCRRequest(bytes32 indexed requestId);
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
+
+  // Modifiers
+  modifier onlyCheckPayout() {
+    require(msg.sender == checkPayoutContract, "Caller is not the CheckPayout contract");
+    _;
+  }
 
   constructor(
     address oracle,
@@ -132,15 +138,22 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     return false;
   }
 
-  // START FUNCTIONS METHODS
+  /**
+   * @notice MAIN ESTIMATE INSURANCE FUNCTION
+   * @param args - Array of strings containing the insurance data
+   * @param subscriptionId - Functions billing subscription id
+   * @param gasLimit - The gas limit for the offchain computation
+   **/
   function estimateInsurance(
     string[] calldata args,
     uint64 subscriptionId,
     uint32 gasLimit
   ) public payable returns (bytes32) {
-    // Ensure at least 1 Matic is sent to cover the cost of the offchain computation.
+    /**
+     * @notice Ensure that the user sends at least 1 MATIC to cost the cost of offchain computation
+     **/
     //require(msg.value >= uint256(getLatestPrice()), "Not enough Matic sent");
-    require(args.length == 11, "Invalid number of arguments"); // total of 12 arguments
+    require(args.length == 11, "Invalid number of arguments");
 
     InsuranceData[] storage policies = insurancePoliciesMapping[msg.sender];
     string memory policyCreationTimeString = Strings.toString(block.timestamp);
@@ -181,6 +194,9 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     return assignedReqID;
   }
 
+  /**
+   * @notice Policy will be created after the request is fulfilled
+   **/
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
     InsuranceQuoteData storage quote = insuranceQuoteData[requestId];
     uint256 numResponse = bytesToUint256(response);
@@ -205,10 +221,10 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     return (request.fulfilled, request.randomWords);
   }
 
-  // END FUNCTIONS METHODS
-
-  // START VRF METHODS
-  // Assumes the subscription is funded sufficiently.
+  /**
+   * @notice VRF METHODS
+   * @dev Assumes the subscription is funded sufficiently.
+   **/
   function requestRandomWords() public onlyOwner returns (uint256 requestId) {
     // Will revert if subscription is not set and funded.
     requestId = COORDINATOR.requestRandomWords(
@@ -233,9 +249,9 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     emit RequestFulfilled(_requestId, _randomWords);
   }
 
-  // END VRF METHODS
-
-  // Datafeed Method
+  /**
+   * @notice PRICE FEED METHODS
+   **/
   function getPriceLinkMatic() public view returns (int) {
     return linkMaticPriceFeed.getLatestPrice();
   }
@@ -244,14 +260,9 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     return maticUsdPriceFeed.getLatestPrice();
   }
 
-  function helloWorld() public view returns (string memory) {
-    return "Hello World!";
-  }
-
-  function getCurrentTime() public view returns (uint256) {
-    return currentTime;
-  }
-
+  /**
+   * @notice CONTROL METHODS FOR THE INSURANCE POLICY
+   **/
   function startPolicy(bytes32 requestId) public payable returns (uint256) {
     InsuranceQuoteData storage quote = insuranceQuoteData[requestId];
     uint256 cost = quote.cost;
@@ -263,7 +274,7 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
 
     // Check the Matic price and calculate the cost of the insurance in Matic
     uint256 priceOfMatic = uint256(getPriceMaticUsd());
-    // Multiply by 10^8 to preserve decimal points as we're working with int
+    // Multiply by 10^6 to preserve decimal points as we're working with int
     uint256 amountInMatic = (cost * 10 ** 6) / priceOfMatic;
     require(msg.value >= amountInMatic, "Not enough Matic sent");
 
@@ -275,6 +286,9 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     checkPayoutContract = _checkPayoutContract;
   }
 
+  /**
+   * @notice CALLABLE ONLY BY THE CHECK PAYOUT CONTRACT
+   **/
   function endPolicy(address policyOwner, uint256 policyIndex) external onlyCheckPayout {
     policyStatus[policyOwner][policyIndex] = PolicyStatus.Ended;
     emit PolicyEnded(policyOwner, policyIndex);
@@ -287,6 +301,20 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     emit UserPaid(userAddress, payoutAmountInMatic);
   }
 
+  /**
+   * @notice Sets the offchain source code to be used with Chainlink functions
+   **/
+  function setSourceCode(string memory _sourceCode) public onlyOwner {
+    sourceCode = _sourceCode;
+  }
+
+  function getSourceCode() public view returns (string memory) {
+    return sourceCode;
+  }
+
+  /**
+   * @notice GETTER METHODS
+   **/
   function getPolicyData(address user, uint256 policyIndex) public view returns (InsuranceData memory) {
     return insurancePoliciesMapping[user][policyIndex];
   }
@@ -310,17 +338,20 @@ contract Insurance is FunctionsClient, VRFConsumerBaseV2, Ownable {
     return policyRequestIdMapping[_address][_policyIndex];
   }
 
-  function setSourceCode(string memory _sourceCode) public onlyOwner {
-    sourceCode = _sourceCode;
+  function getCurrentTime() public view returns (uint256) {
+    return currentTime;
   }
 
-  function getSourceCode() public view returns (string memory) {
-    return sourceCode;
-  }
-
+  /**
+   * @notice UTILITY METHODS
+   **/
   function bytesToUint256(bytes memory input) public pure returns (uint256 result) {
     assembly {
       result := mload(add(input, 0x20))
     }
+  }
+
+  function helloWorld() public view returns (string memory) {
+    return "Hello World!";
   }
 }

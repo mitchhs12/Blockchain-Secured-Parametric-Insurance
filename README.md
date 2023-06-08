@@ -2,7 +2,7 @@
 
 An application built for the Chainlink 2023 Spring Hackathon
 
-You can run this project by doing `yarn dev` after navigating to the frontend folder in the terminal.
+You can run the frontend for this project by doing `yarn dev` after navigating to the frontend folder in the terminal.
 
 <h4>Note:</h4>
 
@@ -87,8 +87,11 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
 
 Similar to the cost, we then calculate how much the actual rainfall exceeded the 3 standard deviation threshold (`cutoff`) for the season, termed `mlExcess`. The `additionalCheck` is then computed based on whether the input value falls below this `mlExcess` figure. The final payout for the season is computed by deducting a term. The term involves `mlExcess`, the reciprocal of the area, and the results of two conditional checks (`firstTest` and `secondTest`). These checks will cause the function to be 0 if the rainfall is less than the insured for amount (`inputValue`) or 1 if the `inputValue` is less than half of the cutoff.
 
-The result is a season-wise payout figure, reflecting the discrepancy between actual and historical rainfall data.
+The result of this is a season-wide payout figure that we use can use for our policy. We then select 3 random points (determined by Chainlink VRF) in the user's `area` whereby if 2 out of 3 points exceed the rainfall limit, the user is paid out the amount calculated for the respective season.
 
-<h3>Foot Note:</h3>
+<h3>Foot Notes:</h3>
 
 The `cutoff / 2` part of both the cost and payout functions isn't technically needed but is added as an extra buffer to ensure that the contract balance effectively always continues to increase as people pay for insurance.
+
+The documentation for the Rainfall API used in this project can be found here:
+https://open-meteo.com/en/docs
