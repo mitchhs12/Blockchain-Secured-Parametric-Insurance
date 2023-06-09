@@ -23,16 +23,6 @@ const Buttons = ({ onButtonClick }) => {
     const balanceQuery = useBalance({ address: address, chainId: 80001 });
     console.log(maticBalance, amountInMatic);
 
-    useEffect(() => {
-        if (balanceQuery.isError) {
-            console.error("Error loading balance: ", balanceQuery.error);
-        } else if (balanceQuery.data) {
-            console.log("Balance: ", balanceQuery.data?.formatted, balanceQuery.data?.symbol);
-            setMaticBalance(balanceQuery.data?.formatted);
-            getMaticPrice();
-        }
-    }, [balanceQuery.isError, balanceQuery.data]);
-
     const { data: signer } = useSigner();
     const provider = useProvider({ chainId: 80001 });
 
@@ -47,6 +37,24 @@ const Buttons = ({ onButtonClick }) => {
         abi: payoutAbi ? undefined : backupPayoutAbi,
         signerOrProvider: signer || provider,
     });
+
+    useEffect(() => {
+        if (balanceQuery.isError) {
+            console.error("Error loading balance: ", balanceQuery.error);
+        } else if (balanceQuery.data && insuranceContract) {
+            console.log("Balance: ", balanceQuery.data?.formatted, balanceQuery.data?.symbol);
+            setMaticBalance(balanceQuery.data?.formatted);
+
+            getMaticPrice();
+        }
+    }, [balanceQuery.isError, balanceQuery.data, insuranceContract]);
+
+    const getMaticPrice = async () => {
+        if (insuranceContract) {
+            const priceOfMatic = await insuranceContract.getPriceMaticUsd();
+            setAmountInMatic(priceOfMatic);
+        }
+    };
 
     useContractEvent({
         address: insuranceContractAddress,
@@ -75,11 +83,6 @@ const Buttons = ({ onButtonClick }) => {
             setIsLoading(newLoadingState);
         },
     });
-
-    const getMaticPrice = async () => {
-        const priceOfMatic = await insuranceContract.getPriceMaticUsd();
-        setAmountInMatic(priceOfMatic);
-    };
 
     const POLICIES_PER_PAGE = 5;
 
@@ -133,9 +136,13 @@ const Buttons = ({ onButtonClick }) => {
     };
 
     useEffect(() => {
-        setIsLoading(true);
-        getPolicyData();
-    }, []);
+        if (insuranceContract) {
+            setIsLoading(true);
+            getPolicyData();
+        } else {
+            console.log("insuranceContract is null");
+        }
+    }, [insuranceContract, payoutContract]);
 
     const startPolicy = async (cost, requestId, policyIndex) => {
         setIsLoading((prevState) => ({ ...prevState, [policyIndex]: true }));
