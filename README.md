@@ -87,7 +87,7 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
 
 Similar to the cost, we then calculate how much the actual rainfall exceeded the 3 standard deviation threshold (`cutoff`) for the season, termed `mlExcess`. The `additionalCheck` is then computed based on whether the input value falls below this `mlExcess` figure. The final payout for the season is computed by deducting a term. The term involves `mlExcess`, the reciprocal of the area, and the results of two conditional checks (`firstTest` and `secondTest`). These checks will cause the function to be 0 if the rainfall is less than the insured for amount (`inputValue`) or 1 if the `inputValue` is less than half of the cutoff.
 
-The result of this is a season-wide payout figure that we use can use for our policy. We then select 3 random points (determined by Chainlink VRF) in the user's `area` whereby if 2 out of 3 points exceed the rainfall limit, the user is paid out the amount calculated for the respective season.
+The result of this is a season-wide payout figure that we use can use for our policy. We then select 3 random points (determined by Chainlink VRF) in the user's `area` whereby if 2 out of 3 points had rainfall that exceeded that of the user's selected rainfall quantity, the user is paid out the amount calculated for the respective time given the respective season.
 
 <h3>Foot Notes:</h3>
 

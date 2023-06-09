@@ -312,7 +312,7 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
   return payouts
 }
 
-async function exceedsRainfallLimit(latCenter, longCenter, seasonalLimits) {
+async function exceedsRainfallLimit(latCenter, longCenter) {
   // Ensure that we do not search beyond today's date
   let endDate = Number(currentDayString) < Number(endDayString) ? currentDay : endDay
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${startDay}&end_date=${endDate}&hourly=rain`
@@ -345,7 +345,7 @@ async function exceedsRainfallLimit(latCenter, longCenter, seasonalLimits) {
   // Check if rainfall on any day exceeds the seasonal limit
   for (let day in dailyRainfall) {
     let season = getSeason(day, latCenter)
-    if (dailyRainfall[day] > seasonalLimits[season]) {
+    if (dailyRainfall[day] > inputValue) {
       return season
     }
   }
@@ -401,7 +401,7 @@ for (let i = 0; i < 3; i++) {
   const lat = getRandomCoordinate(i, minLat, latRange)
   const long = getRandomCoordinate(i, minLong, longRange)
   console.log("Lat: ", lat, "Long: ", long)
-  const seasonOrFalse = await exceedsRainfallLimit(lat.toString(), long.toString(), cutoffs)
+  const seasonOrFalse = await exceedsRainfallLimit(lat.toString(), long.toString())
   console.log("Season or false: ", seasonOrFalse, i)
   if (!seasonOrFalse) {
     falseCount++

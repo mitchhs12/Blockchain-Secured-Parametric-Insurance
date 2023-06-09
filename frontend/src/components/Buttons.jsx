@@ -15,8 +15,8 @@ const Buttons = ({ onButtonClick }) => {
 
     const { isConnected, address } = useAccount();
 
-    const insuranceContractAddress = "0xA7FDD3cE0926d111f888005b8F9252B2f88164dE";
-    const payoutContractAddress = "0x5bD8Ae03B3967ee627205cE05ee0867e17e6b14f";
+    const insuranceContractAddress = "0x74297F3202e15b404ec59d6A67A999a34fefe4Da";
+    const payoutContractAddress = "0xE16b24CBAd89e77650963d28bcfF945d28a10675";
 
     const balanceQuery = useBalance({ address: address, chainId: 80001 });
     console.log(maticBalance, amountInMatic);
@@ -66,6 +66,11 @@ const Buttons = ({ onButtonClick }) => {
         eventName: "TimeRemaining",
         listener(log) {
             console.log("TimeRemaining event detected!", log);
+            const newLoadingState = Object.keys(isLoading).reduce(
+                (acc, policyIndex) => ({ ...acc, [policyIndex]: false }),
+                {}
+            );
+            setIsLoading(newLoadingState);
         },
     });
 
@@ -290,19 +295,9 @@ const Buttons = ({ onButtonClick }) => {
                                                 {quote.fromDate.toLocaleDateString()} -{" "}
                                                 {quote.toDate.toLocaleDateString()}
                                             </h4>
-                                            <button
-                                                className="mt-2 sm:w-auto  bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-1 flex items-center justify-center text-center"
-                                                onClick={() => checkPayout(quote.policyIndex)}
-                                            >
-                                                {isLoading[quote.policyIndex] ? (
-                                                    <div className="flex items-center justify-center">
-                                                        <Spinner />
-                                                        Processing...
-                                                    </div>
-                                                ) : (
-                                                    "Ended"
-                                                )}
-                                            </button>
+                                            <div className="text-center font-bold">
+                                                <div>This insurance policy has concluded.</div>
+                                            </div>
                                         </>
                                     )}
                                 </div>
