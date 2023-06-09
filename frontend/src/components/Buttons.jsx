@@ -216,7 +216,7 @@ const Buttons = ({ onButtonClick }) => {
                             quote.cost !== 0 && (
                                 <div
                                     key={index}
-                                    className="flex flex-col sm:w-auto justify-start items-center text-2xl text-white pb-10"
+                                    className="flex flex-col sm:w-auto justify-start items-center text-2xl text-white pb-10 px-8 sm:px-0"
                                 >
                                     <h3 className="font-bold">
                                         {`Policy ${Number(quote.policyIndex) + 1}: ${
@@ -281,7 +281,7 @@ const Buttons = ({ onButtonClick }) => {
                                                 </div>
                                             ) : (
                                                 <button
-                                                    className="mt-2 sm:w-auto  bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mb-1 flex items-center justify-center text-center"
+                                                    className="mt-2 bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mb-1 flex items-center justify-center text-center"
                                                     onClick={() => checkPayout(quote.policyIndex)}
                                                 >
                                                     {isLoading[quote.policyIndex] ? (
