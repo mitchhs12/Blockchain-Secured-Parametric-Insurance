@@ -269,7 +269,10 @@ const Buttons = ({ onButtonClick }) => {
                                             {new Date().setHours(0, 0, 0, 0) <=
                                             new Date(quote.fromDate).setHours(0, 0, 0, 0) ? (
                                                 <div className="text-center text-green-400 font-bold">
-                                                    <div>You cannot check this policy yet since it hasn't started.</div>
+                                                    <div>
+                                                        You cannot check this policy yet since it hasn't entered it's
+                                                        start period yet.
+                                                    </div>
                                                 </div>
                                             ) : new Date().setHours(0, 0, 0, 0) ===
                                               new Date(quote.toDate).setHours(0, 0, 0, 0) ? (

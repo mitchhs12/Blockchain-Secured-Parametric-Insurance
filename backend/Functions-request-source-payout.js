@@ -1,5 +1,4 @@
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
-console.log("Check Insurance Payout")
 const latNe = args[0]
 const longNe = args[1]
 const latSe = args[2]
@@ -289,7 +288,6 @@ function calculatePayout(cutoff, averages, sds, area, inputValue, sum) {
       additionalCheck = inputValue / Math.pow(mlExcess, 2)
     }
 
-    console.log(`Season: ${season}, Mean: ${averages[season]}, SD: ${sds[season]}`)
     const pActualRainfall = normDist(actualRainfall, averages[season], sds[season], true)
     const pMyRainfall = normDist(inputValue, averages[season], sds[season], true)
     const pDifference = (1 - (pActualRainfall - pMyRainfall)) * sum
@@ -316,7 +314,6 @@ async function exceedsRainfallLimit(latCenter, longCenter) {
   // Ensure that we do not search beyond today's date
   let endDate = Number(currentDayString) < Number(endDayString) ? currentDay : endDay
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latCenter}&longitude=${longCenter}&start_date=${startDay}&end_date=${endDate}&hourly=rain`
-  console.log(url)
   const response = await Functions.makeHttpRequest({ url: url })
 
   if (response.error) {
@@ -390,19 +387,15 @@ const area = estimateArea([latNe, latSw], [longNe, longSw])
 const { cutoffs, averages, sds } = await getAverageRainfall(policyCreationDay, latCenter, longCenter)
 
 const cost = calculateCost(startDay, endDay, latCenter, cutoffs, area, configParam)
-console.log("Cost: ", cost)
 
 const payouts = calculatePayout(cutoffs, averages, sds, area, Number(configParam), cost)
-console.log(payouts)
 
 let successfulSeasonCount = 0
 let falseCount = 0
 for (let i = 0; i < 3; i++) {
   const lat = getRandomCoordinate(i, minLat, latRange)
   const long = getRandomCoordinate(i, minLong, longRange)
-  console.log("Lat: ", lat, "Long: ", long)
   const seasonOrFalse = await exceedsRainfallLimit(lat.toString(), long.toString())
-  console.log("Season or false: ", seasonOrFalse, i)
   if (!seasonOrFalse) {
     falseCount++
   } else {
@@ -410,7 +403,6 @@ for (let i = 0; i < 3; i++) {
   }
 }
 if (successfulSeasonCount > 2) {
-  console.log("Payout: ", payouts[seasonOrFalse])
   return Functions.encodeUint256(payouts[seasonOrFalse])
 } else if (falseCount >= 2) {
   return Functions.encodeUint256(0)
