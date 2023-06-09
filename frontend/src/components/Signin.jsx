@@ -4,16 +4,34 @@ import { useAccount, useConnect, useSigner, useSignMessage, useDisconnect } from
 import { useRouter } from "next/router";
 import { useAuthRequestChallengeEvm } from "@moralisweb3/next";
 import { useState, useEffect, useCallback } from "react";
+import { useNetwork } from "wagmi";
 
 function SignIn() {
     const { connectAsync } = useConnect();
     const { disconnectAsync } = useDisconnect();
-    const { isConnected, account, chain } = useAccount();
+    const { isConnected, account } = useAccount();
     const { signMessageAsync } = useSignMessage();
     const { requestChallengeAsync } = useAuthRequestChallengeEvm();
     const { push } = useRouter();
     const signer = useSigner();
     const [isLoading, setIsLoading] = useState(false);
+    const [chainId, setChainId] = useState(0);
+
+    useEffect(() => {
+        const fetchChainId = async () => {
+            if (isConnected) {
+                await disconnectAsync();
+            }
+
+            const { account, chain } = await connectAsync({
+                connector: new MetaMaskConnector(),
+            });
+
+            setChainId(chain.id); // update state with the new chainId
+        };
+
+        fetchChainId();
+    }, []);
 
     const handleAuth = async () => {
         try {
@@ -26,6 +44,8 @@ function SignIn() {
             const { account, chain } = await connectAsync({
                 connector: new MetaMaskConnector(),
             });
+
+            setChainId(chain.id);
 
             const { message } = await requestChallengeAsync({
                 address: account,
@@ -55,36 +75,40 @@ function SignIn() {
 
     return (
         <div>
-            <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={handleAuth}
-                disabled={isLoading} // disable the button when it's loading
-            >
-                {isLoading ? (
-                    <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                        <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                        ></circle>
-                        <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm12 0a8 8 0 100-16 8 8 0 000 16zM4 12h4m8 0h4"
-                        />
-                    </svg>
-                ) : (
-                    "Authenticate via Metamask"
-                )}
-            </button>
+            {chainId !== 80001 ? (
+                <h3 className="text-white">Please connect to the Mumbai Testnet and reload.</h3>
+            ) : (
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleAuth}
+                    disabled={isLoading} // disable the button when it's loading
+                >
+                    {isLoading ? (
+                        <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm12 0a8 8 0 100-16 8 8 0 000 16zM4 12h4m8 0h4"
+                            />
+                        </svg>
+                    ) : (
+                        "Authenticate via Metamask"
+                    )}
+                </button>
+            )}
         </div>
     );
 }
