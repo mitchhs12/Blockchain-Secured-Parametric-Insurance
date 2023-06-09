@@ -15,8 +15,8 @@ const Buttons = ({ onButtonClick }) => {
 
     const { isConnected, address } = useAccount();
 
-    const insuranceContractAddress = "0x74297F3202e15b404ec59d6A67A999a34fefe4Da";
-    const payoutContractAddress = "0xE16b24CBAd89e77650963d28bcfF945d28a10675";
+    const insuranceContractAddress = "0xA7FDD3cE0926d111f888005b8F9252B2f88164dE";
+    const payoutContractAddress = "0x5bD8Ae03B3967ee627205cE05ee0867e17e6b14f";
 
     const balanceQuery = useBalance({ address: address, chainId: 80001 });
     console.log(maticBalance, amountInMatic);
