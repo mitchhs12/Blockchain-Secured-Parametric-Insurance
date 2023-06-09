@@ -1,6 +1,8 @@
 import { useAccount, useContract, useProvider, useContractEvent, useSigner, useBalance } from "wagmi";
 import { abi as insuranceAbi } from "../../../backend/build/artifacts/contracts/Insurance.sol/Insurance.json";
 import { abi as payoutAbi } from "../../../backend/build/artifacts/contracts/CheckPayout.sol/CheckPayout.json";
+import { abi as backupInsuranceAbi } from "../../abis_from_backend/Insurance.json";
+import { abi as backupPayoutAbi } from "../../abis_from_backend/CheckPayout.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 
@@ -36,19 +38,19 @@ const Buttons = ({ onButtonClick }) => {
 
     const insuranceContract = useContract({
         address: insuranceContractAddress,
-        abi: insuranceAbi,
+        abi: insuranceAbi ? undefined : backupInsuranceAbi,
         signerOrProvider: signer || provider,
     });
 
     const payoutContract = useContract({
         address: payoutContractAddress,
-        abi: payoutAbi,
+        abi: payoutAbi ? undefined : backupPayoutAbi,
         signerOrProvider: signer || provider,
     });
 
     useContractEvent({
         address: insuranceContractAddress,
-        abi: insuranceAbi,
+        abi: insuranceAbi ? undefined : backupInsuranceAbi,
         eventName: "PolicyStarted",
         listener(log) {
             console.log("PolicyStarted event detected!", log);
@@ -62,7 +64,7 @@ const Buttons = ({ onButtonClick }) => {
 
     useContractEvent({
         address: payoutContractAddress,
-        abi: payoutAbi,
+        abi: payoutAbi ? undefined : backupPayoutAbi,
         eventName: "TimeRemaining",
         listener(log) {
             console.log("TimeRemaining event detected!", log);
