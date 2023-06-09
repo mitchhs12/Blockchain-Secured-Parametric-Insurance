@@ -3,7 +3,7 @@ import { signIn } from "next-auth/react";
 import { useAccount, useConnect, useSigner, useSignMessage, useDisconnect } from "wagmi";
 import { useRouter } from "next/router";
 import { useAuthRequestChallengeEvm } from "@moralisweb3/next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function SignIn() {
     const { connectAsync } = useConnect();
@@ -14,11 +14,6 @@ function SignIn() {
     const { push } = useRouter();
     const signer = useSigner();
     const [isLoading, setIsLoading] = useState(false);
-    const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
-
-    useEffect(() => {
-        setIsCorrectNetwork(isConnected && chain?.id === 80001);
-    }, [isConnected, chain]);
 
     const handleAuth = async () => {
         try {
@@ -36,10 +31,6 @@ function SignIn() {
                 address: account,
                 chainId: chain.id,
             });
-
-            if (chain.id !== 80001) {
-                return "Please switch to the Mumbai Testnet";
-            }
 
             const signature = await signMessageAsync({ message });
 
@@ -64,40 +55,36 @@ function SignIn() {
 
     return (
         <div>
-            {isCorrectNetwork ? (
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleAuth}
-                    disabled={isLoading} // disable the button when it's loading
-                >
-                    {isLoading ? (
-                        <svg
-                            className="animate-spin h-5 w-5 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                            ></circle>
-                            <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm12 0a8 8 0 100-16 8 8 0 000 16zM4 12h4m8 0h4"
-                            />
-                        </svg>
-                    ) : (
-                        "Authenticate via Metamask"
-                    )}
-                </button>
-            ) : (
-                <div className="text-white">Please switch to the Mumbai Testnet</div>
-            )}
+            <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleAuth}
+                disabled={isLoading} // disable the button when it's loading
+            >
+                {isLoading ? (
+                    <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                        ></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm12 0a8 8 0 100-16 8 8 0 000 16zM4 12h4m8 0h4"
+                        />
+                    </svg>
+                ) : (
+                    "Authenticate via Metamask"
+                )}
+            </button>
         </div>
     );
 }
