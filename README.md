@@ -4,6 +4,8 @@ An application built for the Chainlink 2023 Spring Hackathon.
 
 #### [You can see a live demo of this project here.](https://chainlink-secured-parametric-insurance-1io1.vercel.app/)
 
+#### [Or watch the video walkthrough here.](https://www.youtube.com/watch?v=f-OytJrvNoc)
+
 You can run the frontend for this project by doing `yarn dev` after navigating to the frontend folder in the terminal.
 
 <h4>Note:</h4>
