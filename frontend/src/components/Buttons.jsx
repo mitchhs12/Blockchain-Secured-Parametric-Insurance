@@ -319,19 +319,20 @@ const Buttons = ({ onButtonClick }) => {
                         </div>
                     </h3>
                 )}
-                <div className="flex justify-between items-center">
-                    {currentPage !== 0 && (
+                <div className="fixed pb-8 bottom-0 w-full flex justify-center items-center">
+                    {currentPage !== 0 && insuranceQuoteData && insuranceQuoteData.length > 0 && (
                         <button
-                            className="px-4 py-2 rounded text-white bg-gray-600 hover:bg-gray-800"
+                            className="px-4 py-2 rounded text-white bg-gray-600 hover:bg-gray-800 mr-1"
                             onClick={() => onPageChange(currentPage - 1)}
                         >
                             Previous
                         </button>
                     )}
                     {insuranceQuoteData &&
+                        insuranceQuoteData.length > POLICIES_PER_PAGE &&
                         currentPage !== Math.ceil(insuranceQuoteData.length / POLICIES_PER_PAGE) - 1 && (
                             <button
-                                className="px-4 py-2 rounded text-white bg-gray-600 hover:bg-gray-800"
+                                className="px-4 py-2 rounded text-white bg-gray-600 hover:bg-gray-800 ml-1"
                                 onClick={() => onPageChange(currentPage + 1)}
                             >
                                 Next
