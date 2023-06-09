@@ -21,20 +21,19 @@ const Buttons = ({ onButtonClick }) => {
     const payoutContractAddress = "0x5bD8Ae03B3967ee627205cE05ee0867e17e6b14f";
 
     const balanceQuery = useBalance({ address: address, chainId: 80001 });
-    console.log(maticBalance, amountInMatic);
 
     const { data: signer } = useSigner();
     const provider = useProvider({ chainId: 80001 });
 
     const insuranceContract = useContract({
         address: insuranceContractAddress,
-        abi: insuranceAbi ? undefined : backupInsuranceAbi,
+        abi: backupInsuranceAbi,
         signerOrProvider: signer || provider,
     });
 
     const payoutContract = useContract({
         address: payoutContractAddress,
-        abi: payoutAbi ? undefined : backupPayoutAbi,
+        abi: backupPayoutAbi,
         signerOrProvider: signer || provider,
     });
 
@@ -142,7 +141,7 @@ const Buttons = ({ onButtonClick }) => {
         } else {
             console.log("insuranceContract is null");
         }
-    }, [insuranceContract, payoutContract]);
+    }, []);
 
     const startPolicy = async (cost, requestId, policyIndex) => {
         setIsLoading((prevState) => ({ ...prevState, [policyIndex]: true }));
