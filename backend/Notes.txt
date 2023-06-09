@@ -28,7 +28,3 @@ npx hardhat functions-request-insurance --network polygonMumbai --subid 1316 --g
 
 Command to request payout:
 npx hardhat functions-request-payout --network polygonMumbai --subid 1316 --gaslimit 300000 --contract CONTRACT_ADDRESS
-
-
-// REMEMBER TO FIX ONLY SET CHECKPAYOUT CONTRACT ONCE!
-
