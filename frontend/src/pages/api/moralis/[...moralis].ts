@@ -14,7 +14,7 @@ if (!nextAuthUrl) {
 export default MoralisNextApi({
     apiKey,
     authentication: {
-        domain: "ParametricInsurance.dapp",
+        domain: "chainlink-secured-parametric-insurance-1io1.vercel.app",
         uri: nextAuthUrl,
         timeout: 120,
     },
